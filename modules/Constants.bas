@@ -5,8 +5,11 @@ Global Const C_TRUE = 1
 Global Const C_FALSE = 0
 
 Global Const ERR_MSINET_REQUESTTIMEDOUT = 35761
-
 Global Const ERR_UNINITIALIZED_LVZ_DC = 20000
+
+
+Global Const MAX_MAPS = 10 'Maximum number of maps opened
+Global Const MAX_RECENT_ITEMS = 10
 
 Global Const PI = 3.14159265
 
@@ -41,6 +44,8 @@ Global Const MAX_MAGICWAND = 128000
 Global Const MAX_TE_FORMWIDTH = 320
 Global Const MAX_TE_FORMHEIGHT = 438
 
+
+
 'increase for slower map dragging while drawing
 Global Const DRAG_FACTOR_LEFT = 8
 Global Const DRAG_FACTOR_RIGHT = 12
@@ -54,7 +59,6 @@ Global Const REGION_SELECTION = 1
 'default settings
 Global Const DEFAULT_AUTOSAVE_DELAY = 10
 Global Const DEFAULT_MAX_AUTOSAVES = 5
-
 
 Global Const DEFAULT_GRID_BLOCKS = 16
 Global Const DEFAULT_GRID_SECTIONS = 4
@@ -144,6 +148,22 @@ Global Const UNDO_REGION_CHANGEPROPERTIES = "Change Region Properties"
     
 'Global Const DEFAULT_UPDATE_URL = "http://www.student.kuleuven.ac.be/~s0158884/DCME/dcmeupdate.txt"
 Global Const DEFAULT_UPDATE_URL = "http://www.dcme.sscentral.com/autoupdate/dcmeupdate.txt"
+
+
+Global Const CMD_CONDITION = &H80000000 'This menu item data represents an enabled condition
+Global Const CMD_ALWAYS = &H0 + CMD_CONDITION 'This menu item is always active
+Global Const CMD_MAP = &H1 + CMD_CONDITION 'This menu item requires that a map is active to be enabled
+Global Const CMD_SELECTION = &H2 + CMD_CONDITION 'This menu item requires an active selection
+Global Const CMD_LVZSELECTION = &H4 + CMD_CONDITION 'Requires an active LVZ selection
+Global Const CMD_CLIPBOARD = &H8 + CMD_CONDITION  'Requires data in clipboard
+Global Const CMD_TILESET = &H10 + CMD_CONDITION 'Requires a customized tileset
+Global Const CMD_UNDO = &H20 + CMD_CONDITION 'Requires available UNDO step
+Global Const CMD_REDO = &H40 + CMD_CONDITION 'Requires available REDO step
+Global Const CMD_REGION = &H80 + CMD_CONDITION 'Requires at least one region on map
+Global Const CMD_MAPCHANGE = &H100 + CMD_CONDITION 'Requires the map has been changed since last save
+Global Const CMD_LVZTILESET = &H200 + CMD_CONDITION 'Requires a lvz image selected in the tileset
+Global Const CMD_CANZOOM = &H400 + CMD_CONDITION 'The map can be zoomed
+Global Const CMD_CANUNZOOM = &H800 + CMD_CONDITION 'The map can be zoomed
 
 
 

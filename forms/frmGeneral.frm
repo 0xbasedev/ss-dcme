@@ -3631,13 +3631,13 @@ Attribute VB_Exposed = False
 Option Explicit
 
 'holds whether map i (0..9) is loaded
-Dim loadedmaps(9) As Boolean
+Dim loadedmaps(MAX_MAPS - 1) As Boolean
 
-Dim tabloaded(9) As Boolean
+Dim tabloaded(MAX_MAPS - 1) As Boolean
 
 
 'holds the actual references to the maps
-Dim Maps(9) As frmMain
+Dim Maps(MAX_MAPS - 1) As frmMain
 
 
 'Display layers of active map
@@ -4600,21 +4600,21 @@ Private Sub MDIForm_Load()
 
     MAX_TOOL_SIZE(T_pencil - 1) = 64
     MAX_TOOL_SIZE(T_line - 1) = 64
-    MAX_TOOL_SIZE(t_spline - 1) = 64
+    MAX_TOOL_SIZE(T_spline - 1) = 64
     MAX_TOOL_SIZE(T_rectangle - 1) = 64
     MAX_TOOL_SIZE(T_ellipse - 1) = 64
     MAX_TOOL_SIZE(T_filledellipse - 1) = 64
     MAX_TOOL_SIZE(T_filledrectangle - 1) = 64
     toolSize(T_pencil - 1).Max = 64
     toolSize(T_line - 1).Max = 64
-    toolSize(t_spline - 1).Max = 64
+    toolSize(T_spline - 1).Max = 64
     toolSize(T_rectangle - 1).Max = 64
     toolSize(T_ellipse - 1).Max = 64
     toolSize(T_filledellipse - 1).Max = 64
     toolSize(T_filledrectangle - 1).Max = 64
 
     toolStep(T_line - 1).Min = 0
-    toolStep(t_spline - 1).Min = 0
+    toolStep(T_spline - 1).Min = 0
     toolStep(T_rectangle - 1).Min = 0
     toolStep(T_ellipse - 1).Min = 0
     toolStep(T_filledellipse - 1).Min = 0
@@ -4703,6 +4703,7 @@ Private Sub MDIForm_QueryUnload(Cancel As Integer, UnloadMode As Integer)
 '    End If
     If inSplash Then Unload frmSplash
     
+    Call llRegionList.HideList
     Dim i As Integer
     For i = 0 To UBound(Maps)
         If loadedmaps(i) Then
@@ -4801,7 +4802,7 @@ MDIForm_QueryUnload_End:
     Next
     
     If CheckUnloadedForms(True) Then
-        AddDebug "DCME ended successfully"
+        AddDebug "All forms unloaded successfully"
     End If
   
     
@@ -5545,7 +5546,7 @@ Private Sub mnuSaveMiniMap_Click()
 
 
     'BitBlt frmSaveRadar.piclevel.hdc, 0, 0, 1024, 1024, Maps(activemap).pic1024.hdc, 0, 0, vbSrcCopy
-    Call Maps(activemap).cpic1024.bltToDC(frmSaveRadar.piclevel.hDC, 0, 0, 1024, 1024, 0, 0, vbSrcCopy)
+'    Call Maps(activemap).cpic1024.bltToDC(frmSaveRadar.piclevel.hDC, 0, 0, 1024, 1024, 0, 0, vbSrcCopy)
     frmSaveRadar.show vbModal, Me
 
 End Sub
@@ -6627,7 +6628,7 @@ End Sub
 Function GetIndexOfMap(path As String) As Integer
 
     Dim i As Integer
-    For i = 0 To 9
+    For i = 0 To MAX_MAPS - 1
         If loadedmaps(i) Then
             If Maps(i).activeFile = path Then
                 GetIndexOfMap = i
@@ -6858,6 +6859,10 @@ Function SaveMap(Optional saveas As Boolean = True, Optional flags As saveFlags 
 
         ShowProgress "Saving", 1524
         
+        
+        'Saving the map as... generate a new DCID
+        Maps(activemap).eLVL.GenerateHashCode
+        
         'call the save handling in the map itself
         Call Maps(activemap).SaveMap(cd.filename, flags)
 
@@ -6945,7 +6950,7 @@ Sub DestroyMap(id)
   
     'Check if there are any more loaded maps
     Dim i As Integer
-    For i = 0 To 9
+    For i = 0 To MAX_MAPS - 1
         If loadedmaps(i) = True Then
             frmGeneral.IsBusy("frmGeneral.DestroyMap") = False
             Exit Sub
@@ -6984,7 +6989,7 @@ Function getFreeMapSlot() As Integer
 
 'if not return -1 else return the available slot
     Dim i As Integer
-    For i = 0 To 9
+    For i = 0 To MAX_MAPS - 1
         If loadedmaps(i) = False Then
             getFreeMapSlot = i
             Exit Function
@@ -7197,7 +7202,7 @@ Private Sub SetCurrentCursor(ByVal tool As toolenum)
            tool <> T_rectangle And _
            tool <> T_selection And _
            tool <> T_ellipse And _
-           tool <> t_spline And _
+           tool <> T_spline And _
            tool <> T_filledellipse And _
            tool <> T_filledrectangle And _
            tool <> T_customshape And _
@@ -7216,7 +7221,7 @@ Private Sub SetCurrentCursor(ByVal tool As toolenum)
     End If
 
     'apply cursor to all loaded maps
-    For i = 0 To 9
+    For i = 0 To MAX_MAPS - 1
         If loadedmaps(i) = True Then
             Maps(i).picPreview.MousePointer = cursor
 
@@ -7297,7 +7302,7 @@ Sub SetCurrentTool(tool As toolenum, Optional setToolbars As Boolean = True)
         'force redraw
         Call Maps(activemap).UpdateLevel
     
-    ElseIf curtool = t_spline Then
+    ElseIf curtool = T_spline Then
         Maps(activemap).tileset.lastButton = vbLeftButton
     End If
     End If
@@ -7459,6 +7464,7 @@ Private Sub LoadRecent()
     On Error GoTo LoadRecent_Error
 
     For i = 1 To 9
+
         Load mnuMaps(i)
         mnuMaps(i).visible = False
 
@@ -7700,7 +7706,7 @@ Sub UpdateMenuMaps()
     Dim i As Integer
     
     
-    For i = 0 To 9
+    For i = 0 To MAX_MAPS - 1
         If loadedmaps(i) Then
             'uncheck them all
             mnuMaps(i).checked = (i = activemap)
@@ -7733,7 +7739,7 @@ End Sub
 '          Dim i As Integer
 '
 '10        tbMaps.Tabs.Clear
-'20        For i = 0 To 9
+'20        For i = 0 to MAX_MAPS-1
 '30            If loadedmaps(i) Then
 '                  Dim t As MSComctlLib.Tab
 '
@@ -8170,7 +8176,7 @@ Sub UpdateToolToolbar()
             optToolRound(curtool - 1).value = True
         End If
 
-    Case T_line, T_rectangle, T_filledrectangle, t_spline
+    Case T_line, T_rectangle, T_filledrectangle, T_spline
         toolSize(curtool - 1).value = CInt(GetSetting("ToolSize" & ToolName(CInt(curtool - 1)), "1"))
 
         If CInt(GetSetting("ToolTip" & ToolName(CInt(curtool - 1)), "1")) = 1 Then
@@ -9122,7 +9128,7 @@ Function QuickSaveAll() As Boolean
 'Used when a critical error occurs
     
     Dim i As Integer
-    For i = 0 To 9
+    For i = 0 To MAX_MAPS - 1
         If loadedmaps(i) Then
             If Maps(i).mapchanged Then
                 Dim path As String

@@ -57,7 +57,10 @@ Sub LoadSettings()
     settingsLoaded = True
 End Sub
 
-
+Sub ClearSettings()
+    Call DeleteFile(App.path & "\settings.dat")
+    Call LoadSettings
+End Sub
 
 Function GetSetting(Key As String, Optional defaultval As Variant = vbNullString) As String
     If Not settingsLoaded Then

@@ -43,12 +43,13 @@ Sub MouseDown(Button As Integer, X As Single, Y As Single)
     If Button <> vbLeftButton And Button <> vbRightButton Then Exit Sub
     
     'get tileset selection
-    Dim toolOptions As DrawOptions
+    Dim tooloptions As DrawOptions
+
     
     curSelection = parent.tileset.selection(Button)
     
     Call parent.tline.SetSelection(curSelection)
-    Call parent.tline.SetOptions(toolOptions)
+    Call parent.tline.SetOptions(tooloptions)
     
     
     UseAsteroids = CBool(GetSetting("UseAirBrushAsAsteroids", "0"))
@@ -137,8 +138,8 @@ Sub MouseMove(Button As Integer, X As Single, Y As Single)
 
 setAnotherRandom:
 
-    curtilex = (parent.Hscr.value + X) \ parent.currenttilew
-    curtiley = (parent.Vscr.value + Y) \ parent.currenttilew
+    curtilex = (parent.hScr.value + X) \ parent.currenttilew
+    curtiley = (parent.vScr.value + Y) \ parent.currenttilew
 '    If (curtilex < 0 Or curtiley < 0 Or curtilex > 1023 Or curtiley > 1023) Then
 '        Exit Sub
 '    End If

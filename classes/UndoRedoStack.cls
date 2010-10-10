@@ -328,6 +328,14 @@ End Sub
 '    'messagebox "Error " & Err.Number & " (" & Err.Description & ") in procedure ResetUndo of Class Module UndoRedoStack"
 'End Sub
 
+Public Property Get UndoAvailable() As Boolean
+    UndoAvailable = (undocurpos >= 1)
+End Property
+
+Public Property Get RedoAvailable() As Boolean
+    RedoAvailable = (redocurpos >= 1)
+End Property
+
 Private Sub Class_Terminate()
     Set parent = Nothing
     

@@ -247,6 +247,8 @@ Public Sub setParent(Main As frmMain)
     End If
 End Sub
 
+
+
 Private Sub Form_Load()
     Boundaries.Left = 0
     Boundaries.Top = 0

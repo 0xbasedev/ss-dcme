@@ -650,7 +650,8 @@ End Sub
 
 'INTERFACE SUBS/FUNCTIONS NEEDED BY THE REST OF THE PROGRAM
 
-Sub getAttributeList(lstItems As ListItems)
+Friend Sub getAttributeList(lstItems As ListItems)
+
 '    'puts all the properties in the given list
 '
     Dim i As Integer
@@ -665,9 +666,10 @@ Sub getAttributeList(lstItems As ListItems)
             lstItems.item(Attributes(i).Key).SubItems(1) = Attributes(i).value
         Next
     End If
+    
 End Sub
 
-Sub setAttributeList(lstItems As ListItems)
+Friend Sub setAttributeList(lstItems As ListItems)
 '    'puts all the properties in eLVL data
     Call ClearAttributes
 
@@ -749,9 +751,12 @@ Private Sub loadRegionInMap(f As Integer, totalsize As Long, ByRef tmpRegion As 
             If SubChunk_Type = "rNAM" Then
                 ReDim SubChunk_Data(SubChunk_Size - 1)
                 Get #f, , SubChunk_Data
-
+                
+                
                 tmpRegion.name = bytesToString(SubChunk_Data)
-
+                
+                parent.AddDebug "   eLVL.loadRegionInMap, ---Region name = '" & tmpRegion.name & "'"
+                
                 'Tile data chunk
             ElseIf SubChunk_Type = "rTIL" Then
                 ReDim SubChunk_Data(SubChunk_Size - 1)
@@ -796,6 +801,7 @@ Private Sub loadRegionInMap(f As Integer, totalsize As Long, ByRef tmpRegion As 
                 If UBound(SubChunk_Data) >= 2 Then
                     tmpRegion.color = RGB(CInt(SubChunk_Data(0)), CInt(SubChunk_Data(1)), CInt(SubChunk_Data(2)))
                 End If
+                
 
             Else
                 'unknown subchunk type, store
@@ -830,8 +836,16 @@ Private Sub loadRegionInMap(f As Integer, totalsize As Long, ByRef tmpRegion As 
 
         ElseIf SubChunk_Type = "rNFL" Then
             tmpRegion.isNoFlagDrop = True
-
-
+ 
+        ElseIf SubChunk_Type = "rNRA" Then
+            'No receive antiwarp (ASSS 1.5.0)
+            tmpRegion.isNoReceiveAntiwarp = True
+            
+        ElseIf SubChunk_Type = "rNRW" Then
+            'No receive weapons (ASSS 1.5.0)
+            tmpRegion.isNoReceiveWeapon = True
+            
+                
 
         Else
             'chunk is an unknown chunk
@@ -958,7 +972,7 @@ Private Sub LoadRegionTileData(ByRef Data() As Byte, ByRef tmpRegion As Region)
             '    000nnnnn          - n+1 (1-32) empty tiles in a row
             value = Byte1 Mod 32 + 1
 
-'            parent.AddDebug "      eLVL.LoadRegionTileData, " & Value & " false tiles @ (" & tilesInRow & "," & rowsCounted & ")"
+'            parent.AddDebug "      eLVL.LoadRegionTileData, " & value & " false tiles @ (" & tilesInRow & "," & rowsCounted & ")"
 
 '            All values are set to false by default already, no need to set these
 
@@ -979,7 +993,7 @@ Private Sub LoadRegionTileData(ByRef Data() As Byte, ByRef tmpRegion As Region)
             Byte2 = Data(CurrentPosition + 1)
             value = 256 * (Byte1 Mod 4) + Byte2 + 1
 
-'            parent.AddDebug "      eLVL.LoadRegionTileData, " & Value & " false tiles @ (" & tilesInRow & "," & rowsCounted & ")"
+'            parent.AddDebug "      eLVL.LoadRegionTileData, " & value & " false tiles @ (" & tilesInRow & "," & rowsCounted & ")"
 
 '            All values are set to false by default already, no need to set these
 
@@ -999,7 +1013,7 @@ Private Sub LoadRegionTileData(ByRef Data() As Byte, ByRef tmpRegion As Region)
             '    010nnnnn          - n+1 (1-32) present tiles in a row
             value = Byte1 Mod 32 + 1
 
-'            parent.AddDebug "      eLVL.LoadRegionTileData, " & Value & " true tiles @ (" & tilesInRow & "," & rowsCounted & ")"
+'            parent.AddDebug "      eLVL.LoadRegionTileData, " & value & " true tiles @ (" & tilesInRow & "," & rowsCounted & ")"
 
             If tilesInRow + value > 1024 Then
                 'something's wrong, more than 1024 tiles in that row
@@ -1021,7 +1035,7 @@ Private Sub LoadRegionTileData(ByRef Data() As Byte, ByRef tmpRegion As Region)
             Byte2 = Data(CurrentPosition + 1)
             value = 256 * (Byte1 Mod 4) + Byte2 + 1
 
-'            parent.AddDebug "      eLVL.LoadRegionTileData, " & Value & " true tiles @ (" & tilesInRow & "," & rowsCounted & ")"
+'            parent.AddDebug "      eLVL.LoadRegionTileData, " & value & " true tiles @ (" & tilesInRow & "," & rowsCounted & ")"
 
             If tilesInRow + value > 1024 Then
                 'something's wrong, more than 1024 tiles in that row
@@ -1042,7 +1056,7 @@ Private Sub LoadRegionTileData(ByRef Data() As Byte, ByRef tmpRegion As Region)
             '    100nnnnn          - n+1 (1-32) rows of all empty
             value = Byte1 Mod 32 + 1
 
-'            parent.AddDebug "      eLVL.LoadRegionTileData, " & Value & " empty rows @ (" & tilesInRow & "," & rowsCounted & ")"
+'            parent.AddDebug "      eLVL.LoadRegionTileData, " & value & " empty rows @ (" & tilesInRow & "," & rowsCounted & ")"
 
             rowsCounted = rowsCounted + value
 
@@ -1053,7 +1067,7 @@ Private Sub LoadRegionTileData(ByRef Data() As Byte, ByRef tmpRegion As Region)
             Byte2 = Data(CurrentPosition + 1)
             value = 256 * (Byte1 Mod 4) + Byte2 + 1
 
-'            parent.AddDebug "      eLVL.LoadRegionTileData, " & Value & " empty rows @ (" & tilesInRow & "," & rowsCounted & ")"
+'            parent.AddDebug "      eLVL.LoadRegionTileData, " & value & " empty rows @ (" & tilesInRow & "," & rowsCounted & ")"
 
             rowsCounted = rowsCounted + value
 
@@ -1063,7 +1077,7 @@ Private Sub LoadRegionTileData(ByRef Data() As Byte, ByRef tmpRegion As Region)
             '    110nnnnn          - repeat last row n+1 (1-32) times
             value = Byte1 Mod 32 + 1
 
-'            parent.AddDebug "      eLVL.LoadRegionTileData, " & Value & " repeated rows @ (" & tilesInRow & "," & rowsCounted & ")"
+'            parent.AddDebug "      eLVL.LoadRegionTileData, " & value & " repeated rows @ (" & tilesInRow & "," & rowsCounted & ")"
 
 '            For i = 0 To 1023
 '                For j = rowsCounted To rowsCounted + Value - 1
@@ -1089,7 +1103,7 @@ Private Sub LoadRegionTileData(ByRef Data() As Byte, ByRef tmpRegion As Region)
             Byte2 = Data(CurrentPosition + 1)
             value = 256 * (Byte1 Mod 4) + Byte2 + 1
 
-'            parent.AddDebug "      eLVL.LoadRegionTileData, " & Value & " repeated rows @ (" & tilesInRow & "," & rowsCounted & ")"
+'            parent.AddDebug "      eLVL.LoadRegionTileData, " & value & " repeated rows @ (" & tilesInRow & "," & rowsCounted & ")"
 
 '            For i = 0 To 1023
 '                For j = rowsCounted To rowsCounted + Value - 1
@@ -1106,6 +1120,9 @@ Private Sub LoadRegionTileData(ByRef Data() As Byte, ByRef tmpRegion As Region)
 
             CurrentPosition = CurrentPosition + 2
 
+        Else
+            parent.AddDebug "Error in region tile data: byte1\32 = " & Byte1 \ 32
+            
         End If
 
         If tilesInRow = 1024 Then

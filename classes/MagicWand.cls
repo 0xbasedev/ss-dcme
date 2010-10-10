@@ -28,8 +28,8 @@ Sub MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
     Dim curtiley As Integer
     '   On Error GoTo MouseDown_Error
 
-    curtilex = (parent.Hscr.value + X) \ parent.currenttilew
-    curtiley = (parent.Vscr.value + Y) \ parent.currenttilew
+    curtilex = (parent.hScr.Value + X) \ parent.currenttilew
+    curtiley = (parent.vScr.Value + Y) \ parent.currenttilew
 
     If (curtilex < 0 Or curtiley < 0 Or curtilex > 1023 Or curtiley > 1023) Then
         Exit Sub
@@ -112,8 +112,8 @@ Sub MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
     Dim curtilex As Integer
     Dim curtiley As Integer
-    curtilex = (parent.Hscr.value + X) \ parent.currenttilew
-    curtiley = (parent.Vscr.value + Y) \ parent.currenttilew
+    curtilex = (parent.hScr.Value + X) \ parent.currenttilew
+    curtiley = (parent.vScr.Value + Y) \ parent.currenttilew
 
     If (curtilex < 0 Or curtiley < 0 Or curtilex > 1023 Or curtiley > 1023) Then
         Exit Sub
@@ -156,71 +156,71 @@ Sub Regions(add As Boolean, tilenr As Integer, ByVal X As Integer, ByVal Y As In
     Dim Pcount As Long
     Dim Colour As Integer
 
-    Dim Lx As Integer
-    Dim Ly As Integer
+    Dim lX As Integer
+    Dim lY As Integer
 
     Dim Sloop As Long
     ReDim px(0)
     ReDim py(0)
 
-    Lx = X
-    Ly = Y
+    lX = X
+    lY = Y
 
 
     Pstart = 0
     Pstop = 0
-    px(0) = Lx
-    py(0) = Ly
+    px(0) = lX
+    py(0) = lY
     Dim count As Long
 
     Dim lbsx As Integer
     Dim lbsy As Integer
     Dim hbsx As Integer
     Dim hbsy As Integer
-    lbsx = parent.Hscr.value \ parent.currenttilew
-    hbsx = (parent.Hscr.value + parent.picPreview.width) \ parent.currenttilew
-    lbsy = parent.Vscr.value \ parent.currenttilew
-    hbsy = (parent.Vscr.value + parent.picPreview.height) \ parent.currenttilew
+    lbsx = parent.hScr.Value \ parent.currenttilew
+    hbsx = (parent.hScr.Value + parent.picPreview.Width) \ parent.currenttilew
+    lbsy = parent.vScr.Value \ parent.currenttilew
+    hbsy = (parent.vScr.Value + parent.picPreview.Height) \ parent.currenttilew
 
-    Call AddPoints(px, py, Pstart, Pstop, Lx, Ly, Sloop, stack)
+    Call AddPoints(px, py, Pstart, Pstop, lX, lY, Sloop, stack)
 
     While Pstart <= Pstop And count < MAX_MAGICWAND
 
-        Lx = px(Pstart)
-        Ly = py(Pstart)
-        If Not (Lx < 0 Or Ly < 0 Or Lx > 1023 Or Ly > 1023) Then
+        lX = px(Pstart)
+        lY = py(Pstart)
+        If Not (lX < 0 Or lY < 0 Or lX > 1023 Or lY > 1023) Then
             If fillscreenonly Then
-                If (Lx < lbsx Or Ly < lbsy Or Lx > hbsx Or Ly > hbsy) Then
+                If (lX < lbsx Or lY < lbsy Or lX > hbsx Or lY > hbsy) Then
                     GoTo skiploop
                 End If
             End If
 
-            If parent.sel.getIsInSelection(Lx, Ly) Then
-                Colour = parent.sel.getSelTile(Lx, Ly)
+            If parent.sel.getIsInSelection(lX, lY) Then
+                Colour = parent.sel.getSelTile(lX, lY)
             Else
-                Colour = parent.getTile(Lx, Ly)
+                Colour = parent.getTile(lX, lY)
             End If
 
             'Consider special objects filling tiles (i.e. -22012...) as the same tile as object (i.e. 220)
             If Colour < 0 Then Colour = Colour \ -100
 
-            If Not (done(Lx, Ly) = True Or Colour <> tilenr) Then
+            If Not (done(lX, lY) = True Or Colour <> tilenr) Then
                 Pcount = Pcount + 1
-                done(Lx, Ly) = True
+                done(lX, lY) = True
 
                 count = count + 1
 
                 If add Then
-                    If Not parent.sel.getIsInSelection(Lx, Ly) Then
-                        Call parent.sel.AddSelectionArea(Lx, Lx, Ly, Ly, undoch, False)
+                    If Not parent.sel.getIsInSelection(lX, lY) Then
+                        Call parent.sel.AddSelectionArea(lX, lX, lY, lY, undoch, False)
                     End If
                 Else
-                    If parent.sel.getIsInSelection(Lx, Ly) Then
-                        Call parent.sel.RemoveSelectionArea(Lx, Lx, Ly, Ly, undoch, False)
+                    If parent.sel.getIsInSelection(lX, lY) Then
+                        Call parent.sel.RemoveSelectionArea(lX, lX, lY, lY, undoch, False)
                     End If
                 End If
 
-                Call AddPoints(px, py, Pstart, Pstop, Lx, Ly, Sloop, stack)
+                Call AddPoints(px, py, Pstart, Pstop, lX, lY, Sloop, stack)
             End If
         End If
 skiploop:
@@ -250,12 +250,10 @@ Regions_Error:
 
     frmGeneral.IsBusy("MagicWand.Regions") = False
     
-    Call AddDebug("*** ERROR " & Err.Number & " (" & Err.description & ") in procedure Regions of Class Module MagicWand")
-    MessageBox "Error " & Err.Number & " (" & Err.description & ") in procedure Regions of Class Module MagicWand"
-
+    HandleError Err, "MagicWand.Regions"
 End Sub
 
-Private Sub AddPoints(ByRef px() As Long, ByRef py() As Long, ByRef Pstart As Long, ByRef Pstop As Long, ByRef Lx As Integer, ByRef Ly As Integer, ByRef Sloop As Long, ByRef stack As Long)
+Private Sub AddPoints(ByRef px() As Long, ByRef py() As Long, ByRef Pstart As Long, ByRef Pstop As Long, ByRef lX As Integer, ByRef lY As Integer, ByRef Sloop As Long, ByRef stack As Long)
 
     If Pstart > stack Then
         For Sloop = Pstart To Pstop
@@ -271,36 +269,36 @@ Private Sub AddPoints(ByRef px() As Long, ByRef py() As Long, ByRef Pstart As Lo
         ReDim Preserve px(Pstop + 8)
         ReDim Preserve py(Pstop + 8)
         Pstop = Pstop + 1
-        px(Pstop) = Lx + 1
-        py(Pstop) = Ly
+        px(Pstop) = lX + 1
+        py(Pstop) = lY
 
         Pstop = Pstop + 1
-        px(Pstop) = Lx + 1
-        py(Pstop) = Ly + 1
+        px(Pstop) = lX + 1
+        py(Pstop) = lY + 1
         '------
         Pstop = Pstop + 1
-        px(Pstop) = Lx
-        py(Pstop) = Ly + 1
+        px(Pstop) = lX
+        py(Pstop) = lY + 1
 
         Pstop = Pstop + 1
-        px(Pstop) = Lx - 1
-        py(Pstop) = Ly + 1
+        px(Pstop) = lX - 1
+        py(Pstop) = lY + 1
         '------
         Pstop = Pstop + 1
-        px(Pstop) = Lx - 1
-        py(Pstop) = Ly
+        px(Pstop) = lX - 1
+        py(Pstop) = lY
 
         Pstop = Pstop + 1
-        px(Pstop) = Lx - 1
-        py(Pstop) = Ly - 1
+        px(Pstop) = lX - 1
+        py(Pstop) = lY - 1
         '------
         Pstop = Pstop + 1
-        px(Pstop) = Lx
-        py(Pstop) = Ly - 1
+        px(Pstop) = lX
+        py(Pstop) = lY - 1
 
         Pstop = Pstop + 1
-        px(Pstop) = Lx + 1
-        py(Pstop) = Ly - 1
+        px(Pstop) = lX + 1
+        py(Pstop) = lY - 1
 
 
 
@@ -308,17 +306,17 @@ Private Sub AddPoints(ByRef px() As Long, ByRef py() As Long, ByRef Pstart As Lo
         ReDim Preserve px(Pstop + 4)
         ReDim Preserve py(Pstop + 4)
         Pstop = Pstop + 1
-        px(Pstop) = Lx + 1
-        py(Pstop) = Ly
+        px(Pstop) = lX + 1
+        py(Pstop) = lY
         Pstop = Pstop + 1
-        px(Pstop) = Lx
-        py(Pstop) = Ly + 1
+        px(Pstop) = lX
+        py(Pstop) = lY + 1
         Pstop = Pstop + 1
-        px(Pstop) = Lx - 1
-        py(Pstop) = Ly
+        px(Pstop) = lX - 1
+        py(Pstop) = lY
         Pstop = Pstop + 1
-        px(Pstop) = Lx
-        py(Pstop) = Ly - 1
+        px(Pstop) = lX
+        py(Pstop) = lY - 1
     End If
 
     '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

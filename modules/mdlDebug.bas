@@ -99,7 +99,7 @@ End Sub
 Sub HandleError(ErrObj As ErrObject, Optional procedure As String = vbNullString, Optional showMsgBox As Boolean = True, Optional critical As Boolean = False)
     Const POSTYOURLOG As String = vbCrLf & "If the error persists, please post your log file (dcme.log) at http://www.ssforum.net in the DCME board."
     
-    frmGeneral.IsBusy(procedure) = False
+    
     
 
         Dim errmsg As String
@@ -116,13 +116,21 @@ Sub HandleError(ErrObj As ErrObject, Optional procedure As String = vbNullString
             Call AddDebug("*** Critical error " & errmsg, True)
             MessageBox "Critical error " & errmsg & POSTYOURLOG, vbCritical + vbOKOnly
             'attempt save
-            frmGeneral.Enabled = True
-            Call frmGeneral.QuickSaveAll
-        
-            Call frmGeneral.CheckUnloadedForms(True)
-    
-            UnHookWnd frmGeneral.hWnd
-            Unload frmGeneral
+            If generalLoaded Then
+                frmGeneral.IsBusy(procedure) = False
+                
+                frmGeneral.Enabled = True
+                Call frmGeneral.QuickSaveAll
+            
+                Call frmGeneral.CheckUnloadedForms(True)
+            End If
+            If generalLoadStarted Then
+                Unload frmGeneral
+            End If
+            
+            If generalHwnd <> 0 Then
+                UnHookWnd generalHwnd
+            End If
             
         Else
             Call AddDebug("*** Error " & errmsg, True)

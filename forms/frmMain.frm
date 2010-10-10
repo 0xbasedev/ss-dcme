@@ -3182,68 +3182,46 @@ Sub RedrawSelectionArea(ByVal Left As Integer, ByVal Top As Integer, ByVal Right
                                                 WorldToScreenY(Bottom), True)
     Set layer = Nothing
 End Sub
-Sub RedrawTileArea(ByVal Left As Integer, ByVal Top As Integer, ByVal Right As Integer, ByVal Bottom As Integer, updateBuffer As Boolean)
-    'Redraws tiles on the Tiles layer in the given area
 
 
-    Dim layer As clsDisplayLayer
-    Set layer = MapLayers(DL_Tiles)
-    
-    layer.BackColor = unusedTilesetColor
-    TileRender.TransparencyColor = unusedTilesetColor
-    
-    
-    Dim firstTileX As Integer, firstTileY As Integer, curtilex As Integer, curtiley As Integer
-    Dim firstscreenX As Integer, firstscreenY As Integer, curscreenX As Integer, curscreenY As Integer
-    Dim lastscreenX As Integer, lastscreenY As Integer
-    
-    
-    Dim tileid As Integer
-    
-    firstTileX = WorldToTile(Left)
-    firstTileY = WorldToTile(Top)
-    
-    firstscreenX = TileToScreenX(firstTileX)
-    firstscreenY = TileToScreenY(firstTileY)
-    
-    lastscreenX = WorldToScreenX(Right) '  firstscreenX + (Right - Left) * currentzoom
-    lastscreenY = WorldToScreenY(Bottom) ' firstscreenY + (Bottom - Top) * currentzoom
-    
-    Dim UsingPixels As Boolean
-    UsingPixels = magnifier.UsingPixels
+
+
+Friend Sub RenderTiles(firsttileX As Integer, firsttileY As Integer, firstscreenX As Integer, firstscreenY As Integer, lastscreenX As Integer, lastscreenY As Integer, renderhDC As Long, usepixels As Boolean, usetilenr As Boolean)
+
+    Dim curscreenX As Integer, curscreenY As Integer, curtilex As Integer, curtiley As Integer
     
     Dim objX As Integer, objY As Integer
-    
-    
     Dim i As Integer, j As Integer
+    Dim tileid As Integer
     
-    If UsingPixels Then
+    
+    If usepixels Then
         Dim bltwidth As Integer, bltheight As Integer
-        bltwidth = intMinimum(layer.width, 1024 - firstTileX)
-        bltheight = intMinimum(layer.height, 1024 - firstTileY)
+        bltwidth = intMinimum(lastscreenX - firstscreenX + 1, 1024 - firsttileX)
+        bltheight = intMinimum(lastscreenY - firstscreenY + 1, 1024 - firsttileY)
         
         If bltwidth > 0 And bltheight > 0 Then
 '        'just copy a part of the pixel map if we are using pixels
 '        'BitBlt piclevelhdc, 0, 0, piclevel.width, piclevel.height, pic1024.hdc, lbx, lby, vbSrcCopy
-            Call cpic1024.transToDC(layer.hDC, firstscreenX, firstscreenY, bltwidth, bltheight, firstTileX, firstTileY, vbBlack)
+            Call cpic1024.transToDC(renderhDC, firstscreenX, firstscreenY, bltwidth, bltheight, firsttileX, firsttileY, vbBlack)
 '        Call cpic1024.bltToDC(layer.hDC, 0, 0, layer.width, layer.height, firsttileX, firsttileY, vbSrcCopy)
         End If
     Else
-        curtiley = firstTileY
+        curtiley = firsttileY
 '        curscreenY = firstscreenY
         
         If usingtilenr Then
-            layer.TextColor = vbWhite
-            layer.FontSize = 8
+            Call ChangeTextSize(renderhDC, 8)
+            Call ChangeTextColor(renderhDC, vbWhite)
         End If
         
         For curscreenY = firstscreenY To lastscreenY Step currenttilew
-            curtilex = firstTileX
+            curtilex = firsttileX
 '            curscreenX = firstscreenX
             
-            If curtiley <= 1023 Then
+            If curtiley < MAPH Then
                 For curscreenX = firstscreenX To lastscreenX Step currenttilew
-                    If curtilex <= 1023 Then
+                    If curtilex < MAPW Then
                         tileid = tile(curtilex, curtiley)
                         
                         If tileid < 0 Then
@@ -3254,23 +3232,23 @@ Sub RedrawTileArea(ByVal Left As Integer, ByVal Top As Integer, ByVal Right As I
                             
                             'The only time we'll want to draw this object, is if it's not drawn yet
                             'For this, the top-left of the object must be outside our boundary
-                            If objX < firstTileX Or objY < firstTileY Then
+                            If objX < firsttileX Or objY < firsttileY Then
                                 'Ok, the object is partially out of our boundaries...
                                 
                                 'This tile has to be the first we encounter of the object
-                                If ((objX < firstTileX And curtilex = firstTileX) Or objX >= firstTileX) Then
-                                    If ((objY < firstTileY And curtiley = firstTileY) Or objY >= firstTileY) Then
+                                If ((objX < firsttileX And curtilex = firsttileX) Or objX >= firsttileX) Then
+                                    If ((objY < firsttileY And curtiley = firsttileY) Or objY >= firsttileY) Then
                                         'Draw partial object
-                                        Call TileRender.DrawObject(tileid \ (-100), False, layer.hDC, curscreenX, curscreenY, curtilex - objX, curtiley - objY)
+                                        Call TileRender.DrawObject(tileid \ (-100), False, renderhDC, curscreenX, curscreenY, curtilex - objX, curtiley - objY)
                                     End If
                                 End If
                             End If
 
                         ElseIf tileid > 0 Then
-                            Call TileRender.DrawTile(tileid, False, layer.hDC, curscreenX, curscreenY, True, False)
+                            Call TileRender.DrawTile(tileid, False, renderhDC, curscreenX, curscreenY, True, False)
                             
-                            If usingtilenr Then
-                                Call layer.PrintText(CStr(tileid), CInt(curscreenX), CInt(curscreenY))
+                            If usetilenr Then
+                                Call PrintText(renderhDC, CStr(tileid), CInt(curscreenX), CInt(curscreenY))
                             End If
                         End If
                     End If
@@ -3287,8 +3265,29 @@ Sub RedrawTileArea(ByVal Left As Integer, ByVal Top As Integer, ByVal Right As I
     
     End If
     
-    If updateBuffer Then Call RedrawBufferArea(firstscreenX, _
-                                                firstscreenY, _
+End Sub
+
+
+
+
+
+Private Sub RedrawTileArea(ByVal Left As Integer, ByVal Top As Integer, ByVal Right As Integer, ByVal Bottom As Integer, updateBuffer As Boolean)
+    'Redraws tiles on the Tiles layer in the given area
+
+    Dim layer As clsDisplayLayer
+    Set layer = MapLayers(DL_Tiles)
+    
+    layer.BackColor = unusedTilesetColor
+    TileRender.TransparencyColor = unusedTilesetColor
+    
+    Dim firsttileX As Integer, firsttileY As Integer
+    
+    firsttileX = WorldToTile(Left)
+    firsttileY = WorldToTile(Top)
+    Call RenderTiles(firsttileX, firsttileY, TileToScreenX(firsttileX), TileToScreenY(firsttileY), WorldToScreenX(Right), WorldToScreenY(Bottom), layer.hDC, magnifier.usingpixels, usingtilenr)
+
+    
+    If updateBuffer Then Call RedrawBufferArea(TileToScreenY(firsttileY), WorldToScreenX(Right), _
                                                 WorldToScreenX(Right), _
                                                 WorldToScreenY(Bottom), True)
     Set layer = Nothing

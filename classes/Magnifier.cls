@@ -41,8 +41,8 @@ End Property
 Sub MouseDown(Button As Integer, X As Single, Y As Single)
     Dim curtilex As Integer
     Dim curtiley As Integer
-    curtilex = (parent.Hscr.value + X) \ (TILEW * c_zoom)
-    curtiley = (parent.Vscr.value + Y) \ (TILEW * c_zoom)
+    curtilex = (parent.hscr.Value + X) \ (TILEW * c_zoom)
+    curtiley = (parent.vscr.Value + Y) \ (TILEW * c_zoom)
     If (curtilex < 0 Or curtiley < 0 Or curtilex > 1023 Or curtiley > 1023) Then
         Exit Sub
     End If
@@ -123,7 +123,7 @@ Sub ZoomIn(tileX As Integer, tileY As Integer, Optional Refresh As Boolean = Tru
     End If
 
 
-    Call parent.SetFocusAt(tileX, tileY, parent.picPreview.width \ 2, parent.picPreview.height \ 2, False)
+    Call parent.SetFocusAt(tileX, tileY, parent.picpreview.Width \ 2, parent.picpreview.Height \ 2, False)
 
     If Refresh Then
         Call parent.UpdateLevel(False, True)
@@ -152,7 +152,7 @@ Sub ZoomOut(tileX As Integer, tileY As Integer, Optional Refresh As Boolean = Tr
         Exit Sub
     End If
     
-    Call parent.SetFocusAt(tileX, tileY, parent.picPreview.width \ 2, parent.picPreview.height \ 2, False)
+    Call parent.SetFocusAt(tileX, tileY, parent.picpreview.Width \ 2, parent.picpreview.Height \ 2, False)
 
     If Refresh Then
         Call parent.UpdateLevel(False, True)
@@ -176,10 +176,10 @@ Sub SetZoom(newzoom As Single, Refresh As Boolean)
         .currentzoom = c_zoom
         .currenttilew = curtilew
         
-        .picempty.width = curtilew
-        .picempty.height = curtilew
-        .pictrans.width = curtilew * 6
-        .pictrans.height = curtilew * 6
+        .picempty.Width = curtilew
+        .picempty.Height = curtilew
+        .pictrans.Width = curtilew * 6
+        .pictrans.Height = curtilew * 6
         
         Call .UpdateScrollbars(False)
         'recalculate the scrollbars
@@ -188,19 +188,19 @@ Sub SetZoom(newzoom As Single, Refresh As Boolean)
         'build the zoomed tileset:
     
         'make it the correct size
-        .piczoomtileset.width = .pictileset.width * c_zoom
-        .piczoomtileset.height = .pictileset.height * c_zoom
-        .picHighlightZoomTileset.width = .pictileset.width * c_zoom
-        .picHighlightZoomTileset.height = .pictileset.height * c_zoom
+        .piczoomtileset.Width = .pictileset.Width * c_zoom
+        .piczoomtileset.Height = .pictileset.Height * c_zoom
+        .picHighlightZoomTileset.Width = .pictileset.Width * c_zoom
+        .picHighlightZoomTileset.Height = .pictileset.Height * c_zoom
 
         'stretchblt the normal tileset to it
     
         SetStretchBltMode .piczoomtileset.hDC, HALFTONE
-        StretchBlt .piczoomtileset.hDC, 0, 0, .piczoomtileset.width, .piczoomtileset.height, .pictileset.hDC, 0, 0, .pictileset.width, .pictileset.height, vbSrcCopy
+        StretchBlt .piczoomtileset.hDC, 0, 0, .piczoomtileset.Width, .piczoomtileset.Height, .pictileset.hDC, 0, 0, .pictileset.Width, .pictileset.Height, vbSrcCopy
         .piczoomtileset.Refresh
 
         SetStretchBltMode .picHighlightZoomTileset.hDC, HALFTONE
-        StretchBlt .picHighlightZoomTileset.hDC, 0, 0, .piczoomtileset.width, .piczoomtileset.height, .pichighlightTileset.hDC, 0, 0, .pichighlightTileset.width, .pichighlightTileset.height, vbSrcCopy
+        StretchBlt .picHighlightZoomTileset.hDC, 0, 0, .piczoomtileset.Width, .piczoomtileset.Height, .pichighlightTileset.hDC, 0, 0, .pichighlightTileset.Width, .pichighlightTileset.Height, vbSrcCopy
         .picHighlightZoomTileset.Refresh
     
     Call parent.lvz.buildAllZoomImages(c_zoom)
@@ -212,9 +212,8 @@ Sub SetZoom(newzoom As Single, Refresh As Boolean)
         
     End With
     
-    frmGeneral.ToolbarTop.Buttons("ZoomIn").Enabled = (c_zoom < 2)
-    frmGeneral.ToolbarTop.Buttons("ZoomOut").Enabled = (c_zoom > 1 / 16)
-
+  
+  Call frmGeneral.UpdateToolBarButtons
 
 End Sub
 
