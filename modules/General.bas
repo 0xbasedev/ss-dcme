@@ -13,146 +13,146 @@ End Function
 
 
 Function GetFileTitle(path As String) As String
-      'Returns name of the file: C:\file.ext -> file.ext
-          Dim temp() As String
-          Dim output As String
+'Returns name of the file: C:\file.ext -> file.ext
+    Dim temp() As String
+    Dim output As String
 
-10        If path = "" Then
-20            GetFileTitle = ""
-30            Exit Function
-40        End If
+    If path = "" Then
+        GetFileTitle = ""
+        Exit Function
+    End If
 
-50        temp = Split(path, "\")
+    temp = Split(path, "\")
 
-60        output = temp(UBound(temp))
-70        If output = "" Then
-80            output = temp(UBound(temp))
-90        End If
+    output = temp(UBound(temp))
+    If output = "" Then
+        output = temp(UBound(temp))
+    End If
 
-100       GetFileTitle = output
+    GetFileTitle = output
 End Function
 
 Function GetDrive(path As String) As String
-          Dim str() As String
-10        str = Split(path, ":")
-          
-20        If Len(str(0)) > 1 Then
-30            GetDrive = ""
-40        Else
-50            GetDrive = str(0)
-60        End If
+    Dim str() As String
+    str = Split(path, ":")
+    
+    If Len(str(0)) > 1 Then
+        GetDrive = ""
+    Else
+        GetDrive = str(0)
+    End If
 End Function
 
 
 Function GetPathTo(filepath As String) As String
-      'Returns full path to filepath: C:\folder\file.ext -> C:\folder\
-10    If filepath = "" Then
-20      GetPathTo = ""
-30    Else
-40        GetPathTo = Mid$(filepath, 1, Len(filepath) - Len(GetFileTitle(filepath)))
-50    End If
+'Returns full path to filepath: C:\folder\file.ext -> C:\folder\
+If filepath = "" Then
+  GetPathTo = ""
+Else
+    GetPathTo = Mid$(filepath, 1, Len(filepath) - Len(GetFileTitle(filepath)))
+End If
 End Function
 
 Function GetRelativePath(filepath As String, relativeto As String) As String
-      'Returns filepath relative to relativeto
+'Returns filepath relative to relativeto
+  
+    If GetDrive(filepath) <> GetDrive(relativeto) Then
+        'if different drive, return full path
+        GetRelativePath = filepath
+        Exit Function
+    End If
+    
+'C:\Program Files\Continuum\Server\mylvz.lvz
+'relative to
+'C:\Program Files\Continuum\DCME
+
+'..\Server\mylvz.lvz
+
+'C:\Program Files\Continuum\DCME\mylvz.lvz
+'relative to
+'C:\Program Files\Continuum\DCME\
+
+'..\Server\mylvz.lvz
+
+    While InStrRev(relativeto, "\") = Len(relativeto) And Len(relativeto) <> 0
+        relativeto = Left$(relativeto, Len(relativeto) - 1)
+    Wend
+    relativeto = relativeto & "\"
+    
+    relativeto = LCase$(relativeto)
+    filepath = LCase$(filepath)
+    
+    Dim build As String
+    
+    Dim relativeparts() As String
+    
+    Do
+        Dim pos As Long
+        pos = InStr(filepath, relativeto)
         
-10        If GetDrive(filepath) <> GetDrive(relativeto) Then
-              'if different drive, return full path
-20            GetRelativePath = filepath
-30            Exit Function
-40        End If
-          
-      'C:\Program Files\Continuum\Server\mylvz.lvz
-      'relative to
-      'C:\Program Files\Continuum\DCME
-
-      '..\Server\mylvz.lvz
-
-      'C:\Program Files\Continuum\DCME\mylvz.lvz
-      'relative to
-      'C:\Program Files\Continuum\DCME\
-
-      '..\Server\mylvz.lvz
-
-50        While InStrRev(relativeto, "\") = Len(relativeto) And Len(relativeto) <> 0
-60            relativeto = Left$(relativeto, Len(relativeto) - 1)
-70        Wend
-80        relativeto = relativeto & "\"
-          
-90        relativeto = LCase$(relativeto)
-100       filepath = LCase$(filepath)
-          
-          Dim build As String
-          
-          Dim relativeparts() As String
-          
-110       Do
-              Dim pos As Long
-120           pos = InStr(filepath, relativeto)
-              
-              ' And InStrRev(filepath, "\") >= Len(relativeto)
-130           If pos = 1 Then
-                  'append filename
-140               build = build & Mid$(filepath, Len(relativeto) + 1, Len(filepath) - Len(relativeto))
-150               Exit Do
-160           Else
-170               build = build & "..\"
-                  
-180               Do
-190                   relativeparts = Split(relativeto, "\")
-                      
-                      
-200                   If UBound(relativeparts) = 0 Or InStr(relativeparts(UBound(relativeparts)), ":") Then
-                          'we reached the root...
-210                       GetRelativePath = ""
-220                       Exit Function
-230                   End If
-                      
-240                   If Len(relativeparts(UBound(relativeparts))) = 0 Then
-250                       relativeto = Left$(relativeto, Len(relativeto) - 1)
-260                   Else
-270                       relativeto = Left$(relativeto, Len(relativeto) - Len(relativeparts(UBound(relativeparts))))
-280                   End If
-                      
-290               Loop While Len(relativeparts(UBound(relativeparts))) = 0 And Len(relativeto) > 0
-                  
-300           End If
-              
-310       Loop While Len(relativeto) > 0
-          
-320       GetRelativePath = build
+        ' And InStrRev(filepath, "\") >= Len(relativeto)
+        If pos = 1 Then
+            'append filename
+            build = build & Mid$(filepath, Len(relativeto) + 1, Len(filepath) - Len(relativeto))
+            Exit Do
+        Else
+            build = build & "..\"
+            
+            Do
+                relativeparts = Split(relativeto, "\")
+                
+                
+                If UBound(relativeparts) = 0 Or InStr(relativeparts(UBound(relativeparts)), ":") Then
+                    'we reached the root...
+                    GetRelativePath = ""
+                    Exit Function
+                End If
+                
+                If Len(relativeparts(UBound(relativeparts))) = 0 Then
+                    relativeto = Left$(relativeto, Len(relativeto) - 1)
+                Else
+                    relativeto = Left$(relativeto, Len(relativeto) - Len(relativeparts(UBound(relativeparts))))
+                End If
+                
+            Loop While Len(relativeparts(UBound(relativeparts))) = 0 And Len(relativeto) > 0
+            
+        End If
+        
+    Loop While Len(relativeto) > 0
+    
+    GetRelativePath = build
 End Function
 
 
 Function GetExtension(filetitle As String) As String
-      'Returns extension of file: C:\file.ext -> ext
-          Dim temp() As String
-          Dim output As String
-10        temp = Split(filetitle, ".")
-20        If UBound(temp) < 0 Then
-30            GetExtension = ""
-40            Exit Function
-50        End If
+'Returns extension of file: C:\file.ext -> ext
+    Dim temp() As String
+    Dim output As String
+    temp = Split(filetitle, ".")
+    If UBound(temp) < 0 Then
+        GetExtension = ""
+        Exit Function
+    End If
 
-60        output = temp(UBound(temp))
+    output = temp(UBound(temp))
 
-70        GetExtension = LCase(output)
+    GetExtension = LCase(output)
 End Function
 
 Function GetFileNameWithoutExtension(filetitle As String) As String
-      'Returns filename of file with no extension: C:\file.ext -> file
-          Dim temp() As String
-          Dim output As String
-10        temp = Split(filetitle, ".")
-20        If UBound(temp) <= 0 Then
-30            GetFileNameWithoutExtension = GetFileTitle(filetitle)
-40            Exit Function
-50        End If
+'Returns filename of file with no extension: C:\file.ext -> file
+    Dim temp() As String
+    Dim output As String
+    temp = Split(filetitle, ".")
+    If UBound(temp) <= 0 Then
+        GetFileNameWithoutExtension = GetFileTitle(filetitle)
+        Exit Function
+    End If
 
-60        output = temp(UBound(temp) - 1)
+    output = temp(UBound(temp) - 1)
 
 
-70        GetFileNameWithoutExtension = GetFileTitle(output)
+    GetFileNameWithoutExtension = GetFileTitle(output)
 End Function
 
 
@@ -160,68 +160,68 @@ End Function
 
 
 Sub toggleLockToolTextBox(txt As TextBox, Optional lck As Boolean = False)
-10        If txt.locked And Not lck Then
-20            txt.locked = False
-30            txt.BorderStyle = vbFixedSingle
-40            txt.BackColor = vbWhite
-50            txt.Alignment = vbCenter
-60            Call ShowCaret(txt.hWnd)
-70            txt.selstart = 0
-80            txt.sellength = Len(txt.Text)
-90        Else
-100           txt.locked = True
-110           txt.BorderStyle = 0
-120           txt.BackColor = &H8000000F
-130           txt.Alignment = vbRightJustify
-140           Call HideCaret(txt.hWnd)
-150       End If
+    If txt.locked And Not lck Then
+        txt.locked = False
+        txt.BorderStyle = vbFixedSingle
+        txt.BackColor = vbWhite
+        txt.Alignment = vbCenter
+        Call ShowCaret(txt.hWnd)
+        txt.selstart = 0
+        txt.sellength = Len(txt.Text)
+    Else
+        txt.locked = True
+        txt.BorderStyle = 0
+        txt.BackColor = &H8000000F
+        txt.Alignment = vbRightJustify
+        Call HideCaret(txt.hWnd)
+    End If
 
 End Sub
 
 
 Sub removeDisallowedCharacters(ByRef txtbox As TextBox, lowerBound As Single, upperBound As Single, Optional dec As Boolean = False)
-10        If lowerBound > upperBound Then
-20            txtbox.Text = lowerBound
-30            Exit Sub
-40        End If
-          
-50        If (Not IsNumeric(txtbox.Text) And (txtbox.Text <> "-" Or lowerBound >= 0)) _
-              Or InStr(txtbox.Text, "e") > 0 Or InStr(txtbox.Text, "E") > 0 _
-              Or (Not dec And (InStr(txtbox.Text, ".") > 0 Or InStr(txtbox.Text, ",") > 0)) _
-              Or (lowerBound < 0 And InStr(2, txtbox.Text, "-") > 1) _
-              Or (lowerBound >= 0 And InStr(txtbox.Text, "-") > 0) Then
-              
-              Dim oldselstart As Integer
-60            oldselstart = txtbox.selstart - 1    'char  typed so always one more
-70            If oldselstart < 0 Then oldselstart = 0
+    If lowerBound > upperBound Then
+        txtbox.Text = lowerBound
+        Exit Sub
+    End If
+    
+    If (Not IsNumeric(txtbox.Text) And (txtbox.Text <> "-" Or lowerBound >= 0)) _
+        Or InStr(txtbox.Text, "e") > 0 Or InStr(txtbox.Text, "E") > 0 _
+        Or (Not dec And (InStr(txtbox.Text, ".") > 0 Or InStr(txtbox.Text, ",") > 0)) _
+        Or (lowerBound < 0 And InStr(2, txtbox.Text, "-") > 1) _
+        Or (lowerBound >= 0 And InStr(txtbox.Text, "-") > 0) Then
+        
+        Dim oldselstart As Integer
+        oldselstart = txtbox.selstart - 1    'char  typed so always one more
+        If oldselstart < 0 Then oldselstart = 0
 
-              'remove all characters aside from nrs
-              Dim i As Integer
-              Dim finalresult As String
-80            For i = 1 To Len(txtbox.Text)
-90                If (Asc(Mid$(txtbox.Text, i, 1)) < Asc("0") Or _
-                      Asc(Mid$(txtbox.Text, i, 1)) > Asc("9")) Then
-                      Dim result As String
-100                   If i - 1 >= 1 Then result = Mid$(txtbox.Text, 1, i - 1)
-110                   If i + 1 <= Len(txtbox.Text) Then result = result + Mid$(txtbox.Text, i + 1, Len(txtbox.Text) - (i))
-120                   finalresult = result
-130               End If
-140           Next
-150           txtbox.Text = finalresult
-160           If oldselstart > Len(txtbox.Text) Then
-170               txtbox.selstart = Len(txtbox.Text)
-180           Else
-190               txtbox.selstart = oldselstart
-200           End If
-210       End If
+        'remove all characters aside from nrs
+        Dim i As Integer
+        Dim finalresult As String
+        For i = 1 To Len(txtbox.Text)
+            If (Asc(Mid$(txtbox.Text, i, 1)) < Asc("0") Or _
+                Asc(Mid$(txtbox.Text, i, 1)) > Asc("9")) Then
+                Dim result As String
+                If i - 1 >= 1 Then result = Mid$(txtbox.Text, 1, i - 1)
+                If i + 1 <= Len(txtbox.Text) Then result = result + Mid$(txtbox.Text, i + 1, Len(txtbox.Text) - (i))
+                finalresult = result
+            End If
+        Next
+        txtbox.Text = finalresult
+        If oldselstart > Len(txtbox.Text) Then
+            txtbox.selstart = Len(txtbox.Text)
+        Else
+            txtbox.selstart = oldselstart
+        End If
+    End If
 
-220       If val(txtbox.Text) < lowerBound Then
-230           txtbox.Text = lowerBound
-240       End If
+    If val(txtbox.Text) < lowerBound Then
+        txtbox.Text = lowerBound
+    End If
 
-250       If val(txtbox.Text) > upperBound Then
-260           txtbox.Text = upperBound
-270       End If
+    If val(txtbox.Text) > upperBound Then
+        txtbox.Text = upperBound
+    End If
 
 End Sub
 
@@ -230,30 +230,30 @@ End Sub
 
 
 Function GetLongFilename(ByRef sShortName As String) As String
-          Dim sTemp As String
-          Dim sLongName As String
-          Dim lSlashPos As Long
-        If sShortName = "" Then
-            GetLongFilename = ""
-            Exit Function
-        End If
-        
-        If Left$(sShortName, 2) = "\\" Then
-            GetLongFilename = sShortName
-        Else
-10        If Right$(sShortName, 1) <> "\" Then sShortName = sShortName & "\"
-20        lSlashPos = InStr(4, sShortName, "\")    ' start past x:\
+    Dim sTemp As String
+    Dim sLongName As String
+    Dim lSlashPos As Long
+  If sShortName = "" Then
+      GetLongFilename = ""
+      Exit Function
+  End If
+  
+  If Left$(sShortName, 2) = "\\" Then
+      GetLongFilename = sShortName
+  Else
+    If Right$(sShortName, 1) <> "\" Then sShortName = sShortName & "\"
+    lSlashPos = InStr(4, sShortName, "\")    ' start past x:\
 
-30        Do While lSlashPos
-40            sTemp = Dir$(Left$(sShortName, lSlashPos - 1), vbNormal Or vbHidden Or vbSystem Or vbDirectory)
-50            If LenB(sTemp) = 0 Then Exit Function
-60            sLongName = sLongName & "\" & sTemp
-70            lSlashPos = InStr(lSlashPos + 1, sShortName, "\")
-80        Loop
+    Do While lSlashPos
+        sTemp = Dir$(Left$(sShortName, lSlashPos - 1), vbNormal Or vbHidden Or vbSystem Or vbDirectory)
+        If LenB(sTemp) = 0 Then Exit Function
+        sLongName = sLongName & "\" & sTemp
+        lSlashPos = InStr(lSlashPos + 1, sShortName, "\")
+    Loop
 
-90        GetLongFilename = Left$(sShortName, 2) & sLongName
+    GetLongFilename = Left$(sShortName, 2) & sLongName
 
-        End If
+  End If
 End Function
 
 
@@ -263,72 +263,72 @@ End Function
 
 
 Function dist(x1 As Integer, y1 As Integer, x2 As Single, y2 As Single) As Single
-10        dist = Abs(Math.Sqr(CLng((x2 - x1)) * (x2 - x1) + CLng((y2 - y1)) * (y2 - y1)))
+    dist = Abs(Math.Sqr(CLng((x2 - x1)) * (x2 - x1) + CLng((y2 - y1)) * (y2 - y1)))
 End Function
 
 
 
 
 Function HaveComponent(compname As String) As Boolean
-10        compname = LCase(compname)
-20        If FileExists(App.path & "\" & compname) Then
-30            HaveComponent = True
-40        ElseIf FileExists(SysDir & "\" & compname) Then
-50            HaveComponent = True
-60        ElseIf FileExists(WinDir & "\" & compname) Then
-70            HaveComponent = True
-80        Else
-90            HaveComponent = False
-100       End If
+    compname = LCase(compname)
+    If FileExists(App.path & "\" & compname) Then
+        HaveComponent = True
+    ElseIf FileExists(SysDir & "\" & compname) Then
+        HaveComponent = True
+    ElseIf FileExists(WinDir & "\" & compname) Then
+        HaveComponent = True
+    Else
+        HaveComponent = False
+    End If
 End Function
 
 
 
 
 Function DirExists(DirName As String) As Boolean
-10        On Error GoTo ErrorHandler
-          ' test the directory attribute
-        If DirName = "" Then
-            DirExists = False
-        Else
-20        DirExists = GetAttr(DirName) And vbDirectory
-        End If
-        Exit Function
+    On Error GoTo ErrorHandler
+    ' test the directory attribute
+  If DirName = "" Then
+      DirExists = False
+  Else
+    DirExists = GetAttr(DirName) And vbDirectory
+  End If
+  Exit Function
 ErrorHandler:
-        DirExists = False
-          ' if an error occurs, this function returns False
+  DirExists = False
+    ' if an error occurs, this function returns False
 End Function
 
 
 Function FileExists(path As String, Optional fileattribute As VbFileAttribute = vbNormal) As Boolean
-10        If path = "" Then
-20          FileExists = False
-30          Exit Function
-40        End If
-          
-50        On Error GoTo errh
-60        FileExists = (LCase(Dir$(path, fileattribute)) = LCase$(GetFileTitle(path)))
-70        Exit Function
+    If path = "" Then
+      FileExists = False
+      Exit Function
+    End If
+    
+    On Error GoTo errh
+    FileExists = (LCase(Dir$(path, fileattribute)) = LCase$(GetFileTitle(path)))
+    Exit Function
 errh:
-80        FileExists = False
-90        Exit Function
+    FileExists = False
+    Exit Function
 End Function
 
 Function DeleteFile(path As String, Optional fileattribute As VbFileAttribute = vbNormal) As Boolean
-10        On Local Error GoTo DeleteFile_Error
-20        If FileExists(path, fileattribute) Then
-30            Kill path
-40        Else
-50            DeleteFile = False
-60        End If
-          
-          'If file is still there, we failed
-70        DeleteFile = Not FileExists(path, fileattribute)
-          
-80        Exit Function
+    On Local Error GoTo DeleteFile_Error
+    If FileExists(path, fileattribute) Then
+        Kill path
+    Else
+        DeleteFile = False
+    End If
+    
+    'If file is still there, we failed
+    DeleteFile = Not FileExists(path, fileattribute)
+    
+    Exit Function
 DeleteFile_Error:
 '90        HandleError Err, "DeleteFile(" & path & "," & fileattribute & ")", False, False
-100       DeleteFile = False
+    DeleteFile = False
 End Function
 
 
@@ -381,142 +381,142 @@ End Function
 
 
 Function IsLcase(char As Integer) As Boolean
-10        IsLcase = (char >= Asc("a") And char <= Asc("z"))
+    IsLcase = (char >= Asc("a") And char <= Asc("z"))
 End Function
 
 Function IsUcase(char As Integer) As Boolean
-10        IsUcase = (char >= Asc("A") And char <= Asc("Z"))
+    IsUcase = (char >= Asc("A") And char <= Asc("Z"))
 End Function
 
 Function IsNumber(char As Integer) As Boolean
-10        IsNumber = (char >= Asc("0") And char <= Asc("9"))
+    IsNumber = (char >= Asc("0") And char <= Asc("9"))
 End Function
 
 Function decMod(val As Double, modval As Double) As Double
-          Dim b As Integer
-10        b = val \ modval
-20        decMod = val - b * modval
+    Dim b As Integer
+    b = val \ modval
+    decMod = val - b * modval
 End Function
 
 
 'rounds number away from 0
 'if number is positive, rounds up, else, rounds down
 Function RoundAway(X As Single) As Integer
-10        RoundAway = Sgn(-X) * Int(-Abs(X))
+    RoundAway = Sgn(-X) * Int(-Abs(X))
 End Function
 
 Function RoundAwayLong(X As Double) As Long
-10        RoundAwayLong = Sgn(-X) * Int(-Abs(X))
+    RoundAwayLong = Sgn(-X) * Int(-Abs(X))
 End Function
 
 Function Atn2(X As Double, Y As Double) As Double
-10        If X = 0 Then
-20            Atn2 = Sgn(Y) * PI / 2
-30        ElseIf X > 0 Then
-40            Atn2 = Atn(Y / X)
-50        Else
-60            Atn2 = Atn(Y / X) + PI
-70        End If
+    If X = 0 Then
+        Atn2 = Sgn(Y) * PI / 2
+    ElseIf X > 0 Then
+        Atn2 = Atn(Y / X)
+    Else
+        Atn2 = Atn(Y / X) + PI
+    End If
 End Function
 
 Function intMinimum(val1 As Integer, val2 As Integer) As Integer
-      '10        If val1 <= val2 Then
-10        intMinimum = IIf(val1 <= val2, val1, val2)
-      '30        Else
-      '40            intMinimum = val2
-      '50        End If
+'10        If val1 <= val2 Then
+    intMinimum = IIf(val1 <= val2, val1, val2)
+'30        Else
+'40            intMinimum = val2
+'50        End If
 End Function
 
 Function intMaximum(val1 As Integer, val2 As Integer) As Integer
-      '10        If val1 >= val2 Then
-10            intMaximum = IIf(val1 >= val2, val1, val2)
-      '30        Else
-      '40            intMaximum = val2
-      '50        End If
+'10        If val1 >= val2 Then
+        intMaximum = IIf(val1 >= val2, val1, val2)
+'30        Else
+'40            intMaximum = val2
+'50        End If
 End Function
 
 Function longMinimum(val1 As Long, val2 As Long) As Long
-      '10        If val1 <= val2 Then
-10            longMinimum = IIf(val1 <= val2, val1, val2)
-      '30        Else
-      '40            longMinimum = val2
-      '50        End If
+'10        If val1 <= val2 Then
+        longMinimum = IIf(val1 <= val2, val1, val2)
+'30        Else
+'40            longMinimum = val2
+'50        End If
 End Function
 
 Function longMaximum(val1 As Long, val2 As Long) As Long
-      '10        If val1 >= val2 Then
-10            longMaximum = IIf(val1 >= val2, val1, val2)
-      '30        Else
-      '40            longMaximum = val2
-      '50        End If
+'10        If val1 >= val2 Then
+        longMaximum = IIf(val1 >= val2, val1, val2)
+'30        Else
+'40            longMaximum = val2
+'50        End If
 End Function
 
 Function doubleMinimum(val1 As Double, val2 As Double) As Double
-10        If val1 <= val2 Then
-20            doubleMinimum = val1
-30        Else
-40            doubleMinimum = val2
-50        End If
+    If val1 <= val2 Then
+        doubleMinimum = val1
+    Else
+        doubleMinimum = val2
+    End If
 End Function
 
 Function doubleMaximum(val1 As Double, val2 As Double) As Double
-10        If val1 >= val2 Then
-20            doubleMaximum = val1
-30        Else
-40            doubleMaximum = val2
-50        End If
+    If val1 >= val2 Then
+        doubleMaximum = val1
+    Else
+        doubleMaximum = val2
+    End If
 End Function
 
 Function RenameFile(Source As String, Destination As String) As Boolean
-10        On Local Error GoTo RenameFile_Error
-          
-          Dim oFso
-20        Set oFso = CreateObject("Scripting.FileSystemObject")
-          
-      '30        DoEvents
-30        If FileExists(Source) Then
-          
-40            If FileExists(Destination, vbNormal + vbHidden) Then
-50                Call SetAttr(Destination, vbNormal)
-60                Kill (Destination)
-70            End If
-      '90            DoEvents
+    On Local Error GoTo RenameFile_Error
+    
+    Dim oFso
+    Set oFso = CreateObject("Scripting.FileSystemObject")
+    
+'30        DoEvents
+    If FileExists(Source) Then
+    
+        If FileExists(Destination, vbNormal + vbHidden) Then
+            Call SetAttr(Destination, vbNormal)
+            Kill (Destination)
+        End If
+'90            DoEvents
 
-80            oFso.MoveFile Source, Destination
-90        End If
-      '120       DoEvents
-          
-100       Set oFso = Nothing
-110       RenameFile = True
-120       Exit Function
+        oFso.MoveFile Source, Destination
+    End If
+'120       DoEvents
+    
+    Set oFso = Nothing
+    RenameFile = True
+    Exit Function
 RenameFile_Error:
-130       RenameFile = False
+    RenameFile = False
 '140       HandleError Err, "RenameFile (" & Source & "," & Destination & ")", False,  False
 End Function
 
 Sub CreateDir(NewFolder As String)
-10        On Error Resume Next
-        
-20      If DirExists(NewFolder) Then Exit Sub
-        
-          Dim path() As String
-30        path = Split(NewFolder, "\")
-          Dim progPath As String
-40        progPath = path(0) & "\"
-          
-          Dim i As Integer
-50        For i = 1 To UBound(path)
-60            If path(i) <> "" Then
-70                progPath = progPath & path(i) & "\"
-80                Call CreateSingleDir(progPath)
-90            End If
-100       Next
+    On Error Resume Next
+  
+  If DirExists(NewFolder) Then Exit Sub
+  
+    Dim path() As String
+    path = Split(NewFolder, "\")
+    Dim progPath As String
+    progPath = path(0) & "\"
+    
+    Dim i As Integer
+    For i = 1 To UBound(path)
+        If path(i) <> "" Then
+            progPath = progPath & path(i) & "\"
+            Call CreateSingleDir(progPath)
+        End If
+    Next
 
 End Sub
 
 Sub CreateSingleDir(NewFolder As String)
-10        On Error Resume Next
-20        MkDir NewFolder
+    On Error Resume Next
+    MkDir NewFolder
 End Sub
 
 
@@ -787,84 +787,84 @@ End Sub
 
 ' Return the factorial of the expression.
 Private Function Factorial(ByVal value As Double) As Double
-      Dim result As Double
+Dim result As Double
 
-          ' Make sure the value is an integer.
-10        If CLng(value) <> value Then
-20            Err.Raise vbObjectError + 1001, _
-                  "Factorial", _
-                  "Argument must be an integer in Factorial(" & _
-                  Format$(value) & ")"
-30        End If
+    ' Make sure the value is an integer.
+    If CLng(value) <> value Then
+        Err.Raise vbObjectError + 1001, _
+            "Factorial", _
+            "Argument must be an integer in Factorial(" & _
+            Format$(value) & ")"
+    End If
 
-40        result = 1
-50        Do While value > 1
-60            result = result * value
-70            value = value - 1
-80        Loop
-90        Factorial = result
+    result = 1
+    Do While value > 1
+        result = result * value
+        value = value - 1
+    Loop
+    Factorial = result
 End Function
 
 
 Function IsTextFile(filepath As String) As Boolean
-          Dim ext As String
-10        ext = GetExtension(filepath)
-20        IsTextFile = (ext = "txt" Or ext = "sss" Or ext = "cfg" Or ext = "ini" Or ext = "set" Or ext = "log")
+    Dim ext As String
+    ext = GetExtension(filepath)
+    IsTextFile = (ext = "txt" Or ext = "sss" Or ext = "cfg" Or ext = "ini" Or ext = "set" Or ext = "log")
 End Function
 
 
 
 Function ExtractFilePaths(files As String) As String()
 
-          'working variables
-          Dim cnt As Integer
-          Dim tmp As String
-          Dim path As String
-            
-          'dim an array to hold the files selected
-          Dim sFileArray() As String
+    'working variables
+    Dim cnt As Integer
+    Dim tmp As String
+    Dim path As String
+      
+    'dim an array to hold the files selected
+    Dim sFileArray() As String
 
-          
-          'test the string for a Chr$(0)
-          'character. If present, a multiple
-          'selection was made.
-10         If InStr(files, vbNullChar) Then
-              
-             'use Split to create an array
-             'of the path and files selected
-20            sFileArray() = Split(files, vbNullChar)
-              
-30            For cnt = LBound(sFileArray) To UBound(sFileArray)
-40               If cnt = 0 Then
-                   'item 0 is always the path
-50                  path = sFileArray(0)
-60               End If
-                 
-70            Next
-              
-                      
-80            For cnt = 1 To UBound(sFileArray)
-90               sFileArray(cnt) = path & "\" & sFileArray(cnt)
-100           Next
+    
+    'test the string for a Chr$(0)
+    'character. If present, a multiple
+    'selection was made.
+     If InStr(files, vbNullChar) Then
+        
+       'use Split to create an array
+       'of the path and files selected
+        sFileArray() = Split(files, vbNullChar)
+        
+        For cnt = LBound(sFileArray) To UBound(sFileArray)
+           If cnt = 0 Then
+             'item 0 is always the path
+              path = sFileArray(0)
+           End If
            
-110        Else
-             'no null char, so a single selection was made
-120           ReDim sFileArray(1)
-130           sFileArray(0) = GetPathTo(files)
-140           sFileArray(1) = files
-150        End If
+        Next
+        
+                
+        For cnt = 1 To UBound(sFileArray)
+           sFileArray(cnt) = path & "\" & sFileArray(cnt)
+        Next
+     
+     Else
+       'no null char, so a single selection was made
+        ReDim sFileArray(1)
+        sFileArray(0) = GetPathTo(files)
+        sFileArray(1) = files
+     End If
 
-160       ExtractFilePaths = sFileArray
-             
+    ExtractFilePaths = sFileArray
+       
 End Function
 
 Function IsImageType(extension As String) As Boolean
-10        IsImageType = (extension = "png" Or _
-                         extension = "bmp" Or _
-                         extension = "bm2" Or _
-                         extension = "gif" Or _
-                         extension = "jpg" Or _
-                         extension = "jpeg")
+    IsImageType = (extension = "png" Or _
+                   extension = "bmp" Or _
+                   extension = "bm2" Or _
+                   extension = "gif" Or _
+                   extension = "jpg" Or _
+                   extension = "jpeg")
 End Function
 
 
@@ -872,64 +872,64 @@ End Function
 
 
 
-Function ShapesOverlap(Shape1 As shape, Shape2 As shape) As Boolean
-10        ShapesOverlap = False
-20        If Shape1.Left = Shape2.Left Then
-30            If Shape1.Top = Shape2.Top Then
-40                If Shape1.width = Shape2.width Then
-50                    ShapesOverlap = (Shape1.height = Shape2.height)
-60                End If
-70            End If
-80        End If
+Function ShapesOverlap(Shape1 As shape, shape2 As shape) As Boolean
+    ShapesOverlap = False
+    If Shape1.Left = shape2.Left Then
+        If Shape1.Top = shape2.Top Then
+            If Shape1.width = shape2.width Then
+                ShapesOverlap = (Shape1.height = shape2.height)
+            End If
+        End If
+    End If
 End Function
 
 Function VersionToString(version As Long) As String
-          'Format:  MMmmrrr
-10        VersionToString = version \ 100000 & "." & (version Mod 100000) \ 1000 & "." & version Mod 1000
+    'Format:  MMmmrrr
+    VersionToString = version \ 100000 & "." & (version Mod 100000) \ 1000 & "." & version Mod 1000
 End Function
 
 
 Function GetProcessMemory(ByVal app_name As String) As String
-          Dim Process As Object
-          Dim dMemory As Double
-10        For Each Process In GetObject("winmgmts:").ExecQuery("Select WorkingSetSize from Win32_Process Where Name = '" & app_name & "'")
-20            dMemory = Process.WorkingSetSize
-30        Next
-          
-40        If dMemory > 0 Then
-50            GetProcessMemory = GetKbytes(dMemory)
-60        Else
-70            GetProcessMemory = "0 Bytes"
-80        End If
+    Dim Process As Object
+    Dim dMemory As Double
+    For Each Process In GetObject("winmgmts:").ExecQuery("Select WorkingSetSize from Win32_Process Where Name = '" & app_name & "'")
+        dMemory = Process.WorkingSetSize
+    Next
+    
+    If dMemory > 0 Then
+        GetProcessMemory = GetKbytes(dMemory)
+    Else
+        GetProcessMemory = "0 Bytes"
+    End If
 End Function
 
 Function GetKbytes(ByVal amount) As String
-          ' convert to Kbytes
-10        amount = amount \ 1024
-20        GetKbytes = Format(amount, "###,###,###K")
+    ' convert to Kbytes
+    amount = amount \ 1024
+    GetKbytes = Format(amount, "###,###,###K")
 End Function
 
 
 
 
 Function CheckOverwrite(path As String) As Boolean
-          'Checks if a file exists, and asks for confirmation to delete it
-          'Returns true if the file is deleted, or does not exist
-          '             i.e. if it is safe to create a new file at that path
-          'Returns false if the file exists and the user did not want to overwrite it
-          
-10        If FileExists(path) Then
-20            If MessageBox(path & " already exists. Do you want to overwrite it?", vbYesNo + vbQuestion, "Confirm overwrite") = vbYes Then
-30                If FileExists(path) Then
-40                    Kill path
-50                    CheckOverwrite = True
-60                End If
-70            Else
-80                CheckOverwrite = False
-90            End If
-100       Else
-110           CheckOverwrite = True
-120       End If
+    'Checks if a file exists, and asks for confirmation to delete it
+    'Returns true if the file is deleted, or does not exist
+    '             i.e. if it is safe to create a new file at that path
+    'Returns false if the file exists and the user did not want to overwrite it
+    
+    If FileExists(path) Then
+        If MessageBox(path & " already exists. Do you want to overwrite it?", vbYesNo + vbQuestion, "Confirm overwrite") = vbYes Then
+            If FileExists(path) Then
+                Kill path
+                CheckOverwrite = True
+            End If
+        Else
+            CheckOverwrite = False
+        End If
+    Else
+        CheckOverwrite = True
+    End If
 End Function
 
 
@@ -940,28 +940,28 @@ End Function
 
 
 Function IsIntersecting(rect1 As RECT, rect2 As RECT) As Boolean
-          
-10        IsIntersecting = (rect1.Left <= rect2.Right And rect1.Right >= rect2.Left And rect1.Top <= rect2.Bottom And rect1.Bottom >= rect2.Top)
-          
+    
+    IsIntersecting = (rect1.Left <= rect2.Right And rect1.Right >= rect2.Left And rect1.Top <= rect2.Bottom And rect1.Bottom >= rect2.Top)
+    
 End Function
 
 Function Intersection(ByRef destRect As RECT, ByRef rect1 As RECT, ByRef rect2 As RECT) As Boolean
 
-          
-10        If IsIntersecting(rect1, rect2) Then
-20            If rect1.Left < rect2.Left Then destRect.Left = rect2.Left Else destRect.Left = rect1.Left
-          
-30            If rect1.Right < rect2.Right Then destRect.Right = rect1.Right Else destRect.Right = rect2.Right
-          
-40            If rect1.Top < rect2.Top Then destRect.Top = rect2.Top Else destRect.Top = rect1.Top
-          
-50            If rect1.Bottom < rect2.Bottom Then destRect.Bottom = rect1.Bottom Else destRect.Bottom = rect2.Bottom
-              
-60            Intersection = True
-70        Else
-80            Intersection = False
-90        End If
-          
+    
+    If IsIntersecting(rect1, rect2) Then
+        If rect1.Left < rect2.Left Then destRect.Left = rect2.Left Else destRect.Left = rect1.Left
+    
+        If rect1.Right < rect2.Right Then destRect.Right = rect1.Right Else destRect.Right = rect2.Right
+    
+        If rect1.Top < rect2.Top Then destRect.Top = rect2.Top Else destRect.Top = rect1.Top
+    
+        If rect1.Bottom < rect2.Bottom Then destRect.Bottom = rect1.Bottom Else destRect.Bottom = rect2.Bottom
+        
+        Intersection = True
+    Else
+        Intersection = False
+    End If
+    
 End Function
 
 

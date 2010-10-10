@@ -13,7 +13,7 @@ Begin VB.UserControl ToolProperty
    Begin VB.Frame frm 
       Caption         =   "Size"
       BeginProperty Font 
-         Name            =   "Arial Narrow"
+         Name            =   "Arial"
          Size            =   8.25
          Charset         =   0
          Weight          =   400
@@ -32,7 +32,7 @@ Begin VB.UserControl ToolProperty
          BackColor       =   &H8000000F&
          BorderStyle     =   0  'None
          BeginProperty Font 
-            Name            =   "Arial Narrow"
+            Name            =   "Arial"
             Size            =   8.25
             Charset         =   0
             Weight          =   400
@@ -84,15 +84,15 @@ Dim cap As String
 Private Declare Function HideCaret Lib "user32" (ByVal hWnd As Long) As Long
 Private Declare Function ShowCaret& Lib "user32" (ByVal hWnd As Long)
 
-Event change()
+Event Change()
 
 
 
 Private Sub sld_Change()
-10        txt.Text = sld.value
-20        pval = sld.value
+    txt.Text = sld.value
+    pval = sld.value
 
-30        RaiseEvent change
+    RaiseEvent Change
 
 End Sub
 
@@ -111,186 +111,186 @@ Private Sub sld_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As S
 End Sub
 
 Private Sub sld_Scroll()
-10        Call sld_Change
+    Call sld_Change
 End Sub
 
 Private Sub txt_Change()
-10        Call removeDisallowedCharacters(txt, CSng(Lboundval), CSng(Uboundval), True)
-20        sld.value = val(txt.Text)
-30        pval = sld.value
+    Call removeDisallowedCharacters(txt, CSng(Lboundval), CSng(Uboundval), True)
+    sld.value = val(txt.Text)
+    pval = sld.value
 
-          ' RaiseEvent Change
+    ' RaiseEvent Change
 End Sub
 
 Private Sub txt_Click()
-10        Call toggleLockToolTextBox(txt)
+    Call toggleLockToolTextBox(txt)
 End Sub
 Private Sub txt_LostFocus()
-10        Call toggleLockToolTextBox(txt, False)
+    Call toggleLockToolTextBox(txt, False)
 End Sub
 
 Public Property Get Min() As Integer
-10        Min = Lboundval
+    Min = Lboundval
 End Property
 
 Public Property Let Min(ByVal newMin As Integer)
-10        Lboundval = newMin
-20        sld.Min = Lboundval
-30        If value < Lboundval Then
-40            value = Lboundval
-50        End If
-60        PropertyChanged "Min"
+    Lboundval = newMin
+    sld.Min = Lboundval
+    If value < Lboundval Then
+        value = Lboundval
+    End If
+    PropertyChanged "Min"
 End Property
 
 Public Property Get Max() As Integer
-10        Max = Uboundval
+    Max = Uboundval
 End Property
 
 Public Property Let Max(ByVal newMax As Integer)
-10        Uboundval = newMax
-20        sld.Max = Uboundval
-30        If value > Uboundval Then
-40            value = Uboundval
-50        End If
+    Uboundval = newMax
+    sld.Max = Uboundval
+    If value > Uboundval Then
+        value = Uboundval
+    End If
 
-60        PropertyChanged "Max"
+    PropertyChanged "Max"
 End Property
 
 Public Property Get value() As Integer
-10        value = pval
+    value = pval
 End Property
 
 Public Property Let value(ByVal newValue As Integer)
-10        If newValue < Lboundval Then
-20            pval = Lboundval
-30        Else
-40            pval = newValue
-50        End If
+    If newValue < Lboundval Then
+        pval = Lboundval
+    Else
+        pval = newValue
+    End If
 
-60        If newValue > Uboundval Then
-70            pval = Uboundval
-80        Else
-90            pval = newValue
-100       End If
+    If newValue > Uboundval Then
+        pval = Uboundval
+    Else
+        pval = newValue
+    End If
 
-110       sld.value = pval
+    sld.value = pval
 
-120       PropertyChanged "Value"
+    PropertyChanged "Value"
 End Property
 
 Public Property Get Caption() As String
-10        Caption = cap
+    Caption = cap
 End Property
 
 Public Property Let Caption(ByVal newCaption As String)
-10        cap = newCaption
-20        frm.Caption = cap
-30        PropertyChanged "Caption"
+    cap = newCaption
+    frm.Caption = cap
+    PropertyChanged "Caption"
 End Property
 
 Private Sub UserControl_Initialize()
-10        On Error Resume Next
-20        frm.Caption = cap
-30        Lboundval = 1
-40        sld.Min = 1
-50        Uboundval = 128
-60        sld.Max = 128
-70        value = 1
-80        sld.value = 1
-90        txt.Text = value
+    On Error Resume Next
+    frm.Caption = cap
+    Lboundval = 1
+    sld.Min = 1
+    Uboundval = 128
+    sld.Max = 128
+    value = 1
+    sld.value = 1
+    txt.Text = value
 End Sub
 
 Private Sub UserControl_Resize()
-10        On Error Resume Next
-20        frm.Left = 0
-          'frm.Top = 0
-          Dim dWidth As Long
-30        dWidth = frm.width - (ScaleWidth - 1)
-40        frm.width = ScaleWidth - 1
-          'frm.Height = ScaleHeight - 1
+    On Error Resume Next
+    frm.Left = 0
+    'frm.Top = 0
+    Dim dWidth As Long
+    dWidth = frm.width - (ScaleWidth - 1)
+    frm.width = ScaleWidth - 1
+    'frm.Height = ScaleHeight - 1
 
-          'frm.Move 0, , ScaleWidth - Screen.TwipsPerPixelX, ScaleHeight + Screen.TwipsPerPixelY * 4
-50        sld.Left = frm.width * Screen.TwipsPerPixelX - sld.width - Screen.TwipsPerPixelX * 2
-          'sld.Move frm.Width - sld.Width - Screen.TwipsPerPixelX
-60        txt.Left = sld.Left - txt.width + Screen.TwipsPerPixelX * 3
+    'frm.Move 0, , ScaleWidth - Screen.TwipsPerPixelX, ScaleHeight + Screen.TwipsPerPixelY * 4
+    sld.Left = frm.width * Screen.TwipsPerPixelX - sld.width - Screen.TwipsPerPixelX * 2
+    'sld.Move frm.Width - sld.Width - Screen.TwipsPerPixelX
+    txt.Left = sld.Left - txt.width + Screen.TwipsPerPixelX * 3
 
-70        height = 345
+    height = 345
 End Sub
 
 Private Sub UserControl_InitProperties()
-10        On Error Resume Next
-20        Caption = Extender.name
+    On Error Resume Next
+    Caption = Extender.name
 
 End Sub
 
 Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
-10        Caption = PropBag.ReadProperty("Caption", "")
-20        Lboundval = PropBag.ReadProperty("Min", 1)
-30        Uboundval = PropBag.ReadProperty("Max", 128)
-40        value = PropBag.ReadProperty("Value", 1)
+    Caption = PropBag.ReadProperty("Caption", "")
+    Lboundval = PropBag.ReadProperty("Min", 1)
+    Uboundval = PropBag.ReadProperty("Max", 128)
+    value = PropBag.ReadProperty("Value", 1)
 End Sub
 
 Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
-10        PropBag.WriteProperty "Caption", Caption
-20        PropBag.WriteProperty "Min", Min
-30        PropBag.WriteProperty "Max", Max
-40        PropBag.WriteProperty "Value", value
+    PropBag.WriteProperty "Caption", Caption
+    PropBag.WriteProperty "Min", Min
+    PropBag.WriteProperty "Max", Max
+    PropBag.WriteProperty "Value", value
 End Sub
 
 
 
 Private Sub removeDisallowedCharacters(ByRef txtbox As TextBox, lowerBound As Single, upperBound As Single, Optional dec As Boolean = False)
-10        If Not IsNumeric(txtbox.Text) Or InStr(txtbox.Text, "e") > 0 Or (Not dec And InStr(txtbox.Text, ".") > 0) Then
-              Dim oldselstart As Integer
-20            oldselstart = txtbox.selstart - 1    'char  typed so always one more
-30            If oldselstart < 0 Then oldselstart = 0
+    If Not IsNumeric(txtbox.Text) Or InStr(txtbox.Text, "e") > 0 Or (Not dec And InStr(txtbox.Text, ".") > 0) Then
+        Dim oldselstart As Integer
+        oldselstart = txtbox.selstart - 1    'char  typed so always one more
+        If oldselstart < 0 Then oldselstart = 0
 
-              'remove all characters aside from nrs
-              Dim i As Integer
-              Dim finalresult As String
-40            For i = 1 To Len(txtbox.Text)
-50                If Asc(Mid$(txtbox.Text, i, 1)) < Asc("0") Or _
-                     Asc(Mid$(txtbox.Text, i, 1)) > Asc("9") Then
-                      Dim result As String
-60                    If i - 1 >= 1 Then result = Mid$(txtbox.Text, 1, i - 1)
-70                    If i + 1 <= Len(txtbox.Text) Then result = result + Mid$(txtbox.Text, i + 1, Len(txtbox.Text) - (i))
-80                    finalresult = result
-90                End If
-100           Next
-110           txtbox.Text = finalresult
-120           If oldselstart > Len(txtbox.Text) Then
-130               txtbox.selstart = Len(txtbox.Text)
-140           Else
-150               txtbox.selstart = oldselstart
-160           End If
-170       End If
+        'remove all characters aside from nrs
+        Dim i As Integer
+        Dim finalresult As String
+        For i = 1 To Len(txtbox.Text)
+            If Asc(Mid$(txtbox.Text, i, 1)) < Asc("0") Or _
+               Asc(Mid$(txtbox.Text, i, 1)) > Asc("9") Then
+                Dim result As String
+                If i - 1 >= 1 Then result = Mid$(txtbox.Text, 1, i - 1)
+                If i + 1 <= Len(txtbox.Text) Then result = result + Mid$(txtbox.Text, i + 1, Len(txtbox.Text) - (i))
+                finalresult = result
+            End If
+        Next
+        txtbox.Text = finalresult
+        If oldselstart > Len(txtbox.Text) Then
+            txtbox.selstart = Len(txtbox.Text)
+        Else
+            txtbox.selstart = oldselstart
+        End If
+    End If
 
-180       If val(txtbox.Text) < lowerBound Then
-190           txtbox.Text = lowerBound
-200       End If
+    If val(txtbox.Text) < lowerBound Then
+        txtbox.Text = lowerBound
+    End If
 
-210       If val(txtbox.Text) > upperBound Then
-220           txtbox.Text = upperBound
-230       End If
+    If val(txtbox.Text) > upperBound Then
+        txtbox.Text = upperBound
+    End If
 
 End Sub
 
 Sub toggleLockToolTextBox(txt As TextBox, Optional lck As Boolean = False)
-10        If txt.locked And Not lck Then
-20            txt.locked = False
-30            txt.BorderStyle = vbFixedSingle
-40            txt.BackColor = vbWhite
-50            txt.Alignment = vbCenter
-60            Call ShowCaret(txt.hWnd)
-70            txt.selstart = 0
-80            txt.sellength = Len(txt.Text)
-90        Else
-100           txt.locked = True
-110           txt.BorderStyle = 0
-120           txt.BackColor = &H8000000F
-130           txt.Alignment = vbRightJustify
-140           Call HideCaret(txt.hWnd)
-150       End If
+    If txt.locked And Not lck Then
+        txt.locked = False
+        txt.BorderStyle = vbFixedSingle
+        txt.BackColor = vbWhite
+        txt.Alignment = vbCenter
+        Call ShowCaret(txt.hWnd)
+        txt.selstart = 0
+        txt.sellength = Len(txt.Text)
+    Else
+        txt.locked = True
+        txt.BorderStyle = 0
+        txt.BackColor = &H8000000F
+        txt.Alignment = vbRightJustify
+        Call HideCaret(txt.hWnd)
+    End If
 
 End Sub
 

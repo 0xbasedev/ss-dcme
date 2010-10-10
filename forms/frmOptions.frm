@@ -18,6 +18,15 @@ Begin VB.Form frmOptions
    ScaleWidth      =   591
    ShowInTaskbar   =   0   'False
    StartUpPosition =   1  'CenterOwner
+   Begin VB.CommandButton cmdCleanup 
+      Caption         =   "Cleanup"
+      Height          =   375
+      Left            =   1800
+      TabIndex        =   116
+      ToolTipText     =   "Cleans up the unused settings in the settings.dat file"
+      Top             =   6600
+      Width           =   1095
+   End
    Begin VB.PictureBox picOptions 
       BorderStyle     =   0  'None
       Height          =   5940
@@ -1347,8 +1356,14 @@ Private Sub cmd_centeroffset_Click(Index As Integer)
     GridOffset(Index).value = 512 Mod txtBlocks(Index).Text
 End Sub
 
+Private Sub cmdCleanup_Click()
+    Call ClearSettings
+    Call SaveSettings
+End Sub
+
 Private Sub cmdDefault_Click()
-    If MessageBox("Reset all settings to default?", vbYesNo, "Reset settings") = vbYes Then
+    If MessageBox("Reset all settings to default?", vbYesNo + vbExclamation, "Reset settings") = vbYes Then
+        Call ClearSettings
         Call LoadSettings(True)
     End If
 End Sub
@@ -1382,7 +1397,7 @@ End Sub
 
 Private Sub Form_Load()
 'center the form
-    Me.Move (Screen.width - Me.width) / 2, (Screen.height - Me.height) / 2
+    Me.Move (Screen.width - Me.width) / 2, (Screen.Height - Me.Height) / 2
     Call tbsOptions_Click
     Set Me.Icon = frmGeneral.Icon
 
@@ -1673,7 +1688,7 @@ Private Sub BrowseTileset()
     f = FreeFile
 
     Dim bm As Integer
-    Dim size As Long
+    Dim Size As Long
 
     Dim b() As Byte
 
@@ -1749,17 +1764,17 @@ Private Sub UpdatePreview()
 
 
     If optDefaultTileset(0).value = True Then
-        BitBlt piccurrenttileset.hDC, 0, 0, picdefaulttileset.width, picdefaulttileset.height, frmGeneral.picdefaulttileset.hDC, 0, 0, vbSrcCopy
+        BitBlt piccurrenttileset.hDc, 0, 0, picdefaulttileset.width, picdefaulttileset.Height, frmGeneral.picdefaulttileset.hDc, 0, 0, vbSrcCopy
         piccurrenttileset.Refresh
         cmdImport.Enabled = False
     Else
-        BitBlt piccurrenttileset.hDC, 0, 0, picdefaulttileset.width, picdefaulttileset.height, picdefaulttileset.hDC, 0, 0, vbSrcCopy
+        BitBlt piccurrenttileset.hDc, 0, 0, picdefaulttileset.width, picdefaulttileset.Height, picdefaulttileset.hDc, 0, 0, vbSrcCopy
         piccurrenttileset.Refresh
         cmdImport.Enabled = True
     End If
 
-    SetStretchBltMode picDefaultPreview.hDC, HALFTONE
-    StretchBlt picDefaultPreview.hDC, 0, 0, picDefaultPreview.ScaleWidth, picDefaultPreview.ScaleHeight, piccurrenttileset.hDC, 0, 0, picdefaulttileset.width, picdefaulttileset.height, vbSrcCopy
+    SetStretchBltMode picDefaultPreview.hDc, HALFTONE
+    StretchBlt picDefaultPreview.hDc, 0, 0, picDefaultPreview.ScaleWidth, picDefaultPreview.ScaleHeight, piccurrenttileset.hDc, 0, 0, picdefaulttileset.width, picdefaulttileset.Height, vbSrcCopy
 
     picDefaultPreview.Refresh
     Call DrawWallTiles
@@ -1923,21 +1938,21 @@ End Sub
 
 
 Private Sub DrawTilesetSettingsPreview()
-    Const OffsetX As Integer = 40
-    Const OffsetY As Integer = 6
+    Const offsetX As Integer = 40
+    Const offsetY As Integer = 6
     
     picPreviewTileset.Cls
     
     'Draw a portion of a tileset
-    BitBlt picPreviewTileset.hDC, OffsetX, OffsetY, picPreviewTileset.width - OffsetX, picPreviewTileset.height - OffsetY, frmGeneral.picdefaulttileset.hDC, 0, 0, vbSrcCopy
+    BitBlt picPreviewTileset.hDc, offsetX, offsetY, picPreviewTileset.width - offsetX, picPreviewTileset.Height - offsetY, frmGeneral.picdefaulttileset.hDc, 0, 0, vbSrcCopy
     
     shpPreviewTileset.BorderColor = lblLeftColor_color.BackColor
     
-    Call DrawRectangle(picPreviewTileset.hDC, OffsetX, OffsetY, OffsetX + 3 * TILEW, OffsetY + 2 * TILEH, lblLeftColor_color.BackColor)
-    Call DrawRectangle(picPreviewTileset.hDC, OffsetX + TILEW, OffsetY, OffsetX + 2 * TILEW, OffsetY + TILEH, lblRightColor_color.BackColor)
+    Call DrawRectangle(picPreviewTileset.hDc, offsetX, offsetY, offsetX + 3 * TILEW, offsetY + 2 * TILEH, lblLeftColor_color.BackColor)
+    Call DrawRectangle(picPreviewTileset.hDc, offsetX + TILEW, offsetY, offsetX + 2 * TILEW, offsetY + TILEH, lblRightColor_color.BackColor)
     
     'Draw the enlarged tile preview
-    Call DrawImagePreviewCoords(frmGeneral.picdefaulttileset.hDC, 0, 0, 3 * TILEW, 2 * TILEH, picPreviewTileset.hDC, shpPreviewTileset.Left, shpPreviewTileset.Top, shpPreviewTileset.width, shpPreviewTileset.height, lblTilesetBackground_color.BackColor)
+    Call DrawImagePreviewCoords(frmGeneral.picdefaulttileset.hDc, 0, 0, 3 * TILEW, 2 * TILEH, picPreviewTileset.hDc, shpPreviewTileset.Left, shpPreviewTileset.Top, shpPreviewTileset.width, shpPreviewTileset.Height, lblTilesetBackground_color.BackColor)
     
     
     picPreviewTileset.Refresh
@@ -1950,7 +1965,7 @@ Private Sub SetImageEditor(path As String, Optional Caption As String = "")
     
     picIconImageEditor.Cls
     
-    If DrawFileIconOn(path, picIconImageEditor.hDC, 0, 0) Then
+    If DrawFileIconOn(path, picIconImageEditor.hDc, 0, 0) Then
         If Caption <> "" Then
             cmbImageEditor.list(0) = Caption
         Else
@@ -1966,13 +1981,13 @@ Private Sub SetImageEditor(path As String, Optional Caption As String = "")
 End Sub
 
 Private Sub DrawWallTiles()
-    Call walltiles.DrawWallTiles(picWalltiles.hDC, 4)
+    Call walltiles.DrawWallTiles(picWalltiles.hDc, 4)
     
 
     picWalltiles.Refresh
 
-    SetStretchBltMode picWallTilesPrev.hDC, HALFTONE
-    StretchBlt picWallTilesPrev.hDC, 0, 0, picWallTilesPrev.ScaleWidth, picWallTilesPrev.ScaleHeight, picWalltiles.hDC, 0, 0, picWalltiles.width, picWalltiles.height, vbSrcCopy
+    SetStretchBltMode picWallTilesPrev.hDc, HALFTONE
+    StretchBlt picWallTilesPrev.hDc, 0, 0, picWallTilesPrev.ScaleWidth, picWallTilesPrev.ScaleHeight, picWalltiles.hDc, 0, 0, picWalltiles.width, picWalltiles.Height, vbSrcCopy
 
     picWallTilesPrev.Refresh
 End Sub

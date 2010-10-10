@@ -261,13 +261,13 @@ Public Const MAX_FILENAME_LEN = 256
 
 
 Public Function WM_DCME_OPENMAP() As Long
-          Static msg As Long
+    Static msg As Long
 
-10        If msg = 0 Then
-20            msg = RegisterWindowMessage(MSG_OPENMAP)
-30        End If
+    If msg = 0 Then
+        msg = RegisterWindowMessage(MSG_OPENMAP)
+    End If
 
-40        WM_DCME_OPENMAP = msg
+    WM_DCME_OPENMAP = msg
 
 End Function
 
@@ -277,116 +277,116 @@ End Function
 
 'make a form normal
 Sub MakeNormal(hWnd As Long)
-10        SetWindowPos hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS
+    SetWindowPos hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS
 End Sub
 
 'make a form topmost
 Sub MakeTopMost(hWnd As Long)
-10        SetWindowPos hWnd, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS
+    SetWindowPos hWnd, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS
 End Sub
 
 Sub RestoreWin(hWndToRestore As Long, forceMaximize As Boolean)
-10        On Error GoTo RestoreWindow_Error
-          
-         Dim currWinP As WINDOWPLACEMENT
-         
-        'if a window handle passed
-20       If hWndToRestore Then
-         
-           'prepare the WINDOWPLACEMENT type
-           'to receive the window coordinates
-           'of the specified handle
-30            currWinP.Length = Len(currWinP)
-          
-           'get the info...
-40            If GetWindowPlacement(hWndToRestore, currWinP) > 0 Then
-              'based on the returned info,
-              'determine the window state
-50                 If currWinP.showCmd = SW_SHOWMINIMIZED Then
-                     'it is minimized, so restore it
-60                    With currWinP
-70                       .Length = Len(currWinP)
-80                       .flags = 0&
-90                       If forceMaximize Then
-100                           .showCmd = SW_SHOWMAXIMIZED
-110                      Else
-120                           .showCmd = SW_RESTORE
-130                      End If
-140                   End With
-          
-150                   Call SetWindowPlacement(hWndToRestore, currWinP)
-160                Else
-                     'it is on-screen, so make it visible
-170                   Call SetForegroundWindow(hWndToRestore)
-180                   Call BringWindowToTop(hWndToRestore)
-                      
-190                End If
-200           End If
-210       End If
-         
-220      On Error GoTo 0
-230      Exit Sub
-         
+    On Error GoTo RestoreWindow_Error
+    
+   Dim currWinP As WINDOWPLACEMENT
+   
+  'if a window handle passed
+   If hWndToRestore Then
+   
+     'prepare the WINDOWPLACEMENT type
+     'to receive the window coordinates
+     'of the specified handle
+        currWinP.Length = Len(currWinP)
+    
+     'get the info...
+        If GetWindowPlacement(hWndToRestore, currWinP) > 0 Then
+        'based on the returned info,
+        'determine the window state
+             If currWinP.showCmd = SW_SHOWMINIMIZED Then
+               'it is minimized, so restore it
+                With currWinP
+                   .Length = Len(currWinP)
+                   .flags = 0&
+                   If forceMaximize Then
+                        .showCmd = SW_SHOWMAXIMIZED
+                   Else
+                        .showCmd = SW_RESTORE
+                   End If
+                End With
+    
+                Call SetWindowPlacement(hWndToRestore, currWinP)
+             Else
+               'it is on-screen, so make it visible
+                Call SetForegroundWindow(hWndToRestore)
+                Call BringWindowToTop(hWndToRestore)
+                
+             End If
+        End If
+    End If
+   
+   On Error GoTo 0
+   Exit Sub
+   
 RestoreWindow_Error:
-240       HandleError Err, "RestoreWin"
+    HandleError Err, "RestoreWin"
 End Sub
 
 
 
 Function WinDir() As String
-          Dim buf As String
-          Dim ret As Long
+    Dim buf As String
+    Dim ret As Long
 
-10        buf = String$(260, Chr$(0))
-20        ret = GetWindowsDirectory(buf, Len(buf))
-30        WinDir = Left$(buf, ret)
+    buf = String$(260, Chr$(0))
+    ret = GetWindowsDirectory(buf, Len(buf))
+    WinDir = Left$(buf, ret)
 End Function
 
 Function SysDir() As String
-          Dim buf As String
-          Dim ret As Long
+    Dim buf As String
+    Dim ret As Long
 
-10        buf = String$(260, Chr$(0))
-20        ret = GetSystemDirectory(buf, Len(buf))
-30        SysDir = Left$(buf, ret)
+    buf = String$(260, Chr$(0))
+    ret = GetSystemDirectory(buf, Len(buf))
+    SysDir = Left$(buf, ret)
 End Function
 
 
 
 Function PointerToString(lngPtr As Long) As String
-      '--------------------------------------------------------
-      'RETURNS A STRING FROM IT'S POINTER
-      'EXAMPLE:
-      '-- Generate pointer for demo purposes
+'--------------------------------------------------------
+'RETURNS A STRING FROM IT'S POINTER
+'EXAMPLE:
+'-- Generate pointer for demo purposes
 
-      'Dim l As Long
-      'Dim s As String
-      's = "THIS IS A TEST"
-      'l = StrPtr(s)
+'Dim l As Long
+'Dim s As String
+'s = "THIS IS A TEST"
+'l = StrPtr(s)
 
-      '--We have the pointer, call the function
+'--We have the pointer, call the function
 
-      'messagebox PointerToString(l)
+'messagebox PointerToString(l)
 
-      'NOTE: THE ASSUMPTION IS THAT THE POINTER IS TO A UNICODE STRING
-      'IF NOT, CHANGE THE FUNCTION AS FOLLOWS (UNTESTED)
-      '-- Change lstrlenW to lStrLena
-      '-- Get rid of the * 2
-      '-- The replace statement should not be necessary, just return strTemp
-      '----------------------------------------------------------
+'NOTE: THE ASSUMPTION IS THAT THE POINTER IS TO A UNICODE STRING
+'IF NOT, CHANGE THE FUNCTION AS FOLLOWS (UNTESTED)
+'-- Change lstrlenW to lStrLena
+'-- Get rid of the * 2
+'-- The replace statement should not be necessary, just return strTemp
+'----------------------------------------------------------
 
-          Dim strTemp As String
-          Dim lngLen As Long
+    Dim strTemp As String
+    Dim lngLen As Long
 
 
-10        If lngPtr Then
-20            lngLen = lstrlenW(lngPtr) * 2
-30            If lngLen Then
-40                strTemp = Space(lngLen)
-50                CopyMemory ByVal strTemp, ByVal lngPtr, lngLen
-60                PointerToString = replace(strTemp, Chr(0), "")
-70            End If
-80        End If
+    If lngPtr Then
+        lngLen = lstrlenW(lngPtr) * 2
+        If lngLen Then
+            strTemp = Space(lngLen)
+            CopyMemory ByVal strTemp, ByVal lngPtr, lngLen
+            PointerToString = replace(strTemp, Chr(0), "")
+        End If
+    End If
 End Function
 
 

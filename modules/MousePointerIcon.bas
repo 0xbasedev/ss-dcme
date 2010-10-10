@@ -62,111 +62,111 @@ End Type
 
 Function CreateIcon32x32(hIcon16x16 As Long) As Long
 
-          Dim hIcon As Long
-          Dim icoInfo As ICONINFO, bmpInfo As BITMAP
-          Dim hBmp As Long, hbmpOld As Long, hBmpSrc As Long
-          Dim tmpDC As Long, tmpDCsrc As Long
-          Dim tRect As RECT
-          Dim hBrush As Long
+    Dim hIcon As Long
+    Dim icoInfo As ICONINFO, bmpInfo As BITMAP
+    Dim hBmp As Long, hbmpOld As Long, hBmpSrc As Long
+    Dim tmpDC As Long, tmpDCsrc As Long
+    Dim tRect As RECT
+    Dim hBrush As Long
 
-10        GetIconInfo hIcon16x16, icoInfo
+    GetIconInfo hIcon16x16, icoInfo
 
-20        If icoInfo.hbmColor = 0 Then
-30            If icoInfo.hbmMask <> 0 Then DeleteObject icoInfo.hbmMask
-              'exit here. Black & white icons need a bit more work, and
-              'if you are converting them, let you do the leg work.
-              ' Feeling helpful, but not too motivated, sorry.
-40            Exit Function
-50        End If
-60        If GetGDIObject(icoInfo.hbmColor, Len(bmpInfo), bmpInfo) = 0 Then Exit Function
+    If icoInfo.hbmColor = 0 Then
+        If icoInfo.hbmMask <> 0 Then DeleteObject icoInfo.hbmMask
+        'exit here. Black & white icons need a bit more work, and
+        'if you are converting them, let you do the leg work.
+        ' Feeling helpful, but not too motivated, sorry.
+        Exit Function
+    End If
+    If GetGDIObject(icoInfo.hbmColor, Len(bmpInfo), bmpInfo) = 0 Then Exit Function
 
-70        tRect.Right = 32
-80        tRect.Bottom = 32
+    tRect.Right = 32
+    tRect.Bottom = 32
 
-        Dim dczero As Long
-        
-        dczero = GetDC(0&)
-        
-          ' create 2 temporary DCs. Must destroy these later
-90        tmpDC = CreateCompatibleDC(dczero)
-100       tmpDCsrc = CreateCompatibleDC(dczero)
+  Dim dczero As Long
+  
+  dczero = GetDC(0&)
+  
+    ' create 2 temporary DCs. Must destroy these later
+    tmpDC = CreateCompatibleDC(dczero)
+    tmpDCsrc = CreateCompatibleDC(dczero)
 
-          ' create a temp bitmap to be the new icon & select it into the DC
-110       hBmp = CreateCompatibleBitmap(dczero, 32, 32)
+    ' create a temp bitmap to be the new icon & select it into the DC
+    hBmp = CreateCompatibleBitmap(dczero, 32, 32)
 
-120       hbmpOld = SelectObject(tmpDC, hBmp)
-          ' select the icon into the other DC
-130       hBmpSrc = SelectObject(tmpDCsrc, icoInfo.hbmColor)
-          ' fill the new bitmap with black
-140       hBrush = CreateSolidBrush(vbBlack)
-150       FillRect tmpDC, tRect, hBrush
-160       DeleteObject hBrush
-          ' now copy of the icon into new bitmap, centering it on the way
-170       BitBlt tmpDC, 0, 0, _
-                 bmpInfo.bmWidth, bmpInfo.bmHeight, tmpDCsrc, 0, 0, vbSrcCopy
-          '(32 - bmpInfo.bmWidth) \ 2, (32 - bmpInfo.bmHeight) \ 2
+    hbmpOld = SelectObject(tmpDC, hBmp)
+    ' select the icon into the other DC
+    hBmpSrc = SelectObject(tmpDCsrc, icoInfo.hbmColor)
+    ' fill the new bitmap with black
+    hBrush = CreateSolidBrush(vbBlack)
+    FillRect tmpDC, tRect, hBrush
+    DeleteObject hBrush
+    ' now copy of the icon into new bitmap, centering it on the way
+    BitBlt tmpDC, 0, 0, _
+           bmpInfo.bmWidth, bmpInfo.bmHeight, tmpDCsrc, 0, 0, vbSrcCopy
+    '(32 - bmpInfo.bmWidth) \ 2, (32 - bmpInfo.bmHeight) \ 2
 
-          ' kill the icon's bitmap (doesn't delete the icon)
-180       DeleteObject SelectObject(tmpDCsrc, hBmpSrc)
-          ' make the new bitmap the icon's bitmap
-190       icoInfo.hbmColor = SelectObject(tmpDC, hbmpOld)
+    ' kill the icon's bitmap (doesn't delete the icon)
+    DeleteObject SelectObject(tmpDCsrc, hBmpSrc)
+    ' make the new bitmap the icon's bitmap
+    icoInfo.hbmColor = SelectObject(tmpDC, hbmpOld)
 
-          ' the same exact remarks above apply to the mask below
-200       hBmp = CreateBitmap(32, 32, 1, 1, ByVal 0&)
-210       hbmpOld = SelectObject(tmpDC, hBmp)
-220       hBmpSrc = SelectObject(tmpDCsrc, icoInfo.hbmMask)
-230       hBrush = CreateSolidBrush(vbWhite)
-240       FillRect tmpDC, tRect, hBrush
-250       DeleteObject hBrush
-260       BitBlt tmpDC, 0, 0, _
-                 bmpInfo.bmWidth, bmpInfo.bmHeight, tmpDCsrc, 0, 0, vbSrcCopy
-          '(32 - bmpInfo.bmWidth) \ 2, (32 - bmpInfo.bmHeight) \ 2
-270       DeleteObject SelectObject(tmpDCsrc, hBmpSrc)
-280       icoInfo.hbmMask = SelectObject(tmpDC, hbmpOld)
+    ' the same exact remarks above apply to the mask below
+    hBmp = CreateBitmap(32, 32, 1, 1, ByVal 0&)
+    hbmpOld = SelectObject(tmpDC, hBmp)
+    hBmpSrc = SelectObject(tmpDCsrc, icoInfo.hbmMask)
+    hBrush = CreateSolidBrush(vbWhite)
+    FillRect tmpDC, tRect, hBrush
+    DeleteObject hBrush
+    BitBlt tmpDC, 0, 0, _
+           bmpInfo.bmWidth, bmpInfo.bmHeight, tmpDCsrc, 0, 0, vbSrcCopy
+    '(32 - bmpInfo.bmWidth) \ 2, (32 - bmpInfo.bmHeight) \ 2
+    DeleteObject SelectObject(tmpDCsrc, hBmpSrc)
+    icoInfo.hbmMask = SelectObject(tmpDC, hbmpOld)
 
-          ' destroy the DCs
-290       DeleteDC tmpDC
-300       DeleteDC tmpDCsrc
+    ' destroy the DCs
+    DeleteDC tmpDC
+    DeleteDC tmpDCsrc
 
-          ' set the cursor's hot spot. Here it will be top left of visible icon
-          ' Adjust this as needed if your cursor needs to be at one of the other corners
-310       icoInfo.xHotspot = (32 - bmpInfo.bmWidth) \ 2
-320       icoInfo.yHotspot = (32 - bmpInfo.bmHeight) \ 2
-330       icoInfo.fIcon = 0   ' identifies the icon as a cursor vs icon
+    ' set the cursor's hot spot. Here it will be top left of visible icon
+    ' Adjust this as needed if your cursor needs to be at one of the other corners
+    icoInfo.xHotspot = (32 - bmpInfo.bmWidth) \ 2
+    icoInfo.yHotspot = (32 - bmpInfo.bmHeight) \ 2
+    icoInfo.fIcon = 0   ' identifies the icon as a cursor vs icon
 
-          ' create the icon & delete the bitmaps
-340       hIcon = CreateIconIndirect(icoInfo)
+    ' create the icon & delete the bitmaps
+    hIcon = CreateIconIndirect(icoInfo)
 
-350       DeleteObject icoInfo.hbmColor
-360       DeleteObject icoInfo.hbmMask
+    DeleteObject icoInfo.hbmColor
+    DeleteObject icoInfo.hbmMask
 
     ReleaseDC 0&, dczero
-          ' return the result
-370       CreateIcon32x32 = hIcon
+    ' return the result
+    CreateIcon32x32 = hIcon
 
 
 End Function
 
 Function HandleToPicture(ByVal hHandle As Long, isBitmap As Boolean) As IPicture
 
-10        On Error GoTo ExitRoutine
+    On Error GoTo ExitRoutine
 
-          Dim Pic As PICTDESC
-          Dim GUID(0 To 3) As Long
+    Dim Pic As PICTDESC
+    Dim GUID(0 To 3) As Long
 
-          ' initialize the PictDesc structure
-20        Pic.cbSize = Len(Pic)
-30        If isBitmap Then Pic.pictType = vbPicTypeBitmap Else Pic.pictType = vbPicTypeIcon
-40        Pic.hIcon = hHandle
-          ' this is the IPicture GUID {7BF80980-BF32-101A-8BBB-00AA00300CAB}
-          ' we use an array of Long to initialize it faster
-50        GUID(0) = &H7BF80980
-60        GUID(1) = &H101ABF32
-70        GUID(2) = &HAA00BB8B
-80        GUID(3) = &HAB0C3000
-          ' create the picture,
-          ' return an object reference right into the function result
-90        OleCreatePictureIndirect Pic, GUID(0), True, HandleToPicture
+    ' initialize the PictDesc structure
+    Pic.cbSize = Len(Pic)
+    If isBitmap Then Pic.pictType = vbPicTypeBitmap Else Pic.pictType = vbPicTypeIcon
+    Pic.hIcon = hHandle
+    ' this is the IPicture GUID {7BF80980-BF32-101A-8BBB-00AA00300CAB}
+    ' we use an array of Long to initialize it faster
+    GUID(0) = &H7BF80980
+    GUID(1) = &H101ABF32
+    GUID(2) = &HAA00BB8B
+    GUID(3) = &HAB0C3000
+    ' create the picture,
+    ' return an object reference right into the function result
+    OleCreatePictureIndirect Pic, GUID(0), True, HandleToPicture
 
 ExitRoutine:
 End Function

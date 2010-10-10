@@ -68,7 +68,6 @@ Begin VB.Form frmSplash
       Width           =   3975
    End
    Begin VB.Label lblEmailSamapico 
-      Alignment       =   1  'Right Justify
       Appearance      =   0  'Flat
       BackColor       =   &H80000005&
       BackStyle       =   0  'Transparent
@@ -87,7 +86,7 @@ Begin VB.Form frmSplash
       Left            =   5520
       MousePointer    =   2  'Cross
       TabIndex        =   8
-      Top             =   480
+      Top             =   120
       Width           =   975
    End
    Begin VB.Label lblEmailDrake 
@@ -107,13 +106,14 @@ Begin VB.Form frmSplash
       EndProperty
       ForeColor       =   &H00FF0000&
       Height          =   255
-      Left            =   5520
+      Left            =   3840
       MousePointer    =   2  'Cross
       TabIndex        =   7
       Top             =   120
       Width           =   975
    End
    Begin VB.Label lbllink 
+      Alignment       =   2  'Center
       Appearance      =   0  'Flat
       BackColor       =   &H80000005&
       BackStyle       =   0  'Transparent
@@ -137,7 +137,7 @@ Begin VB.Form frmSplash
    End
    Begin VB.Label lblvisitssforum 
       BackStyle       =   0  'Transparent
-      Caption         =   "Visit                         for info and updates"
+      Caption         =   "Visit                          for info and updates"
       BeginProperty Font 
          Name            =   "Arial"
          Size            =   9.75
@@ -153,10 +153,10 @@ Begin VB.Form frmSplash
       Top             =   3360
       Width           =   3975
    End
-   Begin VB.Label lbladditional 
-      Alignment       =   1  'Right Justify
+   Begin VB.Label lbland 
+      Alignment       =   2  'Center
       BackStyle       =   0  'Transparent
-      Caption         =   "Additional programming by "
+      Caption         =   "and"
       BeginProperty Font 
          Name            =   "Arial"
          Size            =   9.75
@@ -167,15 +167,15 @@ Begin VB.Form frmSplash
          Strikethrough   =   0   'False
       EndProperty
       Height          =   255
-      Left            =   1560
+      Left            =   4920
       TabIndex        =   1
-      Top             =   480
-      Width           =   3855
+      Top             =   120
+      Width           =   495
    End
    Begin VB.Label lblcreated 
       Alignment       =   1  'Right Justify
       BackStyle       =   0  'Transparent
-      Caption         =   "Initially created and developed by "
+      Caption         =   "Created by"
       BeginProperty Font 
          Name            =   "Arial"
          Size            =   9.75
@@ -186,11 +186,11 @@ Begin VB.Form frmSplash
          Strikethrough   =   0   'False
       EndProperty
       Height          =   255
-      Left            =   960
+      Left            =   1320
       MousePointer    =   2  'Cross
       TabIndex        =   0
       Top             =   120
-      Width           =   4455
+      Width           =   2295
    End
    Begin VB.Label lblversion 
       BackStyle       =   0  'Transparent
@@ -226,41 +226,39 @@ Dim thankscount As Long
 
 
 Private Sub Form_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub Form_KeyPress(KeyAscii As Integer)
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub Form_Load()
-10        lblversion.Caption = "Version " & App.Major & "." & App.Minor & "." & App.Revision
-          
-20        BitBlt picThanks.hDC, 0, 0, picThanks.width, picThanks.height, Me.hDC, picThanks.Left, picThanks.Top, vbSrcCopy
-30        picThanks.Refresh
-          
-40        Set picThanks.Font = txtThanks.Font
-          
-50        currentPos = picThanks.height
-          
-60        thanksHeight = picThanks.TextHeight(txtThanks.Text)
-          
-70        thanks = Split(txtThanks.Text, vbCrLf)
-80        thankscount = UBound(thanks) + 1
+    lblversion.Caption = "Version " & App.Major & "." & App.Minor & "." & App.Revision
+    
+    BitBlt picThanks.hDC, 0, 0, picThanks.width, picThanks.height, Me.hDC, picThanks.Left, picThanks.Top, vbSrcCopy
+    picThanks.Refresh
+    
+    Set picThanks.Font = txtThanks.Font
+    
+    currentPos = picThanks.height
+    
+    thanksHeight = picThanks.TextHeight(txtThanks.Text)
+    
+    thanks = Split(txtThanks.Text, vbCrLf)
+    thankscount = UBound(thanks) + 1
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-10        inSplash = False
+    inSplash = False
 End Sub
 
 
 
-Private Sub lbladditional_Click()
-10        Unload Me
-End Sub
+
 
 Private Sub lblcreated_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 
@@ -276,68 +274,68 @@ Private Sub lblEmailSamapico_Click()
 End Sub
 
 Private Sub lbllink_Click()
-10        ShellExecute Me.hWnd, "open", "http://www.ssforum.net/index.php?showforum=277", _
-                       vbNullString, vbNullString, SW_SHOWNORMAL
-20        Unload Me
+    ShellExecute Me.hWnd, "open", "http://www.ssforum.net/index.php?showforum=277", _
+                 vbNullString, vbNullString, SW_SHOWNORMAL
+    Unload Me
 
 End Sub
 
 Private Sub lblversion_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub lblvisitssforum_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub picThanks_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub Timer1_Timer()
-      '    Static lastUpdate As Long
-      '    Dim curTime As Long
-      '
-      '    curTime = GetTickCount
-      '    Label2.Caption = curTime - lastUpdate
-      '    lastUpdate = curTime
-          Dim i As Long
-          
-10        picThanks.Cls
-          
-20        BitBlt picThanks.hDC, 0, 0, picThanks.width, picThanks.height, Me.hDC, picThanks.Left, picThanks.Top, vbSrcCopy
-              
-30        currentPos = currentPos - 1
-          
-40        picThanks.CurrentX = 0
-50        picThanks.CurrentY = currentPos
-          
-          Dim linewidth As Integer
-          Dim toprint As String
-          
-60        For i = 0 To thankscount - 1
-              
-70            toprint = thanks(i)
-              
-80            picThanks.FontBold = (InStr(toprint, "<b>") <> 0)
-90            toprint = replace(toprint, "<b>", "")
-              
-100           picThanks.FontItalic = (InStr(toprint, "<i>") <> 0)
-110           toprint = replace(toprint, "<i>", "")
-                  
-120           linewidth = picThanks.TextWidth(toprint)
-130           picThanks.CurrentX = picThanks.width / 2 - linewidth / 2
-140           picThanks.Print toprint
-150       Next
-          
-160       picThanks.Refresh
-          
-          'Loop if finished
-170       If currentPos <= -thanksHeight Then
-180           currentPos = picThanks.height
-190       End If
+'    Static lastUpdate As Long
+'    Dim curTime As Long
+'
+'    curTime = GetTickCount
+'    Label2.Caption = curTime - lastUpdate
+'    lastUpdate = curTime
+    Dim i As Long
+    
+    picThanks.Cls
+    
+    BitBlt picThanks.hDC, 0, 0, picThanks.width, picThanks.height, Me.hDC, picThanks.Left, picThanks.Top, vbSrcCopy
+        
+    currentPos = currentPos - 1
+    
+    picThanks.CurrentX = 0
+    picThanks.CurrentY = currentPos
+    
+    Dim linewidth As Integer
+    Dim toprint As String
+    
+    For i = 0 To thankscount - 1
+        
+        toprint = thanks(i)
+        
+        picThanks.FontBold = (InStr(toprint, "<b>") <> 0)
+        toprint = replace(toprint, "<b>", "")
+        
+        picThanks.FontItalic = (InStr(toprint, "<i>") <> 0)
+        toprint = replace(toprint, "<i>", "")
+            
+        linewidth = picThanks.TextWidth(toprint)
+        picThanks.CurrentX = picThanks.width / 2 - linewidth / 2
+        picThanks.Print toprint
+    Next
+    
+    picThanks.Refresh
+    
+    'Loop if finished
+    If currentPos <= -thanksHeight Then
+        currentPos = picThanks.height
+    End If
 End Sub
 
 Private Sub TimerClose_Timer()
-10        Unload Me
+    Unload Me
 End Sub

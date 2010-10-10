@@ -37,18 +37,18 @@ Option Explicit
 Public autoHide As Boolean
 
 Private Sub Form_Activate()
-10        MakeTopMost (Me.hWnd)
-20        Call UpdateRadar
+    MakeTopMost (Me.hWnd)
+    Call UpdateRadar
 
-          ' autoHide = True
-30        Debug.Print "activated"
+    ' autoHide = True
+    Debug.Print "activated"
 End Sub
 
 Private Sub Form_Deactivate()
-10        If autoHide Then
-20            Me.visible = False
-30        End If
-40        Debug.Print "deactivated with autohide " & autoHide
+    If autoHide Then
+        Me.visible = False
+    End If
+    Debug.Print "deactivated with autohide " & autoHide
 End Sub
 
 
@@ -57,13 +57,13 @@ Private Sub Form_Load()
 End Sub
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-10        Unload Me
+    Unload Me
 End Sub
 
 
 Private Sub UpdateRadar()
-10        BitBlt picradar.hDC, 0, 0, picradar.width, picradar.height, frmGeneral.picradar.hDC, 0, 0, vbSrcCopy
-20        picradar.Refresh
+    BitBlt picradar.hDC, 0, 0, picradar.width, picradar.height, frmGeneral.picradar.hDC, 0, 0, vbSrcCopy
+    picradar.Refresh
 End Sub
 
 
@@ -72,24 +72,24 @@ Private Sub Form_Unload(Cancel As Integer)
 End Sub
 
 Private Sub picradar_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
-10        autoHide = False
-20        Debug.Print "mousedown"
-30        Me.show
-40        Call frmGeneral.picradar_MouseDown(Button, Shift, X, Y)
-50        Call UpdateRadar
-          '   autoHide = True
-          'Me.Show
-          'Me.setfocus
+    autoHide = False
+    Debug.Print "mousedown"
+    Me.show
+    Call frmGeneral.picradar_MouseDown(Button, Shift, X, Y)
+    Call UpdateRadar
+    '   autoHide = True
+    'Me.Show
+    'Me.setfocus
 End Sub
 
 Private Sub picradar_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-10        autoHide = False
-20        Call frmGeneral.picradar_MouseMove(Button, Shift, X, Y)
-30        Call UpdateRadar
-40        autoHide = True
-          'Me.Show
+    autoHide = False
+    Call frmGeneral.picradar_MouseMove(Button, Shift, X, Y)
+    Call UpdateRadar
+    autoHide = True
+    'Me.Show
 End Sub
 
 Private Sub picradar_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-10        MakeTopMost (Me.hWnd)
+    MakeTopMost (Me.hWnd)
 End Sub

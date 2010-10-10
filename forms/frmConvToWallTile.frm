@@ -95,122 +95,122 @@ Dim parent As frmMain
 Dim curwall As Integer
 
 Sub setParent(Main As frmMain)
-10        Set parent = Main
+    Set parent = Main
 End Sub
 
 Private Sub cmdCancel_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 
 Private Sub cmdOK_Click()
-          Dim i As Integer
+    Dim i As Integer
 
-10        For i = optConvert.LBound To optConvert.UBound
-20            If optConvert(i).value = True Then
-30                Call SetSetting("LastConvert", CStr(i))
-40                Call settings.SaveSettings
-50                Call parent.sel.ConverttoWalltiles(curwall, i)
-60            End If
-70        Next
+    For i = optConvert.LBound To optConvert.UBound
+        If optConvert(i).value = True Then
+            Call SetSetting("LastConvert", CStr(i))
+            Call settings.SaveSettings
+            Call parent.sel.ConverttoWalltiles(curwall, i)
+        End If
+    Next
 
-80        Unload Me
+    Unload Me
 End Sub
 
 Private Sub Form_Activate()
-10        DoEvents
-20        DrawWallTiles
+    DoEvents
+    DrawWallTiles
 End Sub
 
 Private Sub Form_Load()
-10        Set Me.Icon = frmGeneral.Icon
+    Set Me.Icon = frmGeneral.Icon
 
-          Dim i As Integer
-          Dim m As Integer
+    Dim i As Integer
+    Dim m As Integer
 
-20        m = CInt(val(GetSetting("LastConvert", "0")))
-30        For i = optConvert.LBound To optConvert.UBound
-40            If i = m Then
-50                optConvert(i).value = True
-60            Else
-70                optConvert(i).value = False
-80            End If
-90        Next
+    m = CInt(val(GetSetting("LastConvert", "0")))
+    For i = optConvert.LBound To optConvert.UBound
+        If i = m Then
+            optConvert(i).value = True
+        Else
+            optConvert(i).value = False
+        End If
+    Next
 
-          'selwall.Visible = True
-100       If parent.tileset.selection(vbLeftButton).selectionType = TS_Walltiles Then
-110           curwall = parent.tileset.selection(vbLeftButton).group
-120       ElseIf parent.tileset.selection(vbRightButton).selectionType = TS_Walltiles Then
-130           curwall = parent.tileset.selection(vbRightButton).group
-140       Else
-150           curwall = 0
-160       End If
-170       If Not parent.walltiles.isValidSet(curwall) Then
-180           For i = curwall To curwall + 7 Mod 8
-190               If parent.walltiles.isValidSet(i) Then
-200                   curwall = i
-210                   GoTo skip
-220               End If
-230           Next
-              'No valid walltiles set found
-240           curwall = 0
-250           selwall.visible = False
+    'selwall.Visible = True
+    If parent.tileset.selection(vbLeftButton).selectionType = TS_Walltiles Then
+        curwall = parent.tileset.selection(vbLeftButton).group
+    ElseIf parent.tileset.selection(vbRightButton).selectionType = TS_Walltiles Then
+        curwall = parent.tileset.selection(vbRightButton).group
+    Else
+        curwall = 0
+    End If
+    If Not parent.walltiles.isValidSet(curwall) Then
+        For i = curwall To curwall + 7 Mod 8
+            If parent.walltiles.isValidSet(i) Then
+                curwall = i
+                GoTo skip
+            End If
+        Next
+        'No valid walltiles set found
+        curwall = 0
+        selwall.visible = False
 skip:
-260       End If
-270       selwall.Left = (curwall \ 4) * 64
-280       selwall.Top = Int(curwall Mod 4) * 64
+    End If
+    selwall.Left = (curwall \ 4) * 64
+    selwall.Top = Int(curwall Mod 4) * 64
 
 End Sub
 
 Private Sub DrawWallTiles()
-10        Call parent.walltiles.DrawWallTiles(picWalltiles.hDC, 4)
-          
-      '    Dim i As Integer
-      '    For i = 0 To 7
-      '        BitBlt picwalltiles.hdc, (i \ 4) * 4 * TILEW, (i Mod 4) * 4 * TILEW, 4 * TILEW, 4 * TILEW, parent.picwalltiles.hdc, i * 4 * TILEW, 0, vbSrcCopy
-      '    Next
-20        picWalltiles.Refresh
+    Call parent.walltiles.DrawWallTiles(picWalltiles.hDC, 4)
+    
+'    Dim i As Integer
+'    For i = 0 To 7
+'        BitBlt picwalltiles.hdc, (i \ 4) * 4 * TILEW, (i Mod 4) * 4 * TILEW, 4 * TILEW, 4 * TILEW, parent.picwalltiles.hdc, i * 4 * TILEW, 0, vbSrcCopy
+'    Next
+    picWalltiles.Refresh
 End Sub
 
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-10        Set parent = Nothing
-          
+    Set parent = Nothing
+    
 End Sub
 
 Private Sub picWalltiles_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
-          Dim tmp As Integer
+    Dim tmp As Integer
 
-10        If X < 0 Then X = 0
-20        If X >= picWalltiles.width Then X = picWalltiles.width - 1
-30        If Y < 0 Then Y = 0
-40        If Y >= picWalltiles.height Then Y = picWalltiles.height - 1
+    If X < 0 Then X = 0
+    If X >= picWalltiles.width Then X = picWalltiles.width - 1
+    If Y < 0 Then Y = 0
+    If Y >= picWalltiles.height Then Y = picWalltiles.height - 1
 
-50        selwall.visible = True
+    selwall.visible = True
 
-60        tmp = ((X \ (4 * TILEW)) * 4) + (Y \ 64)
+    tmp = ((X \ (4 * TILEW)) * 4) + (Y \ 64)
 
-70        If parent.walltiles.isValidSet(tmp) Then
-              'New walltile selected
-80            curwall = tmp
-              'Move the selection rectangle
-90            selwall.Left = (curwall \ 4) * 64
-100           selwall.Top = Int(curwall Mod 4) * 64
-110       End If
+    If parent.walltiles.isValidSet(tmp) Then
+        'New walltile selected
+        curwall = tmp
+        'Move the selection rectangle
+        selwall.Left = (curwall \ 4) * 64
+        selwall.Top = Int(curwall Mod 4) * 64
+    End If
 
 
 End Sub
 
 Private Sub picWalltiles_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-10        If Button Then Call picWalltiles_MouseDown(Button, Shift, X, Y)
+    If Button Then Call picWalltiles_MouseDown(Button, Shift, X, Y)
 End Sub
 
 Private Sub picwalltiles_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-10        If X >= selwall.Left And X <= selwall.Left + selwall.width And Y >= selwall.Top And Y <= selwall.Top + selwall.height Then
-20            Call cmdOK_Click
-30        End If
+    If X >= selwall.Left And X <= selwall.Left + selwall.width And Y >= selwall.Top And Y <= selwall.Top + selwall.height Then
+        Call cmdOK_Click
+    End If
 End Sub

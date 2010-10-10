@@ -243,219 +243,219 @@ Dim tilecount() As Long
 Dim parent As frmMain
 
 Private Sub cmdDetails_Click()
-10        If showing_details = True Then
-20            Call Hide_Details
-30        Else
-40            Call Show_Details
-50        End If
-60        pictileset.Refresh
-70        UpdatePreview
+    If showing_details = True Then
+        Call Hide_Details
+    Else
+        Call Show_Details
+    End If
+    pictileset.Refresh
+    UpdatePreview
 End Sub
 
 Private Sub cmdOK_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub Form_Load()
-10        Set Me.Icon = frmGeneral.Icon
+    Set Me.Icon = frmGeneral.Icon
 End Sub
 
 Sub setParent(c_parent As frmMain)
-10        Set parent = c_parent
+    Set parent = c_parent
 End Sub
 
 Sub CountTiles()
 '          Dim i As Integer
 
-          'counters
-          Dim total As Long
-          Dim special As Long
-          Dim m As Long
-          Dim n As Long
-          
-          Dim inselection As Boolean
-10        inselection = parent.sel.hasAlreadySelectedParts
-      '    'reset the counters
-      '    total = 0
-      '    special = 0
-      '    m = 0
-      '    n = 0
-          Dim lefttile As Integer
-          Dim righttile As Integer
+    'counters
+    Dim total As Long
+    Dim special As Long
+    Dim m As Long
+    Dim n As Long
+    
+    Dim inselection As Boolean
+    inselection = parent.sel.hasAlreadySelectedParts
+'    'reset the counters
+'    total = 0
+'    special = 0
+'    m = 0
+'    n = 0
+    Dim lefttile As Integer
+    Dim righttile As Integer
 
-20        lefttile = parent.tileset.selection(vbLeftButton).tilenr
-30        righttile = parent.tileset.selection(vbRightButton).tilenr
-          
-          'TODO: pass only a pointer to the array, return the total
-40        ReDim tilecount(255)
-50        total = parent.CountTiles(inselection, VarPtr(tilecount(0)))
-          
-          
-      '    tilecount = parent.CountTiles(inSelection)
-      '
-      '    For i = 0 To 255
-      '        total = total + tilecount(i)
-      '    Next i
+    lefttile = parent.tileset.selection(vbLeftButton).tilenr
+    righttile = parent.tileset.selection(vbRightButton).tilenr
+    
+    'TODO: pass only a pointer to the array, return the total
+    ReDim tilecount(255)
+    total = parent.CountTiles(inselection, VarPtr(tilecount(0)))
+    
+    
+'    tilecount = parent.CountTiles(inSelection)
+'
+'    For i = 0 To 255
+'        total = total + tilecount(i)
+'    Next i
 
-60        special = tilecount(TILE_WORMHOLE) + tilecount(TILE_LRG_ASTEROID) + tilecount(TILE_STATION)
-70        m = tilecount(lefttile)
-80        n = tilecount(righttile)
+    special = tilecount(TILE_WORMHOLE) + tilecount(TILE_LRG_ASTEROID) + tilecount(TILE_STATION)
+    m = tilecount(lefttile)
+    n = tilecount(righttile)
 
-          'show the results
-90        lblLeft.Caption = m
-100       lblRight.Caption = n
-110       lblTotal.Caption = total
-120       lblSpecial.Caption = special
-130       lblFlags.Caption = tilecount(TILE_FLAG)
+    'show the results
+    lblLeft.Caption = m
+    lblRight.Caption = n
+    lblTotal.Caption = total
+    lblSpecial.Caption = special
+    lblFlags.Caption = tilecount(TILE_FLAG)
 
-140       lblInSelection.Visible = inselection
+    lblInSelection.visible = inselection
 
-150       BitBlt pictileset.hDC, 0, 0, pictileset.Width, pictileset.Height, parent.pictileset.hDC, 0, 0, vbSrcCopy
-160       Call SetLeftSelection(lefttile)
-170       Call SetRightSelection(righttile)
-180       Call SetCurrentSelection(1)
+    BitBlt pictileset.hDC, 0, 0, pictileset.width, pictileset.height, parent.pictileset.hDC, 0, 0, vbSrcCopy
+    Call SetLeftSelection(lefttile)
+    Call SetRightSelection(righttile)
+    Call SetCurrentSelection(1)
 
-190       If tilecount(TILE_FLAG) > 256 Then
-200           MessageBox "Warning: You have " & tilecount(TILE_FLAG) & " flags on your map. You will not be able to use your map if you have more than 256 flags.", vbOKOnly + vbExclamation, "Too many flags"
-210       End If
+    If tilecount(TILE_FLAG) > 256 Then
+        MessageBox "Warning: You have " & tilecount(TILE_FLAG) & " flags on your map. You will not be able to use your map if you have more than 256 flags.", vbOKOnly + vbExclamation, "Too many flags"
+    End If
 
-220       Call Hide_Details
+    Call Hide_Details
 End Sub
 
 
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-10        Erase tilecount
-          
-20        Unload Me
+    Erase tilecount
+    
+    Unload Me
 End Sub
 
 Sub SetLeftSelection(tilenr)
-      'Set left selection of the tileset on the given tilenr
-      'Eraser tile cannot be selected here
+'Set left selection of the tileset on the given tilenr
+'Eraser tile cannot be selected here
 
-10        If tilenr = 0 Then Exit Sub
-20        If tilenr >= 256 Then Exit Sub
+    If tilenr = 0 Then Exit Sub
+    If tilenr >= 256 Then Exit Sub
 
-          'move the left shape
-30        leftsel.Visible = True
-40        leftsel.Left = ((tilenr - 1) Mod 19) * TILEW
-50        leftsel.Top = ((tilenr - 1) \ 19) * TILEW
+    'move the left shape
+    leftsel.visible = True
+    leftsel.Left = ((tilenr - 1) Mod 19) * TILEW
+    leftsel.Top = ((tilenr - 1) \ 19) * TILEW
 
-          'if both shapes overlap make them white
-60        If ShapesOverlap(leftsel, rightsel) Then
-70            rightsel.BorderColor = vbWhite
-80        Else
-90            rightsel.BorderColor = vbYellow
-100       End If
+    'if both shapes overlap make them white
+    If ShapesOverlap(leftsel, rightsel) Then
+        rightsel.BorderColor = vbWhite
+    Else
+        rightsel.BorderColor = vbYellow
+    End If
 
 End Sub
 
 Sub SetRightSelection(tilenr)
-      'Set right selection of the tileset on the given tilenr
-      'Eraser tile cannot be selected here
+'Set right selection of the tileset on the given tilenr
+'Eraser tile cannot be selected here
 
-10        If tilenr = 0 Then Exit Sub
-20        If tilenr >= 256 Then Exit Sub
+    If tilenr = 0 Then Exit Sub
+    If tilenr >= 256 Then Exit Sub
 
-          'move the right shape
-30        rightsel.Visible = True
-40        rightsel.Left = ((tilenr - 1) Mod 19) * TILEW
-50        rightsel.Top = ((tilenr - 1) \ 19) * TILEW
+    'move the right shape
+    rightsel.visible = True
+    rightsel.Left = ((tilenr - 1) Mod 19) * TILEW
+    rightsel.Top = ((tilenr - 1) \ 19) * TILEW
 
-          'if both of them overlap make them white
-60        If ShapesOverlap(leftsel, rightsel) Then
-70            rightsel.BorderColor = vbWhite
-80        Else
-90            rightsel.BorderColor = vbYellow
-100       End If
+    'if both of them overlap make them white
+    If ShapesOverlap(leftsel, rightsel) Then
+        rightsel.BorderColor = vbWhite
+    Else
+        rightsel.BorderColor = vbYellow
+    End If
 
 End Sub
 
 Sub SetCurrentSelection(tilenr)
-      'Set right selection of the tileset on the given tilenr
-      'Eraser tile cannot be selected here
+'Set right selection of the tileset on the given tilenr
+'Eraser tile cannot be selected here
 
-10        If tilenr = 0 Then Exit Sub
-20        If tilenr >= 256 Then Exit Sub
+    If tilenr = 0 Then Exit Sub
+    If tilenr >= 256 Then Exit Sub
 
-          'move the blue shape
-30        cursel.Visible = True
-40        cursel.Left = ((tilenr - 1) Mod 19) * TILEW
-50        cursel.Top = ((tilenr - 1) \ 19) * TILEW
+    'move the blue shape
+    cursel.visible = True
+    cursel.Left = ((tilenr - 1) Mod 19) * TILEW
+    cursel.Top = ((tilenr - 1) \ 19) * TILEW
 
-60        tilesetcurrent = tilenr Mod 256
+    tilesetcurrent = tilenr Mod 256
 
-70        UpdatePreview
+    UpdatePreview
 
 End Sub
 
 Sub UpdatePreview()
-      'Updates the preview
-      'stretch the selected tile from the tileset into the large preview
-10        StretchBlt pictilesetlarge.hDC, shpcur.Left + 1, shpcur.Top + 1, shpcur.Width - 2, shpcur.Height - 2, pictileset.hDC, cursel.Left, cursel.Top, TILEW, TILEW, vbSrcCopy
+'Updates the preview
+'stretch the selected tile from the tileset into the large preview
+    StretchBlt pictilesetlarge.hDC, shpcur.Left + 1, shpcur.Top + 1, shpcur.width - 2, shpcur.height - 2, pictileset.hDC, cursel.Left, cursel.Top, TILEW, TILEW, vbSrcCopy
 
-          'update the count
-20        lblCount.Caption = tilecount(tilesetcurrent)
-      '    If Len(TilesetToolTipText(tilesetcurrent)) > 36 Then
-      '        lblTileNr.Caption = Mid(TilesetToolTipText(tilesetcurrent), 1, 36) & "..."
-      '    Else
-30            lblTileNr.Caption = TilesetToolTipText(tilesetcurrent)
-              
-      '    End If
+    'update the count
+    lblCount.Caption = tilecount(tilesetcurrent)
+'    If Len(TilesetToolTipText(tilesetcurrent)) > 36 Then
+'        lblTileNr.Caption = Mid(TilesetToolTipText(tilesetcurrent), 1, 36) & "..."
+'    Else
+        lblTileNr.Caption = TilesetToolTipText(tilesetcurrent)
+        
+'    End If
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-10        Set parent = Nothing
+    Set parent = Nothing
 End Sub
 
-Private Sub pictileset_MouseDown(button As Integer, Shift As Integer, X As Single, Y As Single)
-      'Selects the tile
-10        If Not (X > 0 And Y > 0 And X < pictileset.Width And Y < pictileset.Height) Then
-              'out of range, don't select it
-20            Exit Sub
-30        End If
+Private Sub pictileset_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
+'Selects the tile
+    If Not (X > 0 And Y > 0 And X < pictileset.width And Y < pictileset.height) Then
+        'out of range, don't select it
+        Exit Sub
+    End If
 
-          'set the selected tile
-40        If button = vbLeftButton Or button = vbRightButton Then
-50            SetCurrentSelection ((Y \ TILEW) * 19 + ((X \ TILEW) + 1))
-60        End If
+    'set the selected tile
+    If Button = vbLeftButton Or Button = vbRightButton Then
+        SetCurrentSelection ((Y \ TILEW) * 19 + ((X \ TILEW) + 1))
+    End If
 
 End Sub
 
-Private Sub pictileset_MouseMove(button As Integer, Shift As Integer, X As Single, Y As Single)
-      'Do the same as mousedown
-10        If button Then
-20            Call pictileset_MouseDown(button, Shift, X, Y)
-30        End If
+Private Sub pictileset_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+'Do the same as mousedown
+    If Button Then
+        Call pictileset_MouseDown(Button, Shift, X, Y)
+    End If
 
-          Dim tilenr As Integer
-40        tilenr = (Y \ TILEW) * 19 + ((X \ TILEW) + 1)
+    Dim tilenr As Integer
+    tilenr = (Y \ TILEW) * 19 + ((X \ TILEW) + 1)
 
-50        pictileset.tooltiptext = TilesetToolTipText(tilenr)
+    pictileset.tooltiptext = TilesetToolTipText(tilenr)
 
 End Sub
 
 Private Sub Show_Details()
-10        cmdDetails.Caption = "Hide Details"
+    cmdDetails.Caption = "Hide Details"
 
-20        frmCount.Width = 7590
-30        frmCount.Height = 4095
+    frmCount.width = 7590
+    frmCount.height = 4095
 
 
-40        showing_details = True
+    showing_details = True
 
-50        DoEvents
-60        Call SetCurrentSelection(tilesetcurrent)
+    DoEvents
+    Call SetCurrentSelection(tilesetcurrent)
 End Sub
 
 Private Sub Hide_Details()
-10        cmdDetails.Caption = "View Details"
+    cmdDetails.Caption = "View Details"
 
-20        frmCount.Width = 2835
-30        frmCount.Height = 2750
+    frmCount.width = 2835
+    frmCount.height = 2750
 
-40        showing_details = False
+    showing_details = False
 End Sub
 
 

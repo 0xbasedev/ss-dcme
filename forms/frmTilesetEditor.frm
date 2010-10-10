@@ -1130,7 +1130,7 @@ Dim sourceselection As area
 Dim ignoremouse As Boolean
 
 Private Sub cmdEditLeft_Click()
-    If EditImage(Me, pictileset.hDC, leftsel.Left, leftsel.Top, leftsel.width, leftsel.height, True) Then
+    If EditImage(Me, pictileset.hDc, leftsel.Left, leftsel.Top, leftsel.width, leftsel.Height, True) Then
         changed = True
         pictileset.Refresh
     End If
@@ -1162,7 +1162,7 @@ End Sub
 Private Sub cmdRevertAll_Click()
     If MessageBox("Are you sure you want to revert this tileset to its original state? All changes to it will be lost.", vbYesNo + vbQuestion, "Revert Tileset") = vbYes Then
         pictileset.Cls
-        BitBlt pictileset.hDC, 0, 0, pictileset.width, pictileset.height, pictileset_original.hDC, 0, 0, vbSrcCopy
+        BitBlt pictileset.hDc, 0, 0, pictileset.width, pictileset.Height, pictileset_original.hDc, 0, 0, vbSrcCopy
         pictileset.Refresh
     End If
 
@@ -1171,7 +1171,7 @@ Private Sub cmdRevertAll_Click()
 End Sub
 
 Private Sub cmdRevertTile_Click()
-    BitBlt pictileset.hDC, leftsel.Left, leftsel.Top, leftsel.width, leftsel.height, pictileset_original.hDC, leftsel.Left, leftsel.Top, vbSrcCopy
+    BitBlt pictileset.hDc, leftsel.Left, leftsel.Top, leftsel.width, leftsel.Height, pictileset_original.hDc, leftsel.Left, leftsel.Top, vbSrcCopy
     pictileset.Refresh
 End Sub
 
@@ -1200,12 +1200,12 @@ Private Sub Form_Load()
     PlaceRectangleAround shptarget, pictarget
 
     'place and size the scrollbars correctly
-    Vscr.Left = picSource.Left + picSource.width
-    Vscr.Top = picSource.Top
-    Vscr.height = picSource.height
-    Hscr.Left = picSource.Left
-    Hscr.Top = picSource.Top + picSource.height
-    Hscr.width = picSource.width
+    Vscr.Left = picsource.Left + picsource.width
+    Vscr.Top = picsource.Top
+    Vscr.Height = picsource.Height
+    Hscr.Left = picsource.Left
+    Hscr.Top = picsource.Top + picsource.Height
+    Hscr.width = picsource.width
 
 
     sourceloaded = False
@@ -1223,9 +1223,9 @@ Private Sub Form_Load()
         Call LoadSource(ret)
     End If
 
-    BitBlt pictileset_original.hDC, 0, 0, pictileset.width, pictileset.height, frmGeneral.cTileset.Pic_Tileset.hDC, 0, 0, vbSrcCopy
+    BitBlt pictileset_original.hDc, 0, 0, pictileset.width, pictileset.Height, frmGeneral.cTileset.Pic_Tileset.hDc, 0, 0, vbSrcCopy
     pictileset_original.Refresh
-    BitBlt pictileset.hDC, 0, 0, pictileset.width, pictileset.height, pictileset_original.hDC, 0, 0, vbSrcCopy
+    BitBlt pictileset.hDc, 0, 0, pictileset.width, pictileset.Height, pictileset_original.hDc, 0, 0, vbSrcCopy
     pictileset.Refresh
 
     Call DrawSourcePreview
@@ -1286,6 +1286,8 @@ Private Sub frmTile_MouseMove(Button As Integer, Shift As Integer, X As Single, 
     SetStatus "Generate walltiles from a vertical tile and drag it into your tileset."
 End Sub
 
+
+
 Private Sub lblBackground_Click()
     background = GetColor(Me, lblBackground.BackColor, True, True)
     UpdateBackground
@@ -1299,7 +1301,7 @@ End Sub
 Private Sub UpdateBackground()
     lblBackground.BackColor = background
     picsource_original.BackColor = background
-    picSource.BackColor = background
+    picsource.BackColor = background
     pictilepreviewleft.BackColor = background
     picsrcpreview.BackColor = background
     pictarget.BackColor = background
@@ -1307,7 +1309,7 @@ End Sub
 
 Private Sub RedrawPreviews()
 
-    Call DrawTilePreview(picSource, srcsel, picsrcpreview)
+    Call DrawTilePreview(picsource, srcsel, picsrcpreview)
     Call DrawTilePreview(pictileset, leftsel, pictilepreviewleft)
     Call PlaceCross(0, 0)
 End Sub
@@ -1320,9 +1322,9 @@ Private Sub mnuDrop_Click()
     picsource_original.Cls
 
     picsource_original.width = 304
-    picsource_original.height = 160
+    picsource_original.Height = 160
     picsource_original.Refresh
-    picSource.Cls
+    picsource.Cls
     sourceloaded = False
     sourcepath = ""
     Call DrawSourcePreview
@@ -1341,7 +1343,7 @@ End Sub
 
 Private Sub mnuFitToTiles_Click()
     picsource_original.width = picsource_original.width + (TILEW - (picsource_original.width Mod TILEW)) Mod TILEW
-    picsource_original.height = picsource_original.height + (TILEW - (picsource_original.height Mod TILEW)) Mod TILEW
+    picsource_original.Height = picsource_original.Height + (TILEW - (picsource_original.Height Mod TILEW)) Mod TILEW
 
     Call DrawSourcePreview
 End Sub
@@ -1429,13 +1431,13 @@ Private Sub picgenWallTile_MouseDown(Button As Integer, Shift As Integer, X As S
 
     If Button Then
         picdragdrop.width = picgenWallTile.width
-        picdragdrop.height = picgenWallTile.height
+        picdragdrop.Height = picgenWallTile.Height
         dragsel.width = picdragdrop.width
-        dragsel.height = picdragdrop.height
+        dragsel.Height = picdragdrop.Height
         picdragdrop.Left = X + picgenWallTile.Left - picgenWallTile.width \ 2
-        picdragdrop.Top = Y + picgenWallTile.Top - picgenWallTile.height \ 2
+        picdragdrop.Top = Y + picgenWallTile.Top - picgenWallTile.Height \ 2
         picdragdrop.Cls
-        BitBlt picdragdrop.hDC, 0, 0, picdragdrop.width, picdragdrop.height, picgenWallTile.hDC, 0, 0, vbSrcCopy
+        BitBlt picdragdrop.hDc, 0, 0, picdragdrop.width, picdragdrop.Height, picgenWallTile.hDc, 0, 0, vbSrcCopy
         picdragdrop.Refresh
         picdragdrop.visible = True
     End If
@@ -1453,14 +1455,14 @@ Private Sub picgenWallTile_MouseMove(Button As Integer, Shift As Integer, X As S
         dropY = Y + picgenWallTile.Top
     
         If dropX >= pictileset.Left And dropX <= pictileset.Left + pictileset.width _
-           And dropY >= pictileset.Top And dropY <= pictileset.Top + pictileset.height Then
+           And dropY >= pictileset.Top And dropY <= pictileset.Top + pictileset.Height Then
             'We are dragging the source over the tileset
             'We must snap it on tiles
             picdragdrop.Left = ((dropX - (picdragdrop.width \ 2) - pictileset.Left) \ TILEW) * TILEW + pictileset.Left
-            picdragdrop.Top = ((dropY - (picdragdrop.height \ 2) - pictileset.Top) \ TILEW) * TILEW + pictileset.Top
+            picdragdrop.Top = ((dropY - (picdragdrop.Height \ 2) - pictileset.Top) \ TILEW) * TILEW + pictileset.Top
         Else
             picdragdrop.Left = dropX - (picdragdrop.width \ 2)
-            picdragdrop.Top = dropY - (picdragdrop.height \ 2)
+            picdragdrop.Top = dropY - (picdragdrop.Height \ 2)
         End If
     End If
 End Sub
@@ -1470,9 +1472,9 @@ Private Sub picgenWallTile_MouseUp(Button As Integer, Shift As Integer, X As Sin
 
     If Button Then
         If X + picgenWallTile.Left >= pictileset.Left And X + picgenWallTile.Left <= pictileset.Left + pictileset.width _
-           And Y + picgenWallTile.Top >= pictileset.Top And Y + picgenWallTile.Top <= pictileset.Top + pictileset.height Then
+           And Y + picgenWallTile.Top >= pictileset.Top And Y + picgenWallTile.Top <= pictileset.Top + pictileset.Height Then
             'Tiles can be dropped on tileset
-            BitBlt pictileset.hDC, picdragdrop.Left - pictileset.Left, picdragdrop.Top - pictileset.Top, picdragdrop.width, picdragdrop.height, picdragdrop.hDC, 0, 0, vbSrcCopy
+            BitBlt pictileset.hDc, picdragdrop.Left - pictileset.Left, picdragdrop.Top - pictileset.Top, picdragdrop.width, picdragdrop.Height, picdragdrop.hDc, 0, 0, vbSrcCopy
             pictileset.Refresh
             changed = True
         End If
@@ -1486,10 +1488,10 @@ Private Sub picsource_MouseUp(Button As Integer, Shift As Integer, X As Single, 
     If ignoremouse Then Exit Sub
 
     If Button = vbRightButton Then
-        If X + picSource.Left >= pictileset.Left And X + picSource.Left <= pictileset.Left + pictileset.width _
-           And Y + picSource.Top >= pictileset.Top And Y + picSource.Top <= pictileset.Top + pictileset.height Then
+        If X + picsource.Left >= pictileset.Left And X + picsource.Left <= pictileset.Left + pictileset.width _
+           And Y + picsource.Top >= pictileset.Top And Y + picsource.Top <= pictileset.Top + pictileset.Height Then
             'Tiles can be dropped on tileset
-            BitBlt pictileset.hDC, picdragdrop.Left - pictileset.Left, picdragdrop.Top - pictileset.Top, picdragdrop.width, picdragdrop.height, picdragdrop.hDC, 0, 0, vbSrcCopy
+            BitBlt pictileset.hDc, picdragdrop.Left - pictileset.Left, picdragdrop.Top - pictileset.Top, picdragdrop.width, picdragdrop.Height, picdragdrop.hDc, 0, 0, vbSrcCopy
             pictileset.Refresh
             changed = True
         End If
@@ -1519,10 +1521,10 @@ Private Sub ToolbarTop_ButtonClick(ByVal Button As MSComctlLib.Button)
         Call mnuSave_Click
         
     Case "Mirror"
-        Call FlipH(pictileset, leftsel.Left, leftsel.width, leftsel.Top, leftsel.height)
+        Call FlipH(pictileset, leftsel.Left, leftsel.width, leftsel.Top, leftsel.Height)
     
     Case "Flip"
-        Call FlipV(pictileset, leftsel.Left, leftsel.width, leftsel.Top, leftsel.height)
+        Call FlipV(pictileset, leftsel.Left, leftsel.width, leftsel.Top, leftsel.Height)
     End Select
 End Sub
 
@@ -1531,13 +1533,13 @@ Private Sub txtSnap_Change()
 End Sub
 
 
-Private Sub Vscr_Change()
+Private Sub Vscr_Scroll()
     Call DrawSourcePreview
 
 End Sub
 
 
-Private Sub Hscr_Change()
+Private Sub Hscr_Scroll()
     Call DrawSourcePreview
 End Sub
 
@@ -1551,13 +1553,13 @@ Private Sub picsource_MouseDown(Button As Integer, Shift As Integer, X As Single
         Call picsource_MouseMove(Button, Shift, X, Y)
     ElseIf Button = vbRightButton Then
         picdragdrop.width = srcsel.width
-        picdragdrop.height = srcsel.height
+        picdragdrop.Height = srcsel.Height
         dragsel.width = picdragdrop.width
-        dragsel.height = picdragdrop.height
-        picdragdrop.Left = X + picSource.Left - picSource.width \ 2
-        picdragdrop.Top = Y + picSource.Top - picSource.height \ 2
+        dragsel.Height = picdragdrop.Height
+        picdragdrop.Left = X + picsource.Left - picsource.width \ 2
+        picdragdrop.Top = Y + picsource.Top - picsource.Height \ 2
         picdragdrop.Cls
-        BitBlt picdragdrop.hDC, 0, 0, picdragdrop.width, picdragdrop.height, picsource_original.hDC, srcsel.Left + Hscr.value, srcsel.Top + Vscr.value, vbSrcCopy
+        BitBlt picdragdrop.hDc, 0, 0, picdragdrop.width, picdragdrop.Height, picsource_original.hDc, srcsel.Left + Hscr.value, srcsel.Top + Vscr.value, vbSrcCopy
         picdragdrop.Refresh
         picdragdrop.visible = True
     End If
@@ -1591,24 +1593,24 @@ Private Sub picsource_MouseMove(Button As Integer, Shift As Integer, X As Single
         Dim dropX As Single
         Dim dropY As Single
 
-        dropX = X + picSource.Left
-        dropY = Y + picSource.Top
+        dropX = X + picsource.Left
+        dropY = Y + picsource.Top
 
         If dropX >= pictileset.Left And dropX <= pictileset.Left + pictileset.width _
-           And dropY >= pictileset.Top And dropY <= pictileset.Top + pictileset.height Then
+           And dropY >= pictileset.Top And dropY <= pictileset.Top + pictileset.Height Then
             'We are dragging the source over the tileset
             'We must snap it on tiles
             picdragdrop.Left = ((dropX - (picdragdrop.width \ 2) - pictileset.Left) \ TILEW) * TILEW + pictileset.Left
-            picdragdrop.Top = ((dropY - (picdragdrop.height \ 2) - pictileset.Top) \ TILEW) * TILEW + pictileset.Top
+            picdragdrop.Top = ((dropY - (picdragdrop.Height \ 2) - pictileset.Top) \ TILEW) * TILEW + pictileset.Top
         Else
             picdragdrop.Left = dropX - (picdragdrop.width \ 2)
-            picdragdrop.Top = dropY - (picdragdrop.height \ 2)
+            picdragdrop.Top = dropY - (picdragdrop.Height \ 2)
         End If
         SetStatus "Drop these tiles on your tileset to use them."
     Else
         Exit Sub
     End If
-    Call DrawTilePreview(picSource, srcsel, picsrcpreview)
+    Call DrawTilePreview(picsource, srcsel, picsrcpreview)
 End Sub
 
 Private Sub pictileset_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
@@ -1617,22 +1619,22 @@ Private Sub pictileset_MouseDown(Button As Integer, Shift As Integer, X As Singl
     If ((Shift = 2 Or Shift = 3 Or Shift = 6) Or Button = vbRightButton) Then
         'Start drag and drop
         If X >= leftsel.Left And X <= leftsel.Left + leftsel.width _
-           And Y >= leftsel.Top And Y <= leftsel.Top + leftsel.height Then
+           And Y >= leftsel.Top And Y <= leftsel.Top + leftsel.Height Then
 
 
             dragging = True
             picdragdrop.width = leftsel.width
-            picdragdrop.height = leftsel.height
+            picdragdrop.Height = leftsel.Height
             dragsel.width = picdragdrop.width
-            dragsel.height = picdragdrop.height
+            dragsel.Height = picdragdrop.Height
             picdragdrop.Cls
-            BitBlt picdragdrop.hDC, 0, 0, picdragdrop.width, picdragdrop.height, pictileset.hDC, leftsel.Left + Hscr.value, leftsel.Top + Vscr.value, vbSrcCopy
+            BitBlt picdragdrop.hDc, 0, 0, picdragdrop.width, picdragdrop.Height, pictileset.hDc, leftsel.Left + Hscr.value, leftsel.Top + Vscr.value, vbSrcCopy
             picdragdrop.Refresh
 
             pictemp.Cls
             pictemp.width = picdragdrop.width
-            pictemp.height = picdragdrop.height
-            BitBlt pictemp.hDC, 0, 0, pictemp.width, pictemp.height, picdragdrop.hDC, 0, 0, vbSrcCopy
+            pictemp.Height = picdragdrop.Height
+            BitBlt pictemp.hDc, 0, 0, pictemp.width, pictemp.Height, picdragdrop.hDc, 0, 0, vbSrcCopy
             pictemp.Refresh
 
             Call pictileset_MouseMove(Button, Shift, X, Y)
@@ -1653,18 +1655,18 @@ Private Sub pictileset_MouseMove(Button As Integer, Shift As Integer, X As Singl
         'Start drag and drop on tileset
 
         If X >= 0 And X <= pictileset.width _
-           And Y >= 0 And Y <= pictileset.height Then
+           And Y >= 0 And Y <= pictileset.Height Then
             'We are dragging the source over the tileset
             'We must snap it on tiles
             picdragdrop.visible = True
             Dim tmpX As Integer
             Dim tmpY As Integer
             tmpX = ((X - (picdragdrop.width \ 2)) \ TILEW) * TILEW
-            tmpY = ((Y - (picdragdrop.height \ 2)) \ TILEW) * TILEW
+            tmpY = ((Y - (picdragdrop.Height \ 2)) \ TILEW) * TILEW
             If tmpX <= 0 Then tmpX = 0
             If tmpX + picdragdrop.width >= pictileset.width Then tmpX = pictileset.width - picdragdrop.width
             If tmpY <= 0 Then tmpY = 0
-            If tmpY + picdragdrop.height >= pictileset.height Then tmpY = pictileset.height - picdragdrop.height
+            If tmpY + picdragdrop.Height >= pictileset.Height Then tmpY = pictileset.Height - picdragdrop.Height
 
 
             picdragdrop.Left = tmpX + pictileset.Left
@@ -1672,10 +1674,10 @@ Private Sub pictileset_MouseMove(Button As Integer, Shift As Integer, X As Singl
 
             If Not (Shift = 2 Or Shift = 3 Or Shift = 6) Then
                 'preview the swapped tiles
-                BitBlt pictileset.hDC, leftsel.Left, leftsel.Top, picdragdrop.width, picdragdrop.height, pictileset.hDC, picdragdrop.Left - pictileset.Left, picdragdrop.Top - pictileset.Top, vbSrcCopy
+                BitBlt pictileset.hDc, leftsel.Left, leftsel.Top, picdragdrop.width, picdragdrop.Height, pictileset.hDc, picdragdrop.Left - pictileset.Left, picdragdrop.Top - pictileset.Top, vbSrcCopy
             Else
                 'restore original tiles
-                BitBlt pictileset.hDC, leftsel.Left, leftsel.Top, pictemp.width, pictemp.height, pictemp.hDC, 0, 0, vbSrcCopy
+                BitBlt pictileset.hDc, leftsel.Left, leftsel.Top, pictemp.width, pictemp.Height, pictemp.hDc, 0, 0, vbSrcCopy
             End If
             pictileset.Refresh
         Else
@@ -1698,14 +1700,14 @@ Private Sub pictileset_MouseUp(Button As Integer, Shift As Integer, X As Single,
 
     If dragging = True Then
         If X >= 0 And X <= pictileset.width _
-           And Y >= 0 And Y <= pictileset.height Then
+           And Y >= 0 And Y <= pictileset.Height Then
             'Tiles can be dropped on tileset
 
             'Swap tiles, unless holding ctrl
             If Not (Shift = 2 Or Shift = 3 Or Shift = 6) Then
-                BitBlt pictileset.hDC, leftsel.Left, leftsel.Top, picdragdrop.width, picdragdrop.height, pictileset.hDC, picdragdrop.Left - pictileset.Left, picdragdrop.Top - pictileset.Top, vbSrcCopy
+                BitBlt pictileset.hDc, leftsel.Left, leftsel.Top, picdragdrop.width, picdragdrop.Height, pictileset.hDc, picdragdrop.Left - pictileset.Left, picdragdrop.Top - pictileset.Top, vbSrcCopy
             End If
-            BitBlt pictileset.hDC, picdragdrop.Left - pictileset.Left, picdragdrop.Top - pictileset.Top, picdragdrop.width, picdragdrop.height, picdragdrop.hDC, 0, 0, vbSrcCopy
+            BitBlt pictileset.hDc, picdragdrop.Left - pictileset.Left, picdragdrop.Top - pictileset.Top, picdragdrop.width, picdragdrop.Height, picdragdrop.hDc, 0, 0, vbSrcCopy
             pictileset.Refresh
 
             leftsel.Left = picdragdrop.Left - pictileset.Left
@@ -1730,7 +1732,7 @@ Private Sub MoveTilesetShape(X As Single, Y As Single)
     If X < 0 Then X = 0
     If X > pictileset.width Then X = pictileset.width
     If Y < 0 Then Y = 0
-    If Y > pictileset.height Then Y = pictileset.height
+    If Y > pictileset.Height Then Y = pictileset.Height
 
     If startdragX = -1 Or startdragY = -1 Then
         Left = (X \ TILEW) * TILEW
@@ -1778,7 +1780,7 @@ Private Sub MoveTilesetShape(X As Single, Y As Single)
         Top = Top + TILEW
     Loop
 
-    Do While Bottom > pictileset.height
+    Do While Bottom > pictileset.Height
         Bottom = Bottom - TILEW
     Loop
 
@@ -1795,7 +1797,7 @@ Private Sub MoveTilesetShape(X As Single, Y As Single)
         If Top < TILEW Then
             Top = 0
         Else
-            Top = pictileset.height - TILEW
+            Top = pictileset.Height - TILEW
         End If
         Bottom = Top + TILEW
     End If
@@ -1803,11 +1805,11 @@ Private Sub MoveTilesetShape(X As Single, Y As Single)
     If leftsel.Left <> Left Then leftsel.Left = Left
     If leftsel.Top <> Top Then leftsel.Top = Top
     If leftsel.width <> Right - Left Then leftsel.width = Right - Left
-    If leftsel.height <> Bottom - Top Then leftsel.height = Bottom - Top
+    If leftsel.Height <> Bottom - Top Then leftsel.Height = Bottom - Top
 
 
 
-    lblLeft.Caption = leftsel.width \ TILEW & " " & Chr(215) & " " & leftsel.height \ TILEW
+    lblLeft.Caption = leftsel.width \ TILEW & " " & Chr(215) & " " & leftsel.Height \ TILEW
 
 End Sub
 
@@ -1829,7 +1831,7 @@ Private Sub MoveSourceShape(X As Single, Y As Single)
 
 
     'Scroll if needed
-    Call scroll(picSource, Hscr, Vscr, X, Y)
+    Call scroll(picsource, Hscr, Vscr, X, Y)
 
     realX = X + Hscr.value
     realY = Y + Vscr.value
@@ -1882,7 +1884,7 @@ Private Sub MoveSourceShape(X As Single, Y As Single)
         Top = Top + TILEW
     Loop
 
-    Do While Bottom > picsource_original.height
+    Do While Bottom > picsource_original.Height
         Bottom = Bottom - TILEW
     Loop
 
@@ -1899,7 +1901,7 @@ Private Sub MoveSourceShape(X As Single, Y As Single)
         If Top < TILEW Then
             Top = 0
         Else
-            Top = picsource_original.height - TILEW
+            Top = picsource_original.Height - TILEW
         End If
         Bottom = Top + TILEW
     End If
@@ -1917,7 +1919,7 @@ Private Sub MoveSourceShape(X As Single, Y As Single)
     If srcsel.Left <> Left Then srcsel.Left = Left
     If srcsel.Top <> Top Then srcsel.Top = Top
     If srcsel.width <> Right - Left Then srcsel.width = Right - Left
-    If srcsel.height <> Bottom - Top Then srcsel.height = Bottom - Top
+    If srcsel.Height <> Bottom - Top Then srcsel.Height = Bottom - Top
 
     If lblCoord1.Caption <> "Top-left: " & sourceselection.Left & ", " & sourceselection.Top Then
         lblCoord1.Caption = "Top-left: " & sourceselection.Left & ", " & sourceselection.Top
@@ -1926,7 +1928,7 @@ Private Sub MoveSourceShape(X As Single, Y As Single)
         lblCoord2.Caption = "Bottom-right: " & sourceselection.Right & ", " & sourceselection.Bottom
     End If
 
-    lblSrc.Caption = srcsel.width \ TILEW & " " & Chr(215) & " " & srcsel.height \ TILEW
+    lblSrc.Caption = srcsel.width \ TILEW & " " & Chr(215) & " " & srcsel.Height \ TILEW
 End Sub
 
 'Private Sub Swap(X As Single, Y As Single)
@@ -1937,9 +1939,9 @@ End Sub
 '
 'End Sub
 
-Private Sub DrawTilePreview(ByRef srcPic As PictureBox, ByRef srcshape As shape, ByRef destpic As PictureBox)
+Private Sub DrawTilePreview(ByRef srcPic As PictureBox, ByRef srcshape As Shape, ByRef destPic As PictureBox)
 
-    Call DrawImagePreview(srcPic, srcshape, destpic, Shape1, destpic.BackColor)
+    Call DrawImagePreview(srcPic, srcshape, destPic, Shape1, destPic.BackColor)
     
 '    destPic.Cls
 '    If srcshape.Width > srcshape.Height Then
@@ -1976,31 +1978,31 @@ Private Sub DrawTilePreview(ByRef srcPic As PictureBox, ByRef srcshape As shape,
 End Sub
 
 Private Sub DrawSourcePreview()
-    picSource.Cls
+    picsource.Cls
 
     If picsource_original.width < 304 Then
-        picSource.width = picsource_original.width
+        picsource.width = picsource_original.width
     Else
-        picSource.width = 304
+        picsource.width = 304
     End If
-    If picsource_original.height < 160 Then
-        picSource.height = picsource_original.height
+    If picsource_original.Height < 160 Then
+        picsource.Height = picsource_original.Height
     Else
-        picSource.height = 160
+        picsource.Height = 160
     End If
 
-    If picsource_original.width > picSource.width Then
+    If picsource_original.width > picsource.width Then
         Hscr.visible = True
         Hscr.Min = 0
-        Hscr.Max = picsource_original.width - picSource.width
+        Hscr.Max = picsource_original.width - picsource.width
     Else
         Hscr.value = 0
         Hscr.visible = False
     End If
-    If picsource_original.height > picSource.height Then
+    If picsource_original.Height > picsource.Height Then
         Vscr.visible = True
         Vscr.Min = 0
-        Vscr.Max = picsource_original.height - picSource.height
+        Vscr.Max = picsource_original.Height - picsource.Height
     Else
         Vscr.value = 0
         Vscr.visible = False
@@ -2009,19 +2011,19 @@ Private Sub DrawSourcePreview()
     If sourceloaded = True Then
 
 
-        picSource.BorderStyle = 0
+        picsource.BorderStyle = 0
 
-        lblSource.Caption = "Source Image - " & GetFileTitle(sourcepath) & " (" & picsource_original.width & " " & Chr(215) & " " & picsource_original.height & ")"
+        lblSource.Caption = "Source Image - " & GetFileTitle(sourcepath) & " (" & picsource_original.width & " " & Chr(215) & " " & picsource_original.Height & ")"
         lblSourcePath.Caption = sourcepath
 
-        If picsource_original.width = 304 And picsource_original.height = 160 Then
+        If picsource_original.width = 304 And picsource_original.Height = 160 Then
             'consider it is a tileset, set the snap automatically to tile-snap
             txtSnap.Text = "16"
         End If
 
 
 
-        If picsource_original.width Mod TILEW <> 0 Or picsource_original.height Mod TILEW <> 0 Then
+        If picsource_original.width Mod TILEW <> 0 Or picsource_original.Height Mod TILEW <> 0 Then
             mnuFitToTiles.Enabled = True
         Else
             mnuFitToTiles.Enabled = False
@@ -2031,14 +2033,14 @@ Private Sub DrawSourcePreview()
         srcsel.Left = sourceselection.Left - Hscr.value
         srcsel.Top = sourceselection.Top - Vscr.value
         srcsel.width = sourceselection.Right - sourceselection.Left
-        srcsel.height = sourceselection.Bottom - sourceselection.Top
+        srcsel.Height = sourceselection.Bottom - sourceselection.Top
 
         srcsel.visible = True
 
 
-        BitBlt picSource.hDC, 0, 0, picSource.width, picSource.height, picsource_original.hDC, Hscr.value, Vscr.value, vbSrcCopy
+        BitBlt picsource.hDc, 0, 0, picsource.width, picsource.Height, picsource_original.hDc, Hscr.value, Vscr.value, vbSrcCopy
     Else
-        picSource.BorderStyle = 1
+        picsource.BorderStyle = 1
         lblSource.Caption = "No Source Image Loaded"
         lblSourcePath.Caption = ""
 
@@ -2050,11 +2052,11 @@ Private Sub DrawSourcePreview()
         Hscr.visible = False
         Vscr.visible = False
 
-        picSource.Cls
+        picsource.Cls
 
         mnuFitToTiles.Enabled = False
     End If
-    picSource.Refresh
+    picsource.Refresh
 End Sub
 
 Friend Sub InitLeftSelection(selection As TilesetSelection)
@@ -2075,10 +2077,10 @@ Private Sub SetLeftSelection(tilenr As Integer, sizeX As Integer, sizeY As Integ
     leftsel.Top = ((tilenr - 1) \ 19) * TILEW
 
     leftsel.width = TILEW * sizeX
-    leftsel.height = TILEW * sizeY
+    leftsel.Height = TILEW * sizeY
 
 
-    lblLeft.Caption = leftsel.width \ TILEW & " " & Chr(215) & " " & leftsel.height \ TILEW
+    lblLeft.Caption = leftsel.width \ TILEW & " " & Chr(215) & " " & leftsel.Height \ TILEW
 
     'Update the tileset preview
     Call DrawTilePreview(pictileset, leftsel, pictilepreviewleft)
@@ -2093,7 +2095,7 @@ Private Sub scroll(ByRef curpic As PictureBox, ByRef HScroll As HScrollBar, ByRe
             Hscr.value = Hscr.Min
         End If
     End If
-    If X > picSource.width Then
+    If X > picsource.width Then
         If Hscr.value + 1 < Hscr.Max Then
             Hscr.value = Hscr.value + 1
         Else
@@ -2107,7 +2109,7 @@ Private Sub scroll(ByRef curpic As PictureBox, ByRef HScroll As HScrollBar, ByRe
             Vscr.value = Vscr.Min
         End If
     End If
-    If Y > picSource.height Then
+    If Y > picsource.Height Then
         If Vscr.value + 1 < Vscr.Max Then
             Vscr.value = Vscr.value + 1
         Else
@@ -2141,7 +2143,7 @@ Private Sub PlaceCross(refx As Single, refy As Single)
         'no matter which way selection goes
 
         If X + Hscr.value + TILEW > picsource_original.width Then X = picsource_original.width - TILEW - Hscr.value
-        If Y + Vscr.value + TILEW > picsource_original.height Then Y = picsource_original.height - TILEW - Vscr.value
+        If Y + Vscr.value + TILEW > picsource_original.Height Then Y = picsource_original.Height - TILEW - Vscr.value
 
         lineV.visible = False
         lineH.visible = False
@@ -2153,8 +2155,8 @@ Private Sub PlaceCross(refx As Single, refy As Single)
         shpcursor.Top = Y
 
         pictarget.Cls
-        SetStretchBltMode pictarget.hDC, COLORONCOLOR
-        StretchBlt pictarget.hDC, 0, 0, pictarget.width, pictarget.height, picsource_original.hDC, X + Hscr.value, Y + Vscr.value, TILEW, TILEW, vbSrcCopy
+        SetStretchBltMode pictarget.hDc, COLORONCOLOR
+        StretchBlt pictarget.hDc, 0, 0, pictarget.width, pictarget.Height, picsource_original.hDc, X + Hscr.value, Y + Vscr.value, TILEW, TILEW, vbSrcCopy
         pictarget.Refresh
     Else
         shpcursor.visible = False
@@ -2176,8 +2178,8 @@ Private Sub PlaceCross(refx As Single, refy As Single)
         Dim zoomlevel As Integer
         zoomlevel = 8
         pictarget.Cls
-        SetStretchBltMode pictarget.hDC, COLORONCOLOR
-        StretchBlt pictarget.hDC, 0, 0, pictarget.width, pictarget.height, picsource_original.hDC, X + Hscr.value - zoomlevel / 2, Y + Vscr.value - zoomlevel / 2, zoomlevel, zoomlevel, vbSrcCopy
+        SetStretchBltMode pictarget.hDc, COLORONCOLOR
+        StretchBlt pictarget.hDc, 0, 0, pictarget.width, pictarget.Height, picsource_original.hDc, X + Hscr.value - zoomlevel / 2, Y + Vscr.value - zoomlevel / 2, zoomlevel, zoomlevel, vbSrcCopy
         pictarget.Refresh
     End If
 
@@ -2186,11 +2188,11 @@ Private Sub PlaceCross(refx As Single, refy As Single)
 
 End Sub
 
-Private Sub PlaceRectangleAround(ByRef refshape As shape, ByRef refpic As PictureBox)
+Private Sub PlaceRectangleAround(ByRef refshape As Shape, ByRef refpic As PictureBox)
     refshape.Left = refpic.Left - 1
     refshape.Top = refpic.Top - 1
     refshape.width = refpic.width + 2
-    refshape.height = refpic.height + 2
+    refshape.Height = refpic.Height + 2
 End Sub
 
 
@@ -2230,7 +2232,7 @@ Private Function SaveTileset(p As String)
 
     pictileset.Refresh
     pictileset_original.Cls
-    BitBlt pictileset_original.hDC, 0, 0, pictileset.width, pictileset.height, pictileset.hDC, 0, 0, vbSrcCopy
+    BitBlt pictileset_original.hDc, 0, 0, pictileset.width, pictileset.Height, pictileset.hDc, 0, 0, vbSrcCopy
     pictileset_original.Refresh
 
 
@@ -2310,14 +2312,14 @@ End Sub
 Private Sub LoadTileset(path As String)
     pictileset_original.Cls
     If path = "" Then
-        BitBlt pictileset_original.hDC, 0, 0, pictileset.width, pictileset.height, frmGeneral.picdefaulttileset.hDC, 0, 0, vbSrcCopy
+        BitBlt pictileset_original.hDc, 0, 0, pictileset.width, pictileset.Height, frmGeneral.picdefaulttileset.hDc, 0, 0, vbSrcCopy
     Else
         pictileset_original.Picture = LoadPicture(path)
     End If
     pictileset_original.Refresh
 
     pictileset.Cls
-    BitBlt pictileset.hDC, 0, 0, pictileset.width, pictileset.height, pictileset_original.hDC, 0, 0, vbSrcCopy
+    BitBlt pictileset.hDc, 0, 0, pictileset.width, pictileset.Height, pictileset_original.hDc, 0, 0, vbSrcCopy
 
     pictileset.Refresh
 
@@ -2338,7 +2340,7 @@ Private Sub LoadSource(path As String)
     srcsel.Left = 0
     srcsel.Top = 0
     srcsel.width = TILEW
-    srcsel.height = TILEW
+    srcsel.Height = TILEW
 
     sourceselection.Left = 0
     sourceselection.Right = TILEW
@@ -2347,7 +2349,7 @@ Private Sub LoadSource(path As String)
 
     Call DrawSourcePreview
 
-    Call DrawTilePreview(picSource, srcsel, picsrcpreview)
+    Call DrawTilePreview(picsource, srcsel, picsrcpreview)
     pictarget.Cls
     pictarget.Refresh
 
@@ -2378,7 +2380,7 @@ Private Sub ApplyTilesetToMap(path As String)
     Call frmGeneral.ApplyEditedTileset(path)
 End Sub
 
-Private Sub RotateCW(ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long)
+Private Sub RotateCW(ByVal hDc As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long)
     'Square rotation; width = height
     Dim i As Long, j As Long, halfw As Long
     Dim tmp As Long
@@ -2391,19 +2393,19 @@ Private Sub RotateCW(ByVal hDC As Long, ByVal X As Long, ByVal Y As Long, ByVal 
     For i = 0 To halfw
         For j = 0 To halfw
             'Store top-left
-            tmp = GetPixel(hDC, X + i, Y + j)
+            tmp = GetPixel(hDc, X + i, Y + j)
             
             'Set top-left
-            Call SetPixel(hDC, X + i, Y + j, GetPixel(hDC, X + j, Ymax - i))
+            Call SetPixel(hDc, X + i, Y + j, GetPixel(hDc, X + j, Ymax - i))
             
             'Set bottom-left
-            Call SetPixel(hDC, X + j, Ymax - i, GetPixel(hDC, Xmax - i, Ymax - j))
+            Call SetPixel(hDc, X + j, Ymax - i, GetPixel(hDc, Xmax - i, Ymax - j))
             
             'Set bottom-right
-            Call SetPixel(hDC, Xmax - i, Ymax - j, GetPixel(hDC, Xmax - j, Y + i))
+            Call SetPixel(hDc, Xmax - i, Ymax - j, GetPixel(hDc, Xmax - j, Y + i))
             
             'Set top-right
-            Call SetPixel(hDC, Xmax - j, Y + i, tmp)
+            Call SetPixel(hDc, Xmax - j, Y + i, tmp)
             
         Next
     Next
@@ -2419,8 +2421,8 @@ Sub GenerateWallTile()
     
     picgenWallTile.Cls
     
-    srchDC = pictileset.hDC
-    myDC = picgenWallTile.hDC
+    srchDC = pictileset.hDc
+    myDC = picgenWallTile.hDc
     
     'Copy vertical tile
     BitBlt myDC, 0, TILEH * 1, TILEW, TILEH, srchDC, leftsel.Left, leftsel.Top, vbSrcCopy
@@ -2519,16 +2521,16 @@ End Sub
 
 
 
-Private Sub FlipV(ByRef srcPic As PictureBox, Left As Integer, width As Integer, Top As Integer, height As Integer)
+Private Sub FlipV(ByRef srcPic As PictureBox, Left As Integer, width As Integer, Top As Integer, Height As Integer)
     Dim i As Integer
     
     pictemp.width = width
-    pictemp.height = height
+    pictemp.Height = Height
     
-    BitBlt pictemp.hDC, 0, 0, pictemp.width, pictemp.height, srcPic.hDC, Left, Top, vbSrcCopy
+    BitBlt pictemp.hDc, 0, 0, pictemp.width, pictemp.Height, srcPic.hDc, Left, Top, vbSrcCopy
     pictemp.Refresh
-    For i = 0 To height - 1
-        BitBlt srcPic.hDC, Left, Top + i, pictemp.width, 1, pictemp.hDC, 0, pictemp.height - 1 - i, vbSrcCopy
+    For i = 0 To Height - 1
+        BitBlt srcPic.hDc, Left, Top + i, pictemp.width, 1, pictemp.hDc, 0, pictemp.Height - 1 - i, vbSrcCopy
     Next
     
     srcPic.Refresh
@@ -2536,16 +2538,16 @@ Private Sub FlipV(ByRef srcPic As PictureBox, Left As Integer, width As Integer,
     
 End Sub
 
-Private Sub FlipH(ByRef srcPic As PictureBox, Left As Integer, width As Integer, Top As Integer, height As Integer)
+Private Sub FlipH(ByRef srcPic As PictureBox, Left As Integer, width As Integer, Top As Integer, Height As Integer)
     Dim i As Integer
     
     pictemp.width = width
-    pictemp.height = height
+    pictemp.Height = Height
     
-    BitBlt pictemp.hDC, 0, 0, pictemp.width, pictemp.height, srcPic.hDC, Left, Top, vbSrcCopy
+    BitBlt pictemp.hDc, 0, 0, pictemp.width, pictemp.Height, srcPic.hDc, Left, Top, vbSrcCopy
     pictemp.Refresh
     For i = 0 To width - 1
-        BitBlt srcPic.hDC, Left + i, Top, 1, pictemp.height, pictemp.hDC, pictemp.width - 1 - i, 0, vbSrcCopy
+        BitBlt srcPic.hDc, Left + i, Top, 1, pictemp.Height, pictemp.hDc, pictemp.width - 1 - i, 0, vbSrcCopy
     Next
     
     srcPic.Refresh

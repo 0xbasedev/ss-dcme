@@ -158,188 +158,188 @@ Private Declare Function GetUserNameEx Lib "secur32.dll" Alias "GetUserNameExA" 
 Public currentWindowsVersion As WindowsVersionEnum
 
 Private Function fGetFullNameOfLoggedUser(Optional strUserName As String) As String
-      '
-      ' Returns the full name for a given UserID
-      '   NT/2000 only
-      ' Omitting the strUserName argument will try and
-      ' retrieve the full name for the currently logged on user
-      '
-10        On Error GoTo ErrHandler
-          Dim pBuf As Long
-          Dim dwRec As Long
-          Dim pTmp As USER_INFO_2
-          Dim abytPDCName() As Byte
-          Dim abytUserName() As Byte
-          Dim lngRet As Long
-          Dim i As Long
+'
+' Returns the full name for a given UserID
+'   NT/2000 only
+' Omitting the strUserName argument will try and
+' retrieve the full name for the currently logged on user
+'
+    On Error GoTo ErrHandler
+    Dim pBuf As Long
+    Dim dwRec As Long
+    Dim pTmp As USER_INFO_2
+    Dim abytPDCName() As Byte
+    Dim abytUserName() As Byte
+    Dim lngRet As Long
+    Dim i As Long
 
-          ' Unicode
-20        abytPDCName = fGetDCName() & vbNullChar
-30        If (Len(strUserName) = 0) Then strUserName = fGetUserName()
-40        abytUserName = strUserName & vbNullChar
+    ' Unicode
+    abytPDCName = fGetDCName() & vbNullChar
+    If (Len(strUserName) = 0) Then strUserName = fGetUserName()
+    abytUserName = strUserName & vbNullChar
 
-          ' Level 2
-50        lngRet = apiNetUserGetInfo( _
-                   abytPDCName(0), _
-                   abytUserName(0), _
-                   2, _
-                   pBuf)
-60        If (lngRet = ERROR_SUCCESS) Then
-70            Call sapiCopyMem(pTmp, ByVal pBuf, Len(pTmp))
-80            fGetFullNameOfLoggedUser = fStrFromPtrW(pTmp.usri2_full_name)
-90        End If
+    ' Level 2
+    lngRet = apiNetUserGetInfo( _
+             abytPDCName(0), _
+             abytUserName(0), _
+             2, _
+             pBuf)
+    If (lngRet = ERROR_SUCCESS) Then
+        Call sapiCopyMem(pTmp, ByVal pBuf, Len(pTmp))
+        fGetFullNameOfLoggedUser = fStrFromPtrW(pTmp.usri2_full_name)
+    End If
 
-100       Call apiNetAPIBufferFree(pBuf)
+    Call apiNetAPIBufferFree(pBuf)
 ExitHere:
-110       Exit Function
+    Exit Function
 ErrHandler:
-120       fGetFullNameOfLoggedUser = vbNullString
-130       Resume ExitHere
+    fGetFullNameOfLoggedUser = vbNullString
+    Resume ExitHere
 End Function
 
 Private Function fGetUserName() As String
-      ' Returns the network login name
-          Dim lngLen As Long, lngRet As Long
-          Dim strUserName As String
-10        strUserName = String$(254, 0)
-20        lngLen = 255
-30        lngRet = apiGetUserName(strUserName, lngLen)
-40        If lngRet Then
-50            fGetUserName = Left$(strUserName, lngLen - 1)
-60        End If
+' Returns the network login name
+    Dim lngLen As Long, lngRet As Long
+    Dim strUserName As String
+    strUserName = String$(254, 0)
+    lngLen = 255
+    lngRet = apiGetUserName(strUserName, lngLen)
+    If lngRet Then
+        fGetUserName = Left$(strUserName, lngLen - 1)
+    End If
 End Function
 
 Private Function fGetDCName() As String
-          Dim pTmp As Long
-          Dim lngRet As Long
-          ' Dim abytBuf() As Byte
+    Dim pTmp As Long
+    Dim lngRet As Long
+    ' Dim abytBuf() As Byte
 
-10        lngRet = apiNetGetDCName(0, 0, pTmp)
-20        If lngRet = NERR_SUCCESS Then
-30            fGetDCName = fStrFromPtrW(pTmp)
-40        End If
-50        Call apiNetAPIBufferFree(pTmp)
+    lngRet = apiNetGetDCName(0, 0, pTmp)
+    If lngRet = NERR_SUCCESS Then
+        fGetDCName = fStrFromPtrW(pTmp)
+    End If
+    Call apiNetAPIBufferFree(pTmp)
 End Function
 
 Private Function fStrFromPtrW(pBuf As Long) As String
-          Dim lngLen As Long
-          Dim abytBuf() As Byte
+    Dim lngLen As Long
+    Dim abytBuf() As Byte
 
-          ' Get the length of the string at the memory location
-10        lngLen = apilstrlenW(pBuf) * 2
-          ' if it's not a ZLS
-20        If lngLen Then
-30            ReDim abytBuf(lngLen)
-              ' then copy the memory contents
-              ' into a temp buffer
-40            Call sapiCopyMem( _
-                   abytBuf(0), _
-                   ByVal pBuf, _
-                   lngLen)
-              ' return the buffer
-50            fStrFromPtrW = abytBuf
-60        End If
+    ' Get the length of the string at the memory location
+    lngLen = apilstrlenW(pBuf) * 2
+    ' if it's not a ZLS
+    If lngLen Then
+        ReDim abytBuf(lngLen)
+        ' then copy the memory contents
+        ' into a temp buffer
+        Call sapiCopyMem( _
+             abytBuf(0), _
+             ByVal pBuf, _
+             lngLen)
+        ' return the buffer
+        fStrFromPtrW = abytBuf
+    End If
 End Function
 
 Function fGetUserNameEx() As String
-          Dim sBuffer As String, ret As Long
-10        sBuffer = String(256, 0)
-20        ret = Len(sBuffer)
-          
-30        If GetUserNameEx(NameSamCompatible, sBuffer, ret) <> 0 Then
-40            fGetUserNameEx = Left$(sBuffer, ret)
-50        Else
-60            fGetUserNameEx = ""
-70        End If
+    Dim sBuffer As String, ret As Long
+    sBuffer = String(256, 0)
+    ret = Len(sBuffer)
+    
+    If GetUserNameEx(NameSamCompatible, sBuffer, ret) <> 0 Then
+        fGetUserNameEx = Left$(sBuffer, ret)
+    Else
+        fGetUserNameEx = ""
+    End If
 End Function
 
 Private Function fGetComputerName() As String
 
-          'return the name of the computer
-          Dim tmp As String
-          
-10        tmp = Space$(MAX_COMPUTERNAME + 1)
-          
-20        If GetComputerName(tmp, Len(tmp)) <> 0 Then
-30            fGetComputerName = TrimNull(tmp)
-40        Else
-50            fGetComputerName = ""
-60        End If
+    'return the name of the computer
+    Dim tmp As String
+    
+    tmp = Space$(MAX_COMPUTERNAME + 1)
+    
+    If GetComputerName(tmp, Len(tmp)) <> 0 Then
+        fGetComputerName = TrimNull(tmp)
+    Else
+        fGetComputerName = ""
+    End If
 
 End Function
 
 
 Private Function TrimNull(item As String)
 
-      Dim pos As Integer
+Dim pos As Integer
 
-10    pos = InStr(item, Chr$(0))
+pos = InStr(item, Chr$(0))
 
-20    If pos Then
-30    TrimNull = Left$(item, pos - 1)
-40    Else: TrimNull = item
-50    End If
+If pos Then
+TrimNull = Left$(item, pos - 1)
+Else: TrimNull = item
+End If
 
 End Function
 
 Function GetUserName() As String
-          Dim ret As String
-10        ret = fGetDCName
+    Dim ret As String
+    ret = fGetDCName
 
-20        If ret <> "" Then
-30            GetUserName = ret
-40        Else
-50            GetUserName = fGetUserName
-60        End If
+    If ret <> "" Then
+        GetUserName = ret
+    Else
+        GetUserName = fGetUserName
+    End If
 End Function
 
 Function getWindowsVersion() As WindowsVersionEnum
-          Dim osinfo As OSVERSIONINFO
-          
-          Dim retvalue As Integer
+    Dim osinfo As OSVERSIONINFO
+    
+    Dim retvalue As Integer
 
-10         osinfo.dwOSVersionInfoSize = 148
-20         osinfo.szCSDVersion = Space$(128)
-30         retvalue = GetVersionExA(osinfo)
+     osinfo.dwOSVersionInfoSize = 148
+     osinfo.szCSDVersion = Space$(128)
+     retvalue = GetVersionExA(osinfo)
 
-40         With osinfo
-50         Select Case .dwPlatformId
+     With osinfo
+     Select Case .dwPlatformId
 
-            Case 1
-            
-60              Select Case .dwMinorVersion
-                    Case 0
-70                      getWindowsVersion = os_win95
-80                  Case 10
-90                      getWindowsVersion = os_win98
-100                 Case 90
-110                     getWindowsVersion = os_winME
-                    Case Else
-                        getWindowsVersion = os_unknown
-120             End Select
+      Case 1
+      
+          Select Case .dwMinorVersion
+              Case 0
+                  getWindowsVersion = os_win95
+              Case 10
+                  getWindowsVersion = os_win98
+              Case 90
+                  getWindowsVersion = os_winME
+              Case Else
+                  getWindowsVersion = os_unknown
+          End Select
 
-130         Case 2
-140             Select Case .dwMajorVersion
-                    Case 3
-150                     getWindowsVersion = os_winNT35
-160                 Case 4
-170                     getWindowsVersion = os_winNT4
-180                 Case 5
-190                     If .dwMinorVersion = 0 Then
-200                         getWindowsVersion = os_win2000
-210                     Else
-220                         getWindowsVersion = os_winxp
-230                     End If
-240                 Case 6
-250                     getWindowsVersion = os_winvista
-                    Case Else
-                        getWindowsVersion = os_win7
-260              End Select
-            Case Else
-                getWindowsVersion = os_unknown
-270           End Select
-280       End With
-          
+      Case 2
+          Select Case .dwMajorVersion
+              Case 3
+                  getWindowsVersion = os_winNT35
+              Case 4
+                  getWindowsVersion = os_winNT4
+              Case 5
+                  If .dwMinorVersion = 0 Then
+                      getWindowsVersion = os_win2000
+                  Else
+                      getWindowsVersion = os_winxp
+                  End If
+              Case 6
+                  getWindowsVersion = os_winvista
+              Case Else
+                  getWindowsVersion = os_win7
+           End Select
+      Case Else
+          getWindowsVersion = os_unknown
+        End Select
+    End With
+    
 End Function
 
 
