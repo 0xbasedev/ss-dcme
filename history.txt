@@ -1,0 +1,137 @@
+Drake Continuum Map Editor version history
+Visit http://www.ssforum.net/index.php?showforum=277 for more information
+
+
+---Version 3 ---
+    * 3.1
+          o 3.1.10
+                + made PicToMap form a bit larger, changed "Browse" to "Browse..."
+                + added IsBusy during pictomap and resize operations
+                + Fixed issue with displaying big log files
+                + No more crash when opening a map by double-clicking it while DCME is minimized. Plus, the focus is given to DCME correctly
+                + drawing of special objects fixed
+                + fixed resizing during testmap would cause the last row/column of tiles to glitch
+                + added button to toggle top/bottom alignment of map tabs
+                + fixed applyselection that dropped all tiles regardless of if it should
+                + force lvz transparency option (not only moving)
+                + Changed some more minor autosave stuff
+                + untitled maps do not get autosaved to avoid having hundreds of empty levels in the autosaves folder. Plus, the countdown is reseted when the map is saved. Also removed the copy of the log file that was done with every map... wasn't very useful
+                + MsInet 'Request Timed Out' error is now handled
+                + Fixed crash when zooming out in tile editor
+          o 3.1.09
+                + Tile operations should be a little faster on pixel level
+                + Drawing bomb lines was not fixed on the rounded aim angle, which led to inconsistencies between the ship gfx and the actual aiming of the bomb line
+                + Help -> Show debug log now shows the actual log file completely instead of just the current session log, which caused some confusion
+                + if a file was named pathssomethingsomething in dcme folder, it could have caused problems
+                + Added isbusy (mousepointer hourglass) flag in Line.MouseUp
+                + change: Walltiles and Texttiles are now saved in eLVL data
+                + Fixed that error in Elvl when playing with True/False lists
+                + Things involving pixels (pic1024) should speed up considerably
+                + Fixed huge memory leak (all maps were loaded on 'if maps(i) is ')
+          o 3.1.08
+                + border of map is always drawn (also when grid is not checked)
+                + fixed inconsistent default value for auto force radar preview
+                + accessing selection is a lil sped up
+                + adding selection areas is also a bit sped up
+                + managelvz button wasn't disabled when no active map
+                + savesettings won't save settings if loadsettings wasn't called first (to prevent corruption of the settings)
+                + fixed error when opening maps (by drag dropping or double clicking lvl file) when a modal form is open e.g tips or options
+                + selection on pixel level is now around edges
+                + optimized applyselection ~60% faster
+                + when map resized (e.g switching tools popped up toolbar making space for map smaller or resizing window) it doesn't redraw everything, just the part that wasn't visible before. This decreases lag when switching tools considerably
+                + deleteselection is faster because arrays are zeromemoryd instead of deleting and reallocating
+                + get and set tile of map is a bit faster because of byref arguments
+                + fixed: Tool names (SharedVar.ToolName) had an offset because the freehand selection wasn't on there
+                + sel.hasalreadyselectedParts was not updated correctly in some refresh-less actions
+                + usegrid and usegridTest are now loaded from settings when creating a new map
+                + mapchanged flag is now changed with the AddToUndo() method
+          o 3.1.07
+                + Fixed problem when switching between maps (window-->map) not being flagged as active map
+                + Added map tabs at the bottom (a new toolbar, which you can toggle as the others)
+                + Fixed problem when moving selection near edge (and probably others where out of array bounds errors occurred and were handled)
+          o 3.1.06
+                + Fixed error when editing a value and pressing ok or another button
+                + Fixed edit of isAutoWarp (true/false popup list was *poof*, quite literally)
+                + Select All in textbox when property region edit
+          o 3.1.05
+                + Added option for Force Transparency when moving LVZ
+                + Fixed LVZ Images not being able to delete (sama what were you smoking o_O", trying to delete lvz files instead of images)
+                + Fixed File not found error when DCME tried to create a tmp log file (don't get it, just avoided the error >.>)
+          o 3.1.04
+                + Fixed lvz map objects not being able to move when not on zoom 1/1
+                + Added option to disable enforcing full map preview (speed issues)
+                + Fixed few tools not changing map (resulting in no map change save dialog on close)
+          o 3.1.02
+                + Fixed error appearing when cancelling OpenMap dialog
+                + Fixed bug in SelectTiles, SelectAllTiles, and other actions in the Selection menu
+          o 3.1.01
+                + It is possible to drag and drop files in the lvz manager
+                + Undoing a dropped selection could cause errors on pixel-level preview
+                + Scrolling map with scrollbars update preview during scroll
+                + Added hourglass cursor during long operations
+                + Fixed ellipse bug caused by tool re-ordering
+                + Fixed bug in undo/redo
+                + Fixed small autoupdate bug
+          o 3.1.00
+                + Freehand Selection tool added
+                + Importing custom ship graphics in LVZ will change the TestMap ship graphics
+                + LVZ manager shows preview of Continuum's animations when you import a custom graphic
+                + Fixed bug in BucketFill that could crash DCME
+                + Fixed minor bugs in check update form
+    * 3.0
+          o 3.0.00
+                + LVZ support added
+                + Improved opening of corrupted map files
+                + Upgraded auto-update system to support multiple files
+                + Moved auto-update server
+                + Bookmarks are now saved in eLVL data
+                + Fixed loading of Autowarp region flag
+                + Save as SSME compatible does not save eLVL data anymore
+                + Special objects are drawn correctly with rectangle and line tools
+---Version 2 ---
+    * 2.1
+          o 2.1.01
+                + Fixed huge compatibility bug between DCME and other map editors.
+                + The issue should fix all known tileset problems and 'corrupt map' problems
+                + To ensure backward-compatibility between 2.0 maps and this version's, we have added automatic tile data recovery feature. It should try loading the file in different ways and output the best result. If you can't open a map made with older DCME in other editors, load it with this version, and save it back. It should fix it.
+          o 2.1.00
+                + Fixed TestMap physics
+                + We can now import settings from .cfg file
+                + New WallTiles generator in tileset editor
+                + Fixed critical bug when no rTIL region chunk was loaded
+                + Added 'advanced pencil' feature, that allows you to ignore special tiles and lay tiles over them to do some weird things
+                + Greatly improved logging of events, it is now a circular log that keeps the last 1MB (by default) of text
+                + Autosave feature, completly adjustable
+                + Added Undo/Redo descriptions for menus
+                + New custom chunk used: DCID ; hashcode of the map, used by autosave
+                + Added .bak to openmap filter
+                + Fixed CTRL+Click with wand in an unselected area to create a useless Undo step
+                + In testmap, wormholes do not warp you if Tile Collision is off
+                + In testmap, drawn tiles (with Q or W) can be undo'ed
+    * 2.0
+          o 2.0.00
+                + Complete Elvl support (attributes, regions)
+                + Completely rewrote Undo/Redo code (all should be undoable now)
+                + Added: Test your map on the fly
+                + Special object are also highlighted
+                + Undo/redo menu was not disabled when no map was loaded
+                + Fixed problem with drawing a special object (overflow error)
+                + Tile 0 was never drawn
+                + Random stuff is now completely random
+                + Popup Tileset & Popup Radar when right bar is hidden
+                + Tips of the day updated
+                + Fixed glitch with unable to move selections with magicwand
+                + Fixed offset of DCME window when not maximized
+                + Tool options toolbar can be pinned/unpinned
+                + Fixed rotation bug (out of range error)
+                + Fixed tile problem with flip/mirror
+                + Mousewheel zoom focuses on the tile beneath the cursor
+                + Radar preview is showing complete map when zoomed out
+                + Fixed bug with top left tile
+                + Fixed unnecessary redraws
+                + If a map is not maximized, a new map won't be maximized either
+                + Fixed problems with grid settings
+                + Fixed mystery line when making a new map or opening one
+                + Added warning when importing a tileset from a map without tileset
+                + Fixed drag speed of map
+
