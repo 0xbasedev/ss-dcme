@@ -1,0 +1,67 @@
+
+2009-06-28 16:00:58 --- Drake Continuum Map Editor (v3.4.14) @ D:\Sam\Prog Projects\DCME\tags\3.4.14\Project1.exe starting...
+Windows version: 51
+Screen resolution: 1440 x 900
+args:''
+Untitled 1 @ NewMap, path = '' usingDefaultTileset True
+Untitled 1 @ NewMap, DefaultWalltiles = 
+Untitled 1 @ NewMap, DefaultTileset = 
+Untitled 1 @ InitTileset, tilesetpath= Default usingDefaultTileset True
++++ Last update: 29-12-1899 - Update period: 1
+--- Mbox prompt --- Update - DCME will now automatically check for the newest version available.;1
+--- Mbox result --- Update - DCME will now automatically check for the newest version available.;2
+2009-06-28 16:01:06 --- DCME ready
+
+2009-06-28 16:01:45 --- Drake Continuum Map Editor (v3.4.14) @ D:\Sam\Prog Projects\DCME\tags\3.4.14\Project1.exe starting...
+Windows version: 51
+Screen resolution: 1440 x 900
+args:''
+Untitled 1 @ NewMap, path = '' usingDefaultTileset True
+Untitled 1 @ NewMap, DefaultWalltiles = 
+Untitled 1 @ NewMap, DefaultTileset = 
+Untitled 1 @ InitTileset, tilesetpath= Default usingDefaultTileset True
++++ Last update: 30-12-1899 - Update period: 1
++++ Searching for updates at http://www.dcme.sscentral.com/autoupdate/dcmeupdate.txt...
++++ Latest version available: 3.4.14 (Current version: 3.4.14)
+2009-06-28 16:01:48 --- DCME ready
++++ Closing map Untitled 1 (ID: 0)
+DCME ended successfully
+
+2009-06-28 16:04:33 --- Drake Continuum Map Editor (v3.4.14) @ D:\Sam\Prog Projects\DCME\tags\3.4.14\Project1.exe starting...
+Windows version: 51
+Screen resolution: 1440 x 900
+args:''
+Untitled 1 @ NewMap, path = '' usingDefaultTileset True
+Untitled 1 @ NewMap, DefaultWalltiles = 
+Untitled 1 @ NewMap, DefaultTileset = 
+Untitled 1 @ InitTileset, tilesetpath= Default usingDefaultTileset True
++++ Last update: 28-06-2009 - Update period: 2
+2009-06-28 16:04:36 --- DCME ready
++++ Closing map Untitled 1 (ID: 0)
+DCME ended successfully
+
+2009-06-28 16:05:29 --- Drake Continuum Map Editor (v3.4.14) @ D:\Sam\Prog Projects\DCME\tags\3.4.14\Project1.exe starting...
+Windows version: 51
+Screen resolution: 1440 x 900
+args:''
+Untitled 1 @ NewMap, path = '' usingDefaultTileset True
+Untitled 1 @ NewMap, DefaultWalltiles = 
+Untitled 1 @ NewMap, DefaultTileset = 
+Untitled 1 @ InitTileset, tilesetpath= Default usingDefaultTileset True
++++ Last update: 28-06-2009 - Update period: 2
+2009-06-28 16:05:32 --- DCME ready
+Error loading LVZ image, file 'ship6.bm2' not found in any lvz
+Error loading LVZ image, file 'ship6.bm2' not found in any lvz
+
+2009-06-28 16:12:07 --- Drake Continuum Map Editor (v3.4.14) @ D:\Sam\Prog Projects\DCME\tags\3.4.14\Project1.exe starting...
+Windows version: 51
+Screen resolution: 1440 x 900
+args:''
+Untitled 1 @ NewMap, path = '' usingDefaultTileset True
+Untitled 1 @ NewMap, DefaultWalltiles = 
+Untitled 1 @ NewMap, DefaultTileset = 
+Untitled 1 @ InitTileset, tilesetpath= Default usingDefaultTileset True
++++ Last update: 28-06-2009 - Update period: 2
+2009-06-28 16:12:10 --- DCME ready
++++ Closing map Untitled 1 (ID: 0)
+DCME ended successfully

@@ -1,0 +1,122 @@
+DCME
+#version format - Mmmrrr
+
+
+file::304008::DCMEupdate.exe::http://dcme.sscentral.com/autoupdate/dcmeupdate3408.exe::Main program
+
+change::304008::Fixed several bugs
+change::304002::Fixed LVZ layer rendering problems
+change::304002::All LVZ files are uncompressed in a specific folder instead of having one folder for each LVZ file, which created a big mess after a while
+change::304000::MAJOR performance improvements (up to 4x faster)
+change::304000::ASSS regions much quicker to display
+
+#file::303003::DCMEupdate.exe::http://dcme.sscentral.com/autoupdate/dcmeupdate3303.exe::Main program
+change::303003::Fixed opening maps from Windows Explorer causing crashes
+change::303003::Fixed problems when changing tool while tile-typing or map-testing
+change::303003::Zooming in and out with the mouse wheel is now accurate
+
+change::303002::Fixed some more splash screen issues
+
+#file::303001::DCMEupdate.exe::http://dcme.sscentral.com/autoupdate/dcmeupdate3301.exe::Main program
+change::303001::Fixed splash screen hiding message boxes under it
+
+#file::303000::DCMEupdate.exe::http://dcme.sscentral.com/autoupdate/dcmeupdate3300.exe::Main program
+change::303000::Images can be added or deleted by simply right-clicking in the LVZ library
+change::303000::The LVZ tool can now properly select and move map objects
+change::303000::The map objects show properly in the LVZ manager
+change::303000::Updated splash screen and made it appear during startup
+change::303000::The default layer and display mode of map objects is now working
+change::303000::Map objects properties can be changed with the LVZ tool
+
+file::302001::DCMEupdate.exe::http://dcme.sscentral.com/autoupdate/dcmeupdate3201.exe::Main program
+change::302001::Fixed bug with custom shapes
+change::302001::Tool options captions restored
+
+
+#file::302000::DCMEupdate.exe::http://dcme.sscentral.com/autoupdate/dcmeupdate3200.exe::Main program
+change::302000::MAJOR improvements on most aspects
+change::302000::Radar works in 16bits display mode
+change::302000::Tileset initialization made much faster
+change::302000::Walltile generator of the tileset editor improved
+change::302000::No more crash warnings on Vista
+change::302000::Some eLVL and LVZ properties bugs fixed
+
+
+#file::301010::DCMEupdate.exe::http://dcme.sscentral.com/autoupdate/updateDCME3110.exe::Main program
+file::300000::zlib.dll::http://dcme.sscentral.com/autoupdate/zlib.dll::Zlib file compressing library
+
+change::301011::Fixed animationTime of lvz images being reset to 0 when exporting lvz
+change::301010::made PicToMap form a bit larger, changed "Browse" to "Browse..."
+change::301010::added IsBusy during pictomap and resize operations
+change::301010::Fixed issue with displaying big log files
+change::301010::No more crash when opening a map by double-clicking it while DCME is minimized. Plus, the focus is given to DCME correctly
+change::301010::drawing of special objects fixed
+change::301010::fixed resizing during testmap would cause the last row/column of tiles to glitch
+change::301010::added button to toggle top/bottom alignment of map tabs
+change::301010::fixed applyselection that dropped all tiles regardless of if it should
+change::301010::force lvz transparency option (not only moving)
+change::301010::Changed some more minor autosave stuff
+change::301010::untitled maps do not get autosaved to avoid having hundreds of empty levels in the autosaves folder. Plus, the countdown is reseted when the map is saved. Also removed the copy of the log file that was done with every map... wasn't very useful
+change::301010::MsInet 'Request Timed Out' error is now handled
+change::301010::Fixed crash when zooming out in tile editor
+change::301009::Tile operations should be a little faster on pixel level
+change::301009::Drawing bomb lines was not fixed on the rounded aim angle, which led to inconsistencies between the ship gfx and the actual aiming of the bomb line
+change::301009::Help -> Show debug log now shows the actual log file completely instead of just the current session log, which caused some confusion
+change::301009::if a file was named pathssomethingsomething in dcme folder, it could have caused problems
+change::301009::Added isbusy (mousepointer hourglass) flag in Line.MouseUp
+change::301009::change: Walltiles and Texttiles are now saved in eLVL data
+change::301009::Fixed that error in Elvl when playing with True/False lists
+change::301009::Things involving pixels (pic1024) should speed up considerably
+change::301009::Fixed huge memory leak (all maps were loaded on 'if maps(i) is ')
+change::301008::border of map is always drawn (also when grid is not checked)
+change::301008::fixed inconsistent default value for auto force radar preview
+change::301008::accessing selection is a lil sped up
+change::301008::adding selection areas is also a bit sped up
+change::301008::managelvz button wasn't disabled when no active map
+change::301008::savesettings won't save settings if loadsettings wasn't called first (to prevent corruption of the settings)
+change::301008::fixed error when opening maps (by drag dropping or double clicking lvl file) when a modal form is open e.g tips or options
+change::301008::selection on pixel level is now around edges
+change::301008::optimized applyselection ~60% faster
+change::301008::when map resized (e.g switching tools popped up toolbar making space for map smaller or resizing window) it doesn't redraw everything, just the part that wasn't visible before. This decreases lag when switching tools considerably
+change::301008::deleteselection is faster because arrays are zeromemoryd instead of deleting and reallocating
+change::301008::get and set tile of map is a bit faster because of byref arguments
+change::301008::fixed: Tool names (SharedVar.ToolName) had an offset because the freehand selection wasn't on there
+change::301008::sel.hasalreadyselectedParts was not updated correctly in some refresh-less actions
+change::301008::usegrid and usegridTest are now loaded from settings when creating a new map
+change::301008::mapchanged flag is now changed with the AddToUndo() method
+change::301007::Fixed problem when switching between maps (window-->map) not being flagged as active map
+change::301007::Added map tabs at the bottom (a new toolbar, which you can toggle as the others)
+change::301007::Fixed problem when moving selection near edge (and probably others where out of array bounds errors occurred and were handled)
+change::301006::Fixed error when editing a value and pressing ok or another button
+change::301006::Fixed edit of isAutoWarp (true/false popup list was *poof*, quite literally)
+change::301006::Select All in textbox when property region edit
+change::301005::Added option for Force Transparency when moving LVZ
+change::301005::Fixed LVZ Images not being able to delete (sama what were you smoking o_O", trying to delete lvz files instead of images)
+change::301005::Fixed File not found error when DCME tried to create a tmp log file (don't get it, just avoided the error >.>)
+change::301004::Fixed lvz map objects not being able to move when not on zoom 1/1
+change::301004::Added option to disable enforcing full map preview (speed issues)
+change::301004::Fixed few tools not changing map (resulting in no map change save dialog on close)
+change::301002::Fixed error appearing when cancelling OpenMap dialog
+change::301002::Fixed bug in SelectTiles, SelectAllTiles, and other actions in the Selection menu
+change::301001::It is possible to drag and drop files in the lvz manager
+change::301001::Undoing a dropped selection could cause errors on pixel-level preview
+change::301001::Scrolling map with scrollbars update preview during scroll
+change::301001::Added hourglass cursor during long operations
+change::301001::Fixed ellipse bug caused by tool re-ordering
+change::301001::Fixed bug in undo/redo
+change::301001::Fixed small autoupdate bug
+change::301000::Freehand Selection tool added
+change::301000::Importing custom ship graphics in LVZ will change the TestMap ship graphics
+change::301000::LVZ manager shows preview of Continuum's animations when you import a custom graphic
+change::301000::Fixed bug in BucketFill that could crash DCME
+change::301000::Fixed minor bugs in check update form
+change::300000::LVZ support added
+change::300000::Improved opening of corrupted map files
+change::300000::Upgraded auto-update system to support multiple files
+change::300000::Moved auto-update server
+change::300000::Bookmarks are now saved in eLVL data
+change::300000::Fixed loading of Autowarp region flag
+change::300000::Save as SSME compatible does not save eLVL data anymore
+change::300000::Special objects are drawn correctly with rectangle and line tools
+
+date::2007::07::23
