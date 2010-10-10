@@ -28,7 +28,7 @@ Dim oldtiley As Integer
 
 Dim objfound As Boolean
 
-Dim toolOptions As DrawOptions
+Dim tooloptions As DrawOptions
 Dim curSelection As TilesetSelection
 
 Dim tagonly As Boolean
@@ -39,14 +39,14 @@ Private Sub Class_Initialize()
     oldtiley = -1
 End Sub
 
-Sub SetParent(main As frmMain)
-    Set parent = main
+Sub setParent(Main As frmMain)
+    Set parent = Main
 End Sub
 
 Friend Sub SetOptions(newoptions As DrawOptions)
     'Sets currently used tool options
     'This must be used before using DrawLine or other similar methods
-    toolOptions = newoptions
+    tooloptions = newoptions
 End Sub
 
 Friend Sub SetSelection(newselection As TilesetSelection)
@@ -54,18 +54,16 @@ Friend Sub SetSelection(newselection As TilesetSelection)
     curSelection = newselection
 End Sub
 
-Sub MouseDown(button As Integer, X As Single, Y As Single, Optional Shift As Integer)
+Sub MouseDown(Button As Integer, X As Single, Y As Single, Optional Shift As Integer)
     On Error GoTo MouseDown_Error
     
-    If button = vbLeftButton Or button = vbRightButton Then
+    If Button = vbLeftButton Or Button = vbRightButton Then
         Dim curtilex As Integer, curtiley As Integer
-        curtilex = (parent.hScr.value + X) \ parent.currenttilew
-        curtiley = (parent.vScr.value + Y) \ parent.currenttilew
-    
-        If curtilex < 0 Then curtilex = 0
-        If curtiley < 0 Then curtiley = 0
-        If curtilex > 1023 Then curtilex = 1023
-        If curtiley > 1023 Then curtiley = 1023
+        curtilex = parent.ScreenToTileX(CInt(X))
+        curtiley = parent.ScreenToTileY(CInt(Y))
+        
+        If curtilex < 0 Then curtilex = 0 Else If curtilex > 1023 Then curtilex = 1023
+        If curtiley < 0 Then curtiley = 0 Else If curtiley > 1023 Then curtiley = 1023
     
         oldtilex = curtilex
         oldtiley = curtiley
@@ -80,7 +78,7 @@ Sub MouseDown(button As Integer, X As Single, Y As Single, Optional Shift As Int
         firstStartLineY = startliney
         
         'get tileset selection
-        curSelection = parent.tileset.selection(button)
+        curSelection = parent.tileset.selection(Button)
         
         ''''''''''''''''''
         'get tool options'
@@ -150,7 +148,7 @@ Sub MouseDown(button As Integer, X As Single, Y As Single, Optional Shift As Int
 
     
         
-        Call MouseMove(button, X, Y, False)
+        Call MouseMove(Button, X, Y, False)
     End If
 
     On Error GoTo 0
@@ -160,7 +158,7 @@ MouseDown_Error:
     HandleError Err, "Line.MouseDown"
 End Sub
 
-Sub MouseMove(button As Integer, X As Single, Y As Single, usingctrl As Boolean)
+Sub MouseMove(Button As Integer, X As Single, Y As Single, usingctrl As Boolean)
     Dim curtilex As Integer
     Dim curtiley As Integer
     Dim fromtilex As Integer
@@ -172,8 +170,8 @@ Sub MouseMove(button As Integer, X As Single, Y As Single, usingctrl As Boolean)
 
     If oldtilex = -1 Or oldtiley = -1 Or SharedVar.MouseDown = 0 Then Exit Sub
 
-    curtilex = (parent.hScr.value + X) \ parent.currenttilew
-    curtiley = (parent.vScr.value + Y) \ parent.currenttilew
+    curtilex = parent.ScreenToTileX(CInt(X))
+    curtiley = parent.ScreenToTileY(CInt(Y))
 
     If oldtilex = curtilex And oldtiley = curtiley And oldusectrl = usingctrl Then
         'nothing has moved
@@ -181,7 +179,7 @@ Sub MouseMove(button As Integer, X As Single, Y As Single, usingctrl As Boolean)
     End If
 
 
-    If (curSelection.tilenr = 217 Or curSelection.tilenr = 219 Or curSelection.tilenr = 220) Then
+    If (curSelection.isSpecialObject) Then
         'ELLIPSE WITH SPECIAL OBJECTS??? forget it.
         If curtool = T_ellipse Or curtool = T_filledellipse Then
             Exit Sub
@@ -205,14 +203,10 @@ Sub MouseMove(button As Integer, X As Single, Y As Single, usingctrl As Boolean)
         startliney = firstStartLineY
     End If
     
-    If curtilex < 0 Then curtilex = 0
-    If curtiley < 0 Then curtiley = 0
-    If curtilex > 1023 Then curtilex = 1023
-    If curtiley > 1023 Then curtiley = 1023
-    If startlinex < 0 Then startlinex = 0
-    If startliney < 0 Then startliney = 0
-    If startlinex > 1023 Then startlinex = 1023
-    If startliney > 1023 Then startliney = 1023
+    If curtilex < 0 Then curtilex = 0 Else If curtilex > 1023 Then curtilex = 1023
+    If curtiley < 0 Then curtiley = 0 Else If curtiley > 1023 Then curtiley = 1023
+    If startlinex < 0 Then startlinex = 0 Else If startlinex > 1023 Then startlinex = 1023
+    If startliney < 0 Then startliney = 0 Else If startliney > 1023 Then startliney = 1023
     
     Call parent.UpdatePreview(False)
     
@@ -262,7 +256,7 @@ MouseMove_Error:
     HandleError Err, "Line.MouseMove"
 End Sub
 
-Sub MouseUp(button As Integer, X As Single, Y As Single, Optional usingctrl As Boolean)
+Sub MouseUp(Button As Integer, X As Single, Y As Single, Optional usingctrl As Boolean)
     Dim curtilex As Integer
     Dim curtiley As Integer
     Dim fromtilex As Integer
@@ -273,8 +267,8 @@ Sub MouseUp(button As Integer, X As Single, Y As Single, Optional usingctrl As B
 
     On Error GoTo MouseUp_Error
 
-    curtilex = (parent.hScr.value + X) \ parent.currenttilew
-    curtiley = (parent.vScr.value + Y) \ parent.currenttilew
+    curtilex = parent.ScreenToTileX(CInt(X))
+    curtiley = parent.ScreenToTileY(CInt(Y))
 
     If (curSelection.tilenr = 217 Or curSelection.tilenr = 219 Or curSelection.tilenr = 220) Then
         If curtool = T_ellipse Or curtool = T_filledellipse Then
@@ -296,14 +290,10 @@ Sub MouseUp(button As Integer, X As Single, Y As Single, Optional usingctrl As B
     End If
 
 
-    If curtilex < 0 Then curtilex = 0
-    If curtiley < 0 Then curtiley = 0
-    If curtilex > 1023 Then curtilex = 1023
-    If curtiley > 1023 Then curtiley = 1023
-    If startlinex < 0 Then startlinex = 0
-    If startliney < 0 Then startliney = 0
-    If startlinex > 1023 Then startlinex = 1023
-    If startliney > 1023 Then startliney = 1023
+    If curtilex < 0 Then curtilex = 0 Else If curtilex > 1023 Then curtilex = 1023
+    If curtiley < 0 Then curtiley = 0 Else If curtiley > 1023 Then curtiley = 1023
+    If startlinex < 0 Then startlinex = 0 Else If startlinex > 1023 Then startlinex = 1023
+    If startliney < 0 Then startliney = 0 Else If startliney > 1023 Then startliney = 1023
 
 
 
@@ -354,7 +344,7 @@ Sub MouseUp(button As Integer, X As Single, Y As Single, Optional usingctrl As B
 '        End If
 '    End If
 
-    Call parent.undoredo.AddToUndo(undoch, ToolName(CInt(curtool - 1)))
+    Call parent.undoredo.AddToUndo(undoch, ToolName(curtool))
 
 
     Call parent.walltiles.ClearIsWallTile
@@ -395,8 +385,8 @@ Sub DrawLine(startx As Integer, startY As Integer, _
     Dim StepX As Integer, StepY As Integer
 
     'If tilenr = 217 Or tilenr = 219 Or tilenr = 220 Then
-    StepX = toolOptions.step + curSelection.tileSize.X
-    StepY = toolOptions.step + curSelection.tileSize.Y
+    StepX = tooloptions.Step + curSelection.tileSize.X
+    StepY = tooloptions.Step + curSelection.tileSize.Y
 
 
     Dim tmpendx As Integer, tmpendy As Integer
@@ -472,7 +462,7 @@ Private Sub DrawThickLine(ByVal startx As Integer, ByVal startY As Integer, _
     Dim i As Integer, j As Integer
 
     Dim offset As Integer
-    offset = (toolOptions.size - 1) \ 2
+    offset = (tooloptions.Size - 1) \ 2
 
     startx = startx - offset
     startY = startY - offset
@@ -490,17 +480,17 @@ Private Sub DrawThickLine(ByVal startx As Integer, ByVal startY As Integer, _
 
     'the rectangle end overlaps the start, so be sure to fill it (so no gap occurs)
     Dim fillsrc As Boolean
-    fillsrc = Abs(endX - startx) < toolOptions.size Or Abs(endY - startY) < toolOptions.size
+    fillsrc = Abs(endX - startx) < tooloptions.Size Or Abs(endY - startY) < tooloptions.Size
 
     Dim dst As Single, halfw As Single
     Dim drawcurrent As Boolean
     
-    halfw = toolOptions.size / 2
+    halfw = tooloptions.Size / 2
     
     'draw the lines amount = (w + w) *2
-    For j = 0 To toolOptions.size - 1
-        For i = 0 To (toolOptions.size - 1)
-            If toolOptions.drawshape = DS_Circle Then
+    For j = 0 To tooloptions.Size - 1
+        For i = 0 To (tooloptions.Size - 1)
+            If tooloptions.drawshape = DS_Circle Then
                 dst = dist(i, j, halfw - 0.5, halfw - 0.5)
                 drawcurrent = (dst <= halfw)
             Else
@@ -520,9 +510,9 @@ Private Sub DrawThickLine(ByVal startx As Integer, ByVal startY As Integer, _
                 
                 If StepX > 1 Or StepY > 1 Then
                     Call DrawBaseLine(startx + i, startY + j, endX + i, endY + j, undoch, onpreview, False, appendundo)
-                ElseIf j = 0 Or i = 0 Or j = toolOptions.size - 1 Or i = toolOptions.size - 1 Then
+                ElseIf j = 0 Or i = 0 Or j = tooloptions.Size - 1 Or i = tooloptions.Size - 1 Then
                     Call DrawBaseLine(startx + i, startY + j, endX + i, endY + j, undoch, onpreview, False, appendundo)
-                ElseIf toolOptions.drawshape = DS_Circle And halfw - dst <= 2 Then
+                ElseIf tooloptions.drawshape = DS_Circle And halfw - dst <= 2 Then
                     Call DrawBaseLine(startx + i, startY + j, endX + i, endY + j, undoch, onpreview, False, appendundo)
                 End If
 
@@ -565,8 +555,8 @@ Private Sub DrawBaseLine(ByVal startx As Integer, ByVal startY As Integer, _
     Dim val As Integer, tmp As Integer
 
     Dim StepX As Integer, StepY As Integer
-    StepX = curSelection.tileSize.X + toolOptions.step
-    StepY = curSelection.tileSize.Y + toolOptions.step
+    StepX = curSelection.tileSize.X + tooloptions.Step
+    StepY = curSelection.tileSize.Y + tooloptions.Step
     
     InitialX = startx
     InitialY = startY
@@ -656,7 +646,7 @@ Private Sub DrawBaseLine(ByVal startx As Integer, ByVal startY As Integer, _
     
     If Refresh Then
         If Not onpreview Then
-            If curSelection.tilenr = 0 Or (curtool = t_spline And objfound) Then
+            If curSelection.tilenr = 0 Or (curtool = T_spline And objfound) Then
                 parent.UpdateLevel
             Else
                 parent.UpdatePreview
@@ -897,7 +887,7 @@ Sub DrawTiles(ByRef InitialX As Integer, ByRef InitialY As Integer, ByRef lbx As
 '
 '                Call BitBlt(parent.picPreview.hdc, InitialX * parent.currenttilew - parent.Hscr.value, InitialY * parent.currenttilew - parent.Vscr.value, parent.lvz.getSelImageWidth(Left), parent.lvz.getSelImageHeight(Left), parent.picLVZItem(parent.lvz.getSelImageIdx(Left)).hdc, 0, 0, vbSrcCopy)
 '            Else
-             Call TransparentBlt(parent.picPreview.hDC, (InitialX - offsetX) * parent.currenttilew - parent.hScr.value, (InitialY - offsetY) * parent.currenttilew - parent.vScr.value, .picWidth * (parent.currenttilew / TILEW), .picHeight * (parent.currenttilew / TILEW), srcDC, 0, 0, vbBlack)
+             Call TransparentBlt(parent.picPreview.hDc, (InitialX - offsetX) * parent.currenttilew - parent.hScr.value, (InitialY - offsetY) * parent.currenttilew - parent.vScr.value, .picWidth * (parent.currenttilew / TILEW), .picHeight * (parent.currenttilew / TILEW), srcDC, 0, 0, vbBlack)
 '         End If
         End With
         
@@ -965,16 +955,16 @@ Sub DrawTiles(ByRef InitialX As Integer, ByRef InitialY As Integer, ByRef lbx As
                             
                           If UsingPixels Then
                                 If tilenr = TILE_LRG_ASTEROID Then
-                                    Call DrawRectangle(parent.picPreview.hDC, (curtilex - lbx), (curtiley - lby), (curtilex - lbx + 1), curtiley - lby + 1, TilePixelColor(tilenr))
+                                    Call DrawRectangle(parent.picPreview.hDc, (curtilex - lbx), (curtiley - lby), (curtilex - lbx + 1), curtiley - lby + 1, TilePixelColor(tilenr))
                                 ElseIf tilenr = TILE_STATION Then
-                                    Call DrawRectangle(parent.picPreview.hDC, (curtilex - lbx - 2), (curtiley - lby - 2), (curtilex - lbx + 3), curtiley - lby + 3, TilePixelColor(tilenr))
+                                    Call DrawRectangle(parent.picPreview.hDc, (curtilex - lbx - 2), (curtiley - lby - 2), (curtilex - lbx + 3), curtiley - lby + 3, TilePixelColor(tilenr))
                                 ElseIf tilenr = TILE_WORMHOLE Then
-                                    Call DrawRectangle(parent.picPreview.hDC, (curtilex - lbx - 2), (curtiley - lby - 2), (curtilex - lbx + 2), curtiley - lby + 2, TilePixelColor(tilenr))
+                                    Call DrawRectangle(parent.picPreview.hDc, (curtilex - lbx - 2), (curtiley - lby - 2), (curtilex - lbx + 2), curtiley - lby + 2, TilePixelColor(tilenr))
                                 Else
-                                    Call SetPixel(parent.picPreview.hDC, (curtilex - lbx), (curtiley - lby), TilePixelColor(tilenr))
+                                    Call SetPixel(parent.picPreview.hDc, (curtilex - lbx), (curtiley - lby), TilePixelColor(tilenr))
                                 End If
                           Else
-                              Call parent.TileRender.DrawTile(tilenr, False, parent.picPreview.hDC, drawX, drawY, False, True)
+                              Call parent.TileRender.DrawTile(tilenr, False, parent.picPreview.hDc, drawX, drawY, False, True)
                           End If
 
                             
@@ -1015,8 +1005,8 @@ Private Sub DrawTileRectangle(ByVal startx As Integer, ByVal startY As Integer, 
 
     Dim correctStepX As Integer, correctStepY As Integer
                         
-    correctStepX = curSelection.tileSize.X + toolOptions.step
-    correctStepY = curSelection.tileSize.Y + toolOptions.step
+    correctStepX = curSelection.tileSize.X + tooloptions.Step
+    correctStepY = curSelection.tileSize.Y + tooloptions.Step
             
     
     endX = startx + ((endX - startx) \ correctStepX) * correctStepX
@@ -1028,7 +1018,7 @@ Private Sub DrawTileRectangle(ByVal startx As Integer, ByVal startY As Integer, 
     Call DrawLine(startx, endY, startx, startY, undoch, onpreview, False, appendundo)
 
     'Fill rectangle if needed
-    If toolOptions.filled And Not onpreview Then
+    If tooloptions.Filled And Not onpreview Then
 
         If startx <> endX And startY <> endY Then
             If startx > endX Then
@@ -1070,7 +1060,7 @@ DrawTileRectangle_Error:
 End Sub
 
 Private Sub DrawEllipse(ByVal X As Integer, ByVal Y As Integer, ByVal xx As Integer, ByVal yy As Integer, ByRef undoch As Changes, ByVal onpreview As Boolean, ByVal appendundo As Boolean)
-    Dim cx#, cy#, px#, py#, xp#, yp#
+    Dim cX#, cY#, px#, py#, xp#, yp#
     Dim theta#, dtheta#, a#, b#
     Dim i As Integer, j As Integer
 
@@ -1080,8 +1070,8 @@ Private Sub DrawEllipse(ByVal X As Integer, ByVal Y As Integer, ByVal xx As Inte
   If X > xx Then Swap X, xx
   If Y > yy Then Swap Y, yy
      
-    cx = X + (xx - X) / 2#
-    cy = Y + (yy - Y) / 2#
+    cX = X + (xx - X) / 2#
+    cY = Y + (yy - Y) / 2#
     a = (xx - X) / 2#
     b = (yy - Y) / 2#
 
@@ -1103,13 +1093,13 @@ Private Sub DrawEllipse(ByVal X As Integer, ByVal Y As Integer, ByVal xx As Inte
         'End If
 
       If theta <> 0 Then
-          Call DrawLine(CInt(cx + xp), CInt(cy + yp), CInt(cx + px), CInt(cy + py), undoch, onpreview, False, appendundo)
+          Call DrawLine(CInt(cX + xp), CInt(cY + yp), CInt(cX + px), CInt(cY + py), undoch, onpreview, False, appendundo)
       
-          Call DrawLine(CInt(cx + xp), CInt(cy - yp), CInt(cx + px), CInt(cy - py), undoch, onpreview, False, appendundo)
+          Call DrawLine(CInt(cX + xp), CInt(cY - yp), CInt(cX + px), CInt(cY - py), undoch, onpreview, False, appendundo)
          
-          Call DrawLine(CInt(cx - xp), CInt(cy + yp), CInt(cx - px), CInt(cy + py), undoch, onpreview, False, appendundo)
+          Call DrawLine(CInt(cX - xp), CInt(cY + yp), CInt(cX - px), CInt(cY + py), undoch, onpreview, False, appendundo)
           
-          Call DrawLine(CInt(cx - xp), CInt(cy - yp), CInt(cx - px), CInt(cy - py), undoch, onpreview, False, appendundo)
+          Call DrawLine(CInt(cX - xp), CInt(cY - yp), CInt(cX - px), CInt(cY - py), undoch, onpreview, False, appendundo)
           
 
       End If
@@ -1121,7 +1111,7 @@ Private Sub DrawEllipse(ByVal X As Integer, ByVal Y As Integer, ByVal xx As Inte
     Next theta
 
     If a <> 0 And b <> 0 Then
-     If toolOptions.filled Then
+     If tooloptions.Filled Then
          If Not onpreview Then
          
          
@@ -1145,7 +1135,7 @@ Private Sub DrawEllipse(ByVal X As Integer, ByVal Y As Integer, ByVal xx As Inte
 '270                   Next
                   For j = Y To yy Step curSelection.tileSize.Y
                     For i = X To xx Step curSelection.tileSize.X
-                        If ((((i - cx) * (i - cx)) / (a * a)) + (((j - cy) * (j - cy)) / (b * b))) < 1 Then
+                        If ((((i - cX) * (i - cX)) / (a * a)) + (((j - cY) * (j - cY)) / (b * b))) < 1 Then
                             Call DrawLine(i, j, i, j, undoch, onpreview, False, True)
                         End If
 
@@ -1171,7 +1161,7 @@ DrawEllipse_Error:
 End Sub
 
 Sub DrawCogWheel(ByVal startx As Integer, ByVal startY As Integer, ByVal endX As Integer, ByVal endY As Integer, ByVal numsegments As Integer, ByVal sizeTeeth As Single, ByRef undoch As Changes, onpreview As Boolean, appendundo As Boolean, drawShapePreview As Boolean)
-    Dim cx As Single, cy As Single, radius As Single
+    Dim cX As Single, cY As Single, radius As Single
     
     Dim num_segments As Integer
     
@@ -1179,12 +1169,12 @@ Sub DrawCogWheel(ByVal startx As Integer, ByVal startY As Integer, ByVal endX As
 
     If drawShapePreview Then
         frmGeneral.piccustomshapePreview(s_cogwheel).Cls
-        cx = frmGeneral.piccustomshapePreview(s_cogwheel).ScaleWidth \ 2
-        cy = cx
-        radius = cx
+        cX = frmGeneral.piccustomshapePreview(s_cogwheel).ScaleWidth \ 2
+        cY = cX
+        radius = cX
     Else
-        cx = startx ' Int(startx + (endX - startx) / 2)
-        cy = startY ' Int(startY + (endY - startY) / 2)
+        cX = startx ' Int(startx + (endX - startx) / 2)
+        cY = startY ' Int(startY + (endY - startY) / 2)
         radius = Math.Sqr(CDbl(endX - startx) * CDbl(endX - startx) + CDbl(endY - startY) * CDbl(endY - startY)) '(endX - startx) / 2)
     End If
 
@@ -1222,12 +1212,12 @@ Sub DrawCogWheel(ByVal startx As Integer, ByVal startY As Integer, ByVal endX As
           
       If theta = startAngle Then
           'First segment
-          oldX = cx + r * Cos(theta)
-          oldY = cy + r * Sin(theta)
+          oldX = cX + r * Cos(theta)
+          oldY = cY + r * Sin(theta)
       End If
       
-        X = cx + r * Cos(theta)
-        Y = cy + r * Sin(theta)
+        X = cX + r * Cos(theta)
+        Y = cY + r * Sin(theta)
 
         'Me.Line (oldx, oldy)-(cx + r * Cos(theta), cy + r * Sin(theta))
         If drawShapePreview Then
@@ -1256,8 +1246,8 @@ Sub DrawCogWheel(ByVal startx As Integer, ByVal startY As Integer, ByVal endX As
 End Sub
 
 Sub DrawStar(startx As Integer, startY As Integer, endX As Integer, endY As Integer, ByVal numsegments As Integer, ByVal sizeTeeth As Single, ByRef undoch As Changes, onpreview As Boolean, appendundo As Boolean, drawShapePreview As Boolean)
-    Dim cx As Single
-    Dim cy As Single
+    Dim cX As Single
+    Dim cY As Single
     Dim radius As Single
     Dim num_segments As Integer
     num_segments = IIf(numsegments * 2 <= 0, 1, numsegments * 2)
@@ -1265,12 +1255,12 @@ Sub DrawStar(startx As Integer, startY As Integer, endX As Integer, endY As Inte
 
     If drawShapePreview Then
         frmGeneral.piccustomshapePreview(s_star).Cls
-        cx = frmGeneral.piccustomshapePreview(s_star).ScaleWidth \ 2
-        cy = cx
-        radius = cx
+        cX = frmGeneral.piccustomshapePreview(s_star).ScaleWidth \ 2
+        cY = cX
+        radius = cX
     Else
-        cx = startx ' Int(startx + (endX - startx) / 2)
-        cy = startY ' Int(startY + (endY - startY) / 2)
+        cX = startx ' Int(startx + (endX - startx) / 2)
+        cY = startY ' Int(startY + (endY - startY) / 2)
         radius = Math.Sqr(CDbl(endX - startx) * CDbl(endX - startx) + CDbl(endY - startY) * CDbl(endY - startY)) '(endX - startx) / 2)
     End If
 
@@ -1290,8 +1280,8 @@ Sub DrawStar(startx As Integer, startY As Integer, endX As Integer, endY As Inte
       startAngle = Atn2(endX - startx, endY - startY)
     theta = startAngle
 
-    oldX = cx + radius * Cos(theta)
-    oldY = cy + radius * Sin(theta)
+    oldX = cX + radius * Cos(theta)
+    oldY = cY + radius * Sin(theta)
 
     For seg = 1 To num_segments
         Dim r As Single
@@ -1304,8 +1294,8 @@ Sub DrawStar(startx As Integer, startY As Integer, endX As Integer, endY As Inte
 
         theta = (theta + dtheta)
 
-        X = cx + r * Cos(theta)
-        Y = cy + r * Sin(theta)
+        X = cX + r * Cos(theta)
+        Y = cY + r * Sin(theta)
 
         'Me.Line (oldx, oldy)-(cx + r * Cos(theta), cy + r * Sin(theta))
         If drawShapePreview Then
@@ -1335,18 +1325,18 @@ End Sub
 
 Sub DrawRegularShape(X As Integer, Y As Integer, xx As Integer, yy As Integer, ByVal numsegments As Integer, undoch As Changes, onpreview As Boolean, appendundo As Boolean, drawShapePreview As Boolean)
 
-    Dim cx As Single
-    Dim cy As Single
+    Dim cX As Single
+    Dim cY As Single
     Dim radius As Single
 
     If drawShapePreview Then
         frmGeneral.piccustomshapePreview(s_regular).Cls
-        cx = frmGeneral.piccustomshapePreview(s_regular).ScaleWidth \ 2
-        cy = cx
-        radius = cx
+        cX = frmGeneral.piccustomshapePreview(s_regular).ScaleWidth \ 2
+        cY = cX
+        radius = cX
     Else
-        cx = X ' Int(startx + (endX - startx) / 2)
-        cy = Y ' Int(startY + (endY - startY) / 2)
+        cX = X ' Int(startx + (endX - startx) / 2)
+        cY = Y ' Int(startY + (endY - startY) / 2)
         radius = Math.Sqr(CDbl(xx - X) * CDbl(xx - X) + CDbl(yy - Y) * CDbl(yy - Y)) '(endX - startx) / 2)
     End If
 
@@ -1368,16 +1358,16 @@ Sub DrawRegularShape(X As Integer, Y As Integer, xx As Integer, yy As Integer, B
     startAngle = Atn2(xx - X, yy - Y)
     theta = startAngle
 
-    oldX = cx + radius * Cos(theta)
-    oldY = cy + radius * Sin(theta)
+    oldX = cX + radius * Cos(theta)
+    oldY = cY + radius * Sin(theta)
 
     '  Debug.Print oldx
     For seg = 1 To numsegments
         theta = CSng(theta + dtheta)
         '   Debug.Print (theta / (2 * PI)) * 100
 
-        newX = cx + radius * CSng(Cos(theta))
-        newY = cy + radius * CSng(Sin(theta))
+        newX = cX + radius * CSng(Cos(theta))
+        newY = cY + radius * CSng(Sin(theta))
 
         'Me.Line -(cx + radius * Cos(theta), cy + radius * Sin(theta))
         If drawShapePreview Then
