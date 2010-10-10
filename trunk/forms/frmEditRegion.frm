@@ -14,59 +14,6 @@ Begin VB.Form frmEditRegion
    ScaleWidth      =   271
    ShowInTaskbar   =   0   'False
    StartUpPosition =   3  'Windows Default
-   Begin VB.CheckBox chkNoReceiveWeapons 
-      Caption         =   "No Receive Weapons"
-      Height          =   255
-      Left            =   120
-      TabIndex        =   19
-      Top             =   2640
-      UseMaskColor    =   -1  'True
-      Width           =   1935
-   End
-   Begin VB.CheckBox chkNoReceiveAnti 
-      Caption         =   "No Receive Antiwarp"
-      Height          =   255
-      Left            =   120
-      MaskColor       =   &H8000000F&
-      TabIndex        =   18
-      Top             =   2280
-      UseMaskColor    =   -1  'True
-      Width           =   1935
-   End
-   Begin VB.TextBox txtPython 
-      Height          =   285
-      Left            =   1320
-      Locked          =   -1  'True
-      MultiLine       =   -1  'True
-      TabIndex        =   17
-      Text            =   "frmEditRegion.frx":0000
-      Top             =   480
-      Width           =   1215
-   End
-   Begin VB.TextBox txtName 
-      Height          =   285
-      Left            =   1320
-      TabIndex        =   14
-      Text            =   "Text1"
-      Top             =   120
-      Width           =   2655
-   End
-   Begin VB.CommandButton cmdEditPython 
-      Caption         =   "Edit..."
-      Height          =   255
-      Left            =   2640
-      TabIndex        =   0
-      Top             =   480
-      Width           =   1335
-   End
-   Begin VB.CommandButton cmdGoto 
-      Caption         =   "Jump To"
-      Height          =   255
-      Left            =   2040
-      TabIndex        =   2
-      Top             =   1920
-      Width           =   1935
-   End
    Begin VB.PictureBox picmap 
       AutoRedraw      =   -1  'True
       BackColor       =   &H00000000&
@@ -120,6 +67,59 @@ Begin VB.Form frmEditRegion
          Y1              =   32
          Y2              =   161
       End
+   End
+   Begin VB.CheckBox chkNoReceiveWeapons 
+      Caption         =   "No Receive Weapons"
+      Height          =   255
+      Left            =   120
+      TabIndex        =   19
+      Top             =   2640
+      UseMaskColor    =   -1  'True
+      Width           =   1935
+   End
+   Begin VB.CheckBox chkNoReceiveAnti 
+      Caption         =   "No Receive Antiwarp"
+      Height          =   255
+      Left            =   120
+      MaskColor       =   &H8000000F&
+      TabIndex        =   18
+      Top             =   2280
+      UseMaskColor    =   -1  'True
+      Width           =   1935
+   End
+   Begin VB.TextBox txtPython 
+      Height          =   285
+      Left            =   1320
+      Locked          =   -1  'True
+      MultiLine       =   -1  'True
+      TabIndex        =   17
+      Text            =   "frmEditRegion.frx":0000
+      Top             =   480
+      Width           =   1215
+   End
+   Begin VB.TextBox txtName 
+      Height          =   285
+      Left            =   1320
+      TabIndex        =   14
+      Text            =   "Text1"
+      Top             =   120
+      Width           =   2655
+   End
+   Begin VB.CommandButton cmdEditPython 
+      Caption         =   "Edit..."
+      Height          =   255
+      Left            =   2640
+      TabIndex        =   0
+      Top             =   480
+      Width           =   1335
+   End
+   Begin VB.CommandButton cmdGoto 
+      Caption         =   "Jump To"
+      Height          =   255
+      Left            =   2040
+      TabIndex        =   2
+      Top             =   1920
+      Width           =   1935
    End
    Begin VB.TextBox txtArena 
       Height          =   285
@@ -241,13 +241,13 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Const WIDTH1 = 4155    'width of form with autowarp Off
-Const WIDTH2 = 4155    'width of form with autowarp On
-Const WIDTH3 = 4155    'width of form when viewing the minimap to select a coordinate
+'Const WIDTH1 = 4155    'width of form with autowarp Off
+'Const WIDTH2 = 4155    'width of form with autowarp On
+'Const WIDTH3 = 4155    'width of form when viewing the minimap to select a coordinate
 
-Const HEIGHT1 = 2940
-Const HEIGHT2 = 3735
-Const HEIGHT3 = 3735
+'Const HEIGHT1 = 2940
+'Const HEIGHT2 = 3735
+'Const HEIGHT3 = 3735
 Dim parent As frmMain
 Dim Region As Region
 Dim rIdx As Integer
@@ -299,8 +299,8 @@ Private Sub Form_Load()
 
     ClientToScreen frmGeneral.tlbToolOptions.hWnd, frmtoPt
     
-    Me.width = WIDTH3
-    Me.height = HEIGHT3
+'    Me.width = WIDTH3
+'    Me.height = HEIGHT3
 
     Me.Left = frmtoPt.X * Screen.TwipsPerPixelX + frmGeneral.llRegionList.Left + GetSystemMetrics(SM_CXFRAME) * Screen.TwipsPerPixelX
     Me.Top = frmtoPt.Y * Screen.TwipsPerPixelY + frmGeneral.llRegionList.height + (GetSystemMetrics(SM_CYMENU) + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYFRAME)) * Screen.TwipsPerPixelY
@@ -446,16 +446,16 @@ End Sub
 Private Sub ShowQuickMap()
     cmdGoto.visible = True
     picmap.visible = True
-    Me.width = WIDTH3
-    Me.height = HEIGHT3
+'    Me.width = WIDTH3
+'    Me.height = HEIGHT3
 
 End Sub
 
 Private Sub HideQuickMap()
     cmdGoto.visible = False
     picmap.visible = False
-    Me.width = WIDTH2
-    Me.height = HEIGHT2
+'    Me.width = WIDTH2
+'    Me.height = HEIGHT2
 End Sub
 
 
@@ -471,7 +471,7 @@ Private Sub CheckAutowarpType()
 
 '80            Me.width = WIDTH2
 '90            Me.height = HEIGHT2
-'100           Call ShowQuickMap
+        Call ShowQuickMap
 
 
     Else
@@ -482,7 +482,7 @@ Private Sub CheckAutowarpType()
         txtArena.Enabled = False
         lblArena.Enabled = False
 
-'180           Call HideQuickMap
+        Call HideQuickMap
 
 '190           Me.width = WIDTH1
 '200           Me.height = HEIGHT1

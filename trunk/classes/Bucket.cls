@@ -123,20 +123,20 @@ Friend Sub Fill(tilenr As Integer, ByRef curSelection As TilesetSelection, ByVal
     Dim usewalltile As Boolean
     usewalltile = (curSelection.selectionType = TS_Walltiles)
       
-    Dim Lx As Integer
-    Dim Ly As Integer
+    Dim lX As Integer
+    Dim lY As Integer
 
     Dim Sloop As Long
     ReDim px(0)
     ReDim py(0)
 
-    Lx = X
-    Ly = Y
+    lX = X
+    lY = Y
 
     Pstart = 0
     Pstop = 0
-    px(0) = Lx
-    py(0) = Ly
+    px(0) = lX
+    py(0) = lY
     Dim count As Long
 
     Dim lbsx As Integer
@@ -146,55 +146,55 @@ Friend Sub Fill(tilenr As Integer, ByRef curSelection As TilesetSelection, ByVal
     lbsx = parent.hScr.value \ parent.currenttilew
     hbsx = (parent.hScr.value + parent.picPreview.width) \ parent.currenttilew
     lbsy = parent.vScr.value \ parent.currenttilew
-    hbsy = (parent.vScr.value + parent.picPreview.height) \ parent.currenttilew
+    hbsy = (parent.vScr.value + parent.picPreview.Height) \ parent.currenttilew
 
-    Call AddPoints(px, py, Pstart, Pstop, Lx, Ly, Sloop)
+    Call AddPoints(px, py, Pstart, Pstop, lX, lY, Sloop)
 
     While Pstart <= Pstop And count < MAX_BUCKETFILL
 
-        Lx = px(Pstart)
-        Ly = py(Pstart)
-        If Not (Lx < 0 Or Ly < 0 Or Lx > 1023 Or Ly > 1023) Then
+        lX = px(Pstart)
+        lY = py(Pstart)
+        If Not (lX < 0 Or lY < 0 Or lX > 1023 Or lY > 1023) Then
             If fillinselection Then
-                If Not parent.sel.getIsInSelection(Lx, Ly) Then
+                If Not parent.sel.getIsInSelection(lX, lY) Then
                     GoTo skiploop
                 End If
             ElseIf Not fillinselection And fillscreenonly Then
-                If (Lx < lbsx Or Ly < lbsy Or Lx > hbsx Or Ly > hbsy) Then
+                If (lX < lbsx Or lY < lbsy Or lX > hbsx Or lY > hbsy) Then
                     GoTo skiploop
                 End If
             End If
 
-            If parent.sel.getIsInSelection(Lx, Ly) Then
-                Colour = parent.sel.getSelTile(Lx, Ly)
+            If parent.sel.getIsInSelection(lX, lY) Then
+                Colour = parent.sel.getSelTile(lX, lY)
             Else
-                Colour = parent.getTile(Lx, Ly)
+                Colour = parent.getTile(lX, lY)
             End If
 
             If Colour < 0 Then
                 Colour = Colour \ -100
             End If
 
-            If Not (done(Lx, Ly) Or Colour <> tilenr) Then
+            If Not (done(lX, lY) Or Colour <> tilenr) Then
                 Pcount = Pcount + 1
-                done(Lx, Ly) = True
+                done(lX, lY) = True
 
                 count = count + 1
 
                 If tagwalltiles Then
-                    Call parent.walltiles.setIsWallTile(Lx, Ly)
+                    Call parent.walltiles.setIsWallTile(lX, lY)
                 Else
 
                     If fillinselection Then
                         If usewalltile Then
-                            fillnr = parent.walltiles.DrawSelWallTile(Lx, Ly, undoch, False, False)
+                            fillnr = parent.walltiles.DrawSelWallTile(lX, lY, undoch, False, False)
                         End If
-                        Call parent.sel.setSelTile(Lx, Ly, fillnr, undoch)
+                        Call parent.sel.setSelTile(lX, lY, fillnr, undoch)
                     Else
                         If usewalltile Then
-                            fillnr = parent.walltiles.DrawWallTile(Lx, Ly, False, undoch, False, True)
+                            fillnr = parent.walltiles.DrawWallTile(lX, lY, False, undoch, False, True)
                         End If
-                        Call parent.setTile(Lx, Ly, fillnr, undoch, True)
+                        Call parent.setTile(lX, lY, fillnr, undoch, True)
                     End If
                 End If
                 'it will prolly go faster if we directly set the pixel to the
@@ -205,11 +205,11 @@ Friend Sub Fill(tilenr As Integer, ByRef curSelection As TilesetSelection, ByVal
                 'Call SetPixel(parent.pic1024.hdc, Lx, Ly, TilePixelColor(parent.getTile(x, y)))
                 'Call parent.Set1024Pixel(Lx, Ly, TilePixelColor(parent.getTile(X, Y)))
                 If Not fillinselection Then
-                    Call parent.UpdateLevelTile(Lx, Ly, False)
+                    Call parent.UpdateLevelTile(lX, lY, False)
                 End If
                 '                piccurrent.PSet (Lx, Ly), vbblue
                 '  DoEvents
-                Call AddPoints(px, py, Pstart, Pstop, Lx, Ly, Sloop)
+                Call AddPoints(px, py, Pstart, Pstop, lX, lY, Sloop)
             End If
         End If
 skiploop:
@@ -253,10 +253,10 @@ Fill_Error:
 
     frmGeneral.IsBusy("Bucket.Fill") = False
     
-    HandleError Err, "Bucket.FilL"
+    HandleError Err, "Bucket.Fill"
 End Sub
 
-Private Sub AddPoints(ByRef px() As Long, ByRef py() As Long, ByRef Pstart As Long, ByRef Pstop As Long, ByRef Lx As Integer, ByRef Ly As Integer, ByRef Sloop As Long)
+Private Sub AddPoints(ByRef px() As Long, ByRef py() As Long, ByRef Pstart As Long, ByRef Pstop As Long, ByRef lX As Integer, ByRef lY As Integer, ByRef Sloop As Long)
 
     If Pstart > BUCKET_STACK Then
         For Sloop = Pstart To Pstop
@@ -273,36 +273,36 @@ Private Sub AddPoints(ByRef px() As Long, ByRef py() As Long, ByRef Pstart As Lo
         ReDim Preserve px(Pstop + 8)
         ReDim Preserve py(Pstop + 8)
         Pstop = Pstop + 1
-        px(Pstop) = Lx + 1
-        py(Pstop) = Ly
+        px(Pstop) = lX + 1
+        py(Pstop) = lY
 
         Pstop = Pstop + 1
-        px(Pstop) = Lx + 1
-        py(Pstop) = Ly + 1
+        px(Pstop) = lX + 1
+        py(Pstop) = lY + 1
         '------
         Pstop = Pstop + 1
-        px(Pstop) = Lx
-        py(Pstop) = Ly + 1
+        px(Pstop) = lX
+        py(Pstop) = lY + 1
 
         Pstop = Pstop + 1
-        px(Pstop) = Lx - 1
-        py(Pstop) = Ly + 1
+        px(Pstop) = lX - 1
+        py(Pstop) = lY + 1
         '------
         Pstop = Pstop + 1
-        px(Pstop) = Lx - 1
-        py(Pstop) = Ly
+        px(Pstop) = lX - 1
+        py(Pstop) = lY
 
         Pstop = Pstop + 1
-        px(Pstop) = Lx - 1
-        py(Pstop) = Ly - 1
+        px(Pstop) = lX - 1
+        py(Pstop) = lY - 1
         '------
         Pstop = Pstop + 1
-        px(Pstop) = Lx
-        py(Pstop) = Ly - 1
+        px(Pstop) = lX
+        py(Pstop) = lY - 1
 
         Pstop = Pstop + 1
-        px(Pstop) = Lx + 1
-        py(Pstop) = Ly - 1
+        px(Pstop) = lX + 1
+        py(Pstop) = lY - 1
 
 
 
@@ -310,17 +310,17 @@ Private Sub AddPoints(ByRef px() As Long, ByRef py() As Long, ByRef Pstart As Lo
         ReDim Preserve px(Pstop + 4)
         ReDim Preserve py(Pstop + 4)
         Pstop = Pstop + 1
-        px(Pstop) = Lx + 1
-        py(Pstop) = Ly
+        px(Pstop) = lX + 1
+        py(Pstop) = lY
         Pstop = Pstop + 1
-        px(Pstop) = Lx
-        py(Pstop) = Ly + 1
+        px(Pstop) = lX
+        py(Pstop) = lY + 1
         Pstop = Pstop + 1
-        px(Pstop) = Lx - 1
-        py(Pstop) = Ly
+        px(Pstop) = lX - 1
+        py(Pstop) = lY
         Pstop = Pstop + 1
-        px(Pstop) = Lx
-        py(Pstop) = Ly - 1
+        px(Pstop) = lX
+        py(Pstop) = lY - 1
     End If
 
     '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

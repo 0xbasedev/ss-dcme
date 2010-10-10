@@ -46,7 +46,7 @@ Dim selectionchanged As Boolean
 
 Dim movingselection As Boolean
 
-Dim Boundaries As area
+Dim boundaries As area
 Dim tempboundaries As area
 
 'Boundaries before the move starts
@@ -62,10 +62,10 @@ Private Type SpecialObject
 End Type
 
 Private Sub Class_Initialize()
-    Boundaries.Top = 32767
-    Boundaries.Left = 32767
-    Boundaries.Right = 0
-    Boundaries.Bottom = 0
+    boundaries.Top = 32767
+    boundaries.Left = 32767
+    boundaries.Right = 0
+    boundaries.Bottom = 0
     tempboundaries.Top = 32767
     tempboundaries.Left = 32767
     tempboundaries.Right = 0
@@ -79,8 +79,8 @@ Private Sub Class_Initialize()
 
 End Sub
 
-Sub setParent(ByRef Main As frmMain)
-    Set parent = Main
+Sub SetParent(ByRef main As frmMain)
+    Set parent = main
 End Sub
 
 Function getIsInSelection(i As Integer, j As Integer) As Boolean
@@ -121,7 +121,7 @@ End Function
 'End Function
 
 Friend Function getBoundaries() As area
-    getBoundaries = Boundaries
+    getBoundaries = boundaries
 End Function
 
 Public Property Get selstate() As selectionstate
@@ -295,7 +295,7 @@ Sub MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
     frmGeneral.IsBusy("Selection.MouseUp") = True
     
-    If parent.magnifier.UsingPixels Then
+    If parent.magnifier.usingpixels Then
         'stupid selection on stupid pixel level has wrong offsets
         'because of the +2, but thats needed in non-pixel level
         'to have the correct tile star
@@ -384,7 +384,7 @@ Sub MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
     End If
 
 
-    If parent.magnifier.UsingPixels Then
+    If parent.magnifier.usingpixels Then
         parent.UpdateLevel
     Else
         parent.UpdatePreview
@@ -448,7 +448,7 @@ End Sub
 
 
 
-Function AddSelectionArea(seltilestartx As Integer, seltileendx As Integer, seltilestarty As Integer, seltileendy As Integer, undoch As Changes, Optional refresh As Boolean = True) As Boolean
+Function AddSelectionArea(seltilestartx As Integer, seltileendx As Integer, seltilestarty As Integer, seltileendy As Integer, undoch As Changes, Optional Refresh As Boolean = True) As Boolean
     Dim tick As Long
     tick = GetTickCount
     
@@ -464,11 +464,11 @@ Function AddSelectionArea(seltilestartx As Integer, seltileendx As Integer, selt
     Dim hasAdded As Boolean
     hasAdded = False
 
-    If Boundaries.Left > seltilestartx Then Boundaries.Left = seltilestartx
-    If Boundaries.Right < seltileendx Then Boundaries.Right = seltileendx
-    If Boundaries.Top > seltilestarty Then Boundaries.Top = seltilestarty
-    If Boundaries.Bottom < seltileendy Then Boundaries.Bottom = seltileendy
-    tempboundaries = Boundaries
+    If boundaries.Left > seltilestartx Then boundaries.Left = seltilestartx
+    If boundaries.Right < seltileendx Then boundaries.Right = seltileendx
+    If boundaries.Top > seltilestarty Then boundaries.Top = seltilestarty
+    If boundaries.Bottom < seltileendy Then boundaries.Bottom = seltileendy
+    tempboundaries = boundaries
 
     For j = seltilestarty To seltileendy
         For i = seltilestartx To seltileendx
@@ -479,10 +479,10 @@ Function AddSelectionArea(seltilestartx As Integer, seltileendx As Integer, selt
                         'special tile found, add it completly
                         Call AddObjectToSelection(i, j, undoch)
 
-                        If tempboundaries.Left < Boundaries.Left Then Boundaries.Left = tempboundaries.Left
-                        If tempboundaries.Right > Boundaries.Right Then Boundaries.Right = tempboundaries.Right
-                        If tempboundaries.Top < Boundaries.Top Then Boundaries.Top = tempboundaries.Top
-                        If tempboundaries.Bottom > Boundaries.Bottom Then Boundaries.Bottom = tempboundaries.Bottom
+                        If tempboundaries.Left < boundaries.Left Then boundaries.Left = tempboundaries.Left
+                        If tempboundaries.Right > boundaries.Right Then boundaries.Right = tempboundaries.Right
+                        If tempboundaries.Top < boundaries.Top Then boundaries.Top = tempboundaries.Top
+                        If tempboundaries.Bottom > boundaries.Bottom Then boundaries.Bottom = tempboundaries.Bottom
 
                     Else
                         Call AddTileToSelection(i, j, undoch)
@@ -515,8 +515,8 @@ Function AddSelectionArea(seltilestartx As Integer, seltileendx As Integer, selt
         hasAlreadySelectedParts = True
     End If
 
-    If refresh And hasAdded Then
-        parent.pic1024selection.refresh
+    If Refresh And hasAdded Then
+        parent.pic1024selection.Refresh
         frmGeneral.UpdateToolBarButtons
         parent.UpdateLevel
     End If
@@ -532,7 +532,7 @@ AddSelectionArea_Error:
     HandleError Err, "Selection.AddSelectionArea"
 End Function
 
-Function RemoveSelectionArea(seltilestartx As Integer, seltileendx As Integer, seltilestarty As Integer, seltileendy As Integer, undoch As Changes, Optional refresh As Boolean = True) As Boolean
+Function RemoveSelectionArea(seltilestartx As Integer, seltileendx As Integer, seltilestarty As Integer, seltileendy As Integer, undoch As Changes, Optional Refresh As Boolean = True) As Boolean
     Dim tick As Long
     tick = GetTickCount
     
@@ -544,17 +544,17 @@ Function RemoveSelectionArea(seltilestartx As Integer, seltileendx As Integer, s
 
     On Error GoTo RemoveSelectionArea_Error
 
-    If Boundaries.Left > Boundaries.Right Or Boundaries.Top > Boundaries.Bottom Then Exit Function
+    If boundaries.Left > boundaries.Right Or boundaries.Top > boundaries.Bottom Then Exit Function
 
     'If the area covers the whole selection, just apply it
-    If seltilestartx <= Boundaries.Left And seltileendx >= Boundaries.Right _
-     And seltilestarty <= Boundaries.Top And seltileendy >= Boundaries.Bottom Then
-        Call ApplySelection(undoch, refresh)
+    If seltilestartx <= boundaries.Left And seltileendx >= boundaries.Right _
+     And seltilestarty <= boundaries.Top And seltileendy >= boundaries.Bottom Then
+        Call ApplySelection(undoch, Refresh)
         RemoveSelectionArea = True
 
     'If the area does not cover in part the boundaries, don't bother
-    ElseIf seltileendx < Boundaries.Left Or seltilestartx > Boundaries.Right Or _
-     seltileendy < Boundaries.Top Or seltilestarty > Boundaries.Bottom Then
+    ElseIf seltileendx < boundaries.Left Or seltilestartx > boundaries.Right Or _
+     seltileendy < boundaries.Top Or seltilestarty > boundaries.Bottom Then
         Exit Function
     End If
     
@@ -564,7 +564,7 @@ Function RemoveSelectionArea(seltilestartx As Integer, seltileendx As Integer, s
 '    If seltilestarty < Boundaries.Top Then seltilestarty = Boundaries.Top
 '    If seltileendy > Boundaries.Bottom Then seltileendy = Boundaries.Bottom
     
-    tempboundaries = Boundaries
+    tempboundaries = boundaries
     foundtiles = False
     removedtiles = False
 
@@ -634,8 +634,8 @@ Function RemoveSelectionArea(seltilestartx As Integer, seltileendx As Integer, s
     'If seltilestartx <= tempboundaries.Left Then
     If removedtiles Then
         j = 0: i = 0
-        For j = tempboundaries.Left To Boundaries.Right
-            For i = Boundaries.Top To Boundaries.Bottom
+        For j = tempboundaries.Left To boundaries.Right
+            For i = boundaries.Top To boundaries.Bottom
                 If isInSelection.value(j, i) Then
                     foundtiles = True
                     GoTo skipLeft
@@ -649,8 +649,8 @@ skipLeft:
         ' check if we need to shrink the top side
         'If seltilestarty <= tempboundaries.Top Then
         j = 0: i = 0
-        For j = tempboundaries.Top To Boundaries.Bottom
-            For i = Boundaries.Left To Boundaries.Right
+        For j = tempboundaries.Top To boundaries.Bottom
+            For i = boundaries.Left To boundaries.Right
                 If isInSelection.value(i, j) Then
                     foundtiles = True
                     GoTo skipTop
@@ -664,8 +664,8 @@ skipTop:
         ' check if we need to shrink the right side
         'If seltileendx >= tempboundaries.Right Then
         j = 0: i = 0
-        For j = tempboundaries.Right To Boundaries.Left Step -1
-            For i = Boundaries.Top To Boundaries.Bottom
+        For j = tempboundaries.Right To boundaries.Left Step -1
+            For i = boundaries.Top To boundaries.Bottom
                 If isInSelection.value(j, i) Then
                     foundtiles = True
                     GoTo skipRight
@@ -679,8 +679,8 @@ skipRight:
         ' check if we need to shrink the right side
         'If seltileendy >= tempboundaries.Bottom Then
         j = 0: i = 0
-        For j = tempboundaries.Bottom To Boundaries.Top Step -1
-            For i = Boundaries.Left To Boundaries.Right
+        For j = tempboundaries.Bottom To boundaries.Top Step -1
+            For i = boundaries.Left To boundaries.Right
                 If isInSelection.value(i, j) Then
                     foundtiles = True
                     GoTo skipBottom
@@ -693,11 +693,11 @@ skipBottom:
 
     End If
 
-    Boundaries = tempboundaries
+    boundaries = tempboundaries
 
     hasAlreadySelectedParts = foundtiles
         
-    If refresh Then
+    If Refresh Then
         'check if there are any tiles left in selection
         If Not hasAlreadySelectedParts Then
             parent.pic1024selection.Cls
@@ -705,7 +705,7 @@ skipBottom:
 
         frmGeneral.UpdateToolBarButtons
         Call parent.RedrawSelectionArea((seltilestartx - 1) * TILEW, (seltilestarty - 1) * TILEH, (seltileendx + 1) * TILEW, (seltileendy + 1) * TILEH, False)
-        Call parent.RedrawTileArea((seltilestartx - 1) * TILEW, (seltilestarty - 1) * TILEH, (seltileendx + 1) * TILEW, (seltileendy + 1) * TILEH, True)
+        Call parent.RedrawTileLayer(True)
 '        parent.UpdateLevel
     End If
 
@@ -720,7 +720,7 @@ RemoveSelectionArea_Error:
     HandleError Err, "Selection.RemoveSelectionArea"
 End Function
 
-Function RemoveAllSelectionArea(undoch As Changes, Optional refresh As Boolean = True) As Boolean
+Function RemoveAllSelectionArea(undoch As Changes, Optional Refresh As Boolean = True) As Boolean
     'optimized function of removeselectionarea (when all has to be cleared)
     Dim shouldbedropped As Boolean
     Dim oldtile As Integer, newtile As Integer
@@ -729,8 +729,8 @@ Function RemoveAllSelectionArea(undoch As Changes, Optional refresh As Boolean =
     
     Dim i As Integer, j As Integer
     
-    For j = Boundaries.Top To Boundaries.Bottom
-        For i = Boundaries.Left To Boundaries.Right
+    For j = boundaries.Top To boundaries.Bottom
+        For i = boundaries.Left To boundaries.Right
             If isInSelection.value(i, j) Then
             
                 newtile = seltiles(i, j)
@@ -772,7 +772,7 @@ Function RemoveAllSelectionArea(undoch As Changes, Optional refresh As Boolean =
     RemoveAllSelectionArea = removedtiles
 End Function
 
-Sub ApplySelection(undoch As Changes, Optional refresh As Boolean = True)
+Sub ApplySelection(undoch As Changes, Optional Refresh As Boolean = True)
     
     On Error GoTo ApplySelection_Error
 
@@ -818,10 +818,10 @@ Sub ApplySelection(undoch As Changes, Optional refresh As Boolean = True)
     c_selstate = notdrawing
     selectionchanged = False
 
-    Boundaries.Top = 32767
-    Boundaries.Left = 32767
-    Boundaries.Right = 0
-    Boundaries.Bottom = 0
+    boundaries.Top = 32767
+    boundaries.Left = 32767
+    boundaries.Right = 0
+    boundaries.Bottom = 0
 
 
     'clear possible tile nr's stored in unused selection tiles
@@ -829,7 +829,7 @@ Sub ApplySelection(undoch As Changes, Optional refresh As Boolean = True)
 
     frmGeneral.UpdateToolBarButtons
 
-    If refresh Then parent.UpdateLevel
+    If Refresh Then parent.UpdateLevel
 
     frmGeneral.IsBusy("Selection.ApplySelection") = False
 
@@ -847,7 +847,7 @@ Sub CopySelection()
 'set the array into the clipboard array
     frmGeneral.IsBusy("Selection.CopySelection") = True
     
-    Call frmGeneral.clipboard.SetClipboardData(seltiles, isInSelection, Boundaries)
+    Call frmGeneral.clipboard.SetClipboardData(seltiles, isInSelection, boundaries)
 
 
     frmGeneral.IsBusy("Selection.CopySelection") = False
@@ -870,7 +870,7 @@ Sub CutSelection()
     frmGeneral.IsBusy("Selection.CutSelection") = False
 End Sub
 
-Sub DeleteSelection(undoch As Changes, Optional refresh As Boolean = True, Optional appendundo As Boolean = False)
+Sub DeleteSelection(undoch As Changes, Optional Refresh As Boolean = True, Optional appendundo As Boolean = False)
 'clear the selection, but don't copy the tiles from the selection to the level
     frmGeneral.IsBusy("Selection.DeleteSelection") = True
     
@@ -878,8 +878,8 @@ Sub DeleteSelection(undoch As Changes, Optional refresh As Boolean = True, Optio
 
         Dim i As Integer, j As Integer
         
-        For i = Boundaries.Left To Boundaries.Right
-            For j = Boundaries.Top To Boundaries.Bottom
+        For i = boundaries.Left To boundaries.Right
+            For j = boundaries.Top To boundaries.Bottom
                 If isInSelection.value(i, j) Then
                     Call DeleteSelectionTile(i, j, undoch)
                 End If
@@ -901,7 +901,7 @@ Sub DeleteSelection(undoch As Changes, Optional refresh As Boolean = True, Optio
 
     frmGeneral.UpdateToolBarButtons
 
-    If refresh Then
+    If Refresh Then
         parent.UpdateLevel
     End If
     
@@ -978,7 +978,7 @@ Friend Sub SetSelectionData(tiles() As Integer, ByRef bitfield As boolArray, ByR
 
     seltiles = tiles
     Call isInSelection.CopyFromBitfield(bitfield)
-    Boundaries = Bounds
+    boundaries = Bounds
 
     hasAlreadySelectedParts = True
     selstate = Append
@@ -986,14 +986,14 @@ Friend Sub SetSelectionData(tiles() As Integer, ByRef bitfield As boolArray, ByR
     parent.pic1024selection.Cls
     Dim i As Integer
     Dim j As Integer
-    For j = Boundaries.Top To Boundaries.Bottom
-        For i = Boundaries.Left To Boundaries.Right
+    For j = boundaries.Top To boundaries.Bottom
+        For i = boundaries.Left To boundaries.Right
             If isInSelection.value(i, j) Then
                 Call SetPixel(parent.pic1024selection.hDC, i, j, TilePixelColor(seltiles(i, j)))
             End If
         Next
     Next
-    parent.pic1024selection.refresh
+    parent.pic1024selection.Refresh
 
     Call CenterSelection(True, False, undoch)
     
@@ -1045,16 +1045,16 @@ SetSelectionData_Error:
     HandleError Err, "Selection.SetSelectionData"
 End Sub
 
-Sub Move(dx As Integer, dy As Integer, Optional refresh As Boolean = True, Optional movePixels As Boolean = True)
+Sub Move(dx As Integer, dy As Integer, Optional Refresh As Boolean = True, Optional movePixels As Boolean = True)
 '    On Error GoTo Move_Error
 
     Dim tick As Long
     tick = GetTickCount
 
-    If Boundaries.Left + dx < 0 Then dx = 0 - Boundaries.Left
-    If Boundaries.Right + dx > 1023 Then dx = 1023 - Boundaries.Right
-    If Boundaries.Top + dy < 0 Then dy = 0 - Boundaries.Top
-    If Boundaries.Bottom + dy > 1023 Then dy = 1023 - Boundaries.Bottom
+    If boundaries.Left + dx < 0 Then dx = 0 - boundaries.Left
+    If boundaries.Right + dx > 1023 Then dx = 1023 - boundaries.Right
+    If boundaries.Top + dy < 0 Then dy = 0 - boundaries.Top
+    If boundaries.Bottom + dy > 1023 Then dy = 1023 - boundaries.Bottom
 
     If dx = 0 And dy = 0 Then
         'no move
@@ -1075,8 +1075,8 @@ Sub Move(dx As Integer, dy As Integer, Optional refresh As Boolean = True, Optio
     
     Dim i As Integer, j As Integer
     
-    For j = Boundaries.Top To Boundaries.Bottom
-        For i = Boundaries.Left To Boundaries.Right
+    For j = boundaries.Top To boundaries.Bottom
+        For i = boundaries.Left To boundaries.Right
         '    If isInSelection(i, j) Then
                 newseltiles(i + dx, j + dy) = seltiles(i, j)
 '                newisInSelection(i + dx, j + dY) = isInSelection.value(i, j)
@@ -1088,13 +1088,13 @@ Sub Move(dx As Integer, dy As Integer, Optional refresh As Boolean = True, Optio
     seltiles = newseltiles
 '    Call isInSelection.SetFromBooleanArray(newisInSelection, 1024, 1024)
 
-    Call isInSelection.MoveRectangle(Boundaries.Left, Boundaries.Right, Boundaries.Top, Boundaries.Bottom, dx, dy, True)
+    Call isInSelection.MoveRectangle(boundaries.Left, boundaries.Right, boundaries.Top, boundaries.Bottom, dx, dy, True)
     
     
-    Boundaries.Left = Boundaries.Left + dx
-    Boundaries.Top = Boundaries.Top + dy
-    Boundaries.Right = Boundaries.Right + dx
-    Boundaries.Bottom = Boundaries.Bottom + dy
+    boundaries.Left = boundaries.Left + dx
+    boundaries.Top = boundaries.Top + dy
+    boundaries.Right = boundaries.Right + dx
+    boundaries.Bottom = boundaries.Bottom + dy
     
     'don't update pic1024selection if not on pixel level, it slows down alot
     If movePixels Then
@@ -1110,7 +1110,7 @@ Sub Move(dx As Integer, dy As Integer, Optional refresh As Boolean = True, Optio
     selectionchanged = True
 
 
-    If refresh Then
+    If Refresh Then
         Call parent.RedrawSelection(True)
     End If
     
@@ -1215,8 +1215,8 @@ Sub SwitchOrReplace(src As Integer, dest As Integer, replace As Boolean, Redraw 
         Next
     End If
 
-    For j = Boundaries.Top To Boundaries.Bottom
-        For i = Boundaries.Left To Boundaries.Right
+    For j = boundaries.Top To boundaries.Bottom
+        For i = boundaries.Left To boundaries.Right
             If isInSelection.value(i, j) Then
                 If seltiles(i, j) < 0 Then
                     curtile = seltiles(i, j) \ -100
@@ -1290,8 +1290,8 @@ Sub Mirror(undoch As Changes)
     tmpobjectsCount = 0
 
     'first off, calculate the new positions of any objects
-    For j = Boundaries.Top To Boundaries.Bottom
-        For i = Boundaries.Left To Boundaries.Right
+    For j = boundaries.Top To boundaries.Bottom
+        For i = boundaries.Left To boundaries.Right
             tmp = seltiles(i, j)
 
             If tmp = 217 Or tmp = 219 Or tmp = 220 Then
@@ -1299,7 +1299,7 @@ Sub Mirror(undoch As Changes)
                     ReDim Preserve tmpobjects(tmpobjectsCount + 20)
                 End If
 
-                tmpobjects(tmpobjectsCount).X = Boundaries.Left + Boundaries.Right - (i + GetMaxSizeOfObject(tmp))
+                tmpobjects(tmpobjectsCount).X = boundaries.Left + boundaries.Right - (i + GetMaxSizeOfObject(tmp))
                 tmpobjects(tmpobjectsCount).Y = j
                 tmpobjects(tmpobjectsCount).tilenr = tmp
 
@@ -1311,18 +1311,18 @@ Sub Mirror(undoch As Changes)
     Next
 
     'flip the selection array
-    For j = Boundaries.Top To Boundaries.Bottom
-        For i = Boundaries.Left To Boundaries.Left + ((Boundaries.Right - Boundaries.Left) \ 2)
+    For j = boundaries.Top To boundaries.Bottom
+        For i = boundaries.Left To boundaries.Left + ((boundaries.Right - boundaries.Left) \ 2)
 
             tmp = seltiles(i, j)
             tmpisin = isInSelection.value(i, j)
 
-            isInSelection.value(i, j) = isInSelection.value(Boundaries.Right - (i - Boundaries.Left), j)
-            isInSelection.value(Boundaries.Right - (i - Boundaries.Left), j) = tmpisin
+            isInSelection.value(i, j) = isInSelection.value(boundaries.Right - (i - boundaries.Left), j)
+            isInSelection.value(boundaries.Right - (i - boundaries.Left), j) = tmpisin
 
             'ignore special objects
-            Call setSelTile(i, j, seltiles(Boundaries.Right - (i - Boundaries.Left), j), Nothing, True, False)
-            Call setSelTile(Boundaries.Right - (i - Boundaries.Left), j, tmp, Nothing, True, False)
+            Call setSelTile(i, j, seltiles(boundaries.Right - (i - boundaries.Left), j), Nothing, True, False)
+            Call setSelTile(boundaries.Right - (i - boundaries.Left), j, tmp, Nothing, True, False)
 
         Next
     Next
@@ -1364,8 +1364,8 @@ Sub Flip(undoch As Changes)
     tmpobjectsCount = 0
 
     'first off, calculate the new positions of any objects
-    For j = Boundaries.Top To Boundaries.Bottom
-        For i = Boundaries.Left To Boundaries.Right
+    For j = boundaries.Top To boundaries.Bottom
+        For i = boundaries.Left To boundaries.Right
             tmp = seltiles(i, j)
 
             If tmp = 217 Or tmp = 219 Or tmp = 220 Then
@@ -1374,7 +1374,7 @@ Sub Flip(undoch As Changes)
                 End If
 
                 tmpobjects(tmpobjectsCount).X = i
-                tmpobjects(tmpobjectsCount).Y = Boundaries.Top + Boundaries.Bottom - (j + GetMaxSizeOfObject(tmp))
+                tmpobjects(tmpobjectsCount).Y = boundaries.Top + boundaries.Bottom - (j + GetMaxSizeOfObject(tmp))
                 tmpobjects(tmpobjectsCount).tilenr = tmp
 
                 Call DestroySelObject(Me, i, j, Nothing, , , False)
@@ -1384,20 +1384,20 @@ Sub Flip(undoch As Changes)
     Next
 
     'flip the selection array
-    For i = Boundaries.Left To Boundaries.Right
-        For j = Boundaries.Top To Boundaries.Top + ((Boundaries.Bottom - Boundaries.Top) \ 2)
+    For i = boundaries.Left To boundaries.Right
+        For j = boundaries.Top To boundaries.Top + ((boundaries.Bottom - boundaries.Top) \ 2)
 
             tmp = seltiles(i, j)
             tmpisin = isInSelection.value(i, j)
 
             '            Call setSelTileAndisIn(i, j, seltiles(i, Boundaries.Bottom - (j - Boundaries.Top)), isInSelection(i, Boundaries.Bottom - (j - Boundaries.Top)), undoch)
             '            Call setSelTileAndisIn(i, Boundaries.Bottom - (j - Boundaries.Top), tmp, tmpisin, undoch)
-            isInSelection.value(i, j) = isInSelection.value(i, Boundaries.Bottom - (j - Boundaries.Top))
-            isInSelection.value(i, Boundaries.Bottom - (j - Boundaries.Top)) = tmpisin
+            isInSelection.value(i, j) = isInSelection.value(i, boundaries.Bottom - (j - boundaries.Top))
+            isInSelection.value(i, boundaries.Bottom - (j - boundaries.Top)) = tmpisin
 
             'ignore special objects
-            Call setSelTile(i, j, seltiles(i, Boundaries.Bottom - (j - Boundaries.Top)), Nothing, True, False)
-            Call setSelTile(i, Boundaries.Bottom - (j - Boundaries.Top), tmp, Nothing, True, False)
+            Call setSelTile(i, j, seltiles(i, boundaries.Bottom - (j - boundaries.Top)), Nothing, True, False)
+            Call setSelTile(i, boundaries.Bottom - (j - boundaries.Top), tmp, Nothing, True, False)
         Next
     Next
 
@@ -1433,24 +1433,24 @@ Sub RotateCW(undoch As Changes)
     Call undoch.AddSelRotate(90)
 
     'New parameters of selection
-    selctrx = (Boundaries.Right - Boundaries.Left) \ 2
-    selctry = (Boundaries.Bottom - Boundaries.Top) \ 2
-    newboundaries.Left = (selctrx + Boundaries.Left) - (selctry)
-    newboundaries.Top = (selctry + Boundaries.Top) - (selctrx)
-    newboundaries.Bottom = newboundaries.Top + (Boundaries.Right - Boundaries.Left)
-    newboundaries.Right = newboundaries.Left + (Boundaries.Bottom - Boundaries.Top)
+    selctrx = (boundaries.Right - boundaries.Left) \ 2
+    selctry = (boundaries.Bottom - boundaries.Top) \ 2
+    newboundaries.Left = (selctrx + boundaries.Left) - (selctry)
+    newboundaries.Top = (selctry + boundaries.Top) - (selctrx)
+    newboundaries.Bottom = newboundaries.Top + (boundaries.Right - boundaries.Left)
+    newboundaries.Right = newboundaries.Left + (boundaries.Bottom - boundaries.Top)
 
     Dim tmptile() As Integer
-    ReDim tmptile(Boundaries.Left To Boundaries.Right, Boundaries.Top To Boundaries.Bottom)
+    ReDim tmptile(boundaries.Left To boundaries.Right, boundaries.Top To boundaries.Bottom)
 
     Dim tmpisin() As Boolean
-    ReDim tmpisin(Boundaries.Left To Boundaries.Right, Boundaries.Top To Boundaries.Bottom)
+    ReDim tmpisin(boundaries.Left To boundaries.Right, boundaries.Top To boundaries.Bottom)
 
 
     'Make sure new parameters aren't out of bounds
     If newboundaries.Left < 0 Then
         newboundaries.Left = 0
-        newboundaries.Right = newboundaries.Left + (Boundaries.Bottom - Boundaries.Top)
+        newboundaries.Right = newboundaries.Left + (boundaries.Bottom - boundaries.Top)
     ElseIf newboundaries.Right > 1023 Then
         newboundaries.Left = newboundaries.Left + (1023 - newboundaries.Right)
         newboundaries.Right = 1023
@@ -1458,7 +1458,7 @@ Sub RotateCW(undoch As Changes)
 
     If newboundaries.Top < 0 Then
         newboundaries.Top = 0
-        newboundaries.Bottom = newboundaries.Top + (Boundaries.Right - Boundaries.Left)
+        newboundaries.Bottom = newboundaries.Top + (boundaries.Right - boundaries.Left)
     ElseIf newboundaries.Bottom > 1023 Then
         newboundaries.Top = newboundaries.Top + (1023 - newboundaries.Bottom)
         newboundaries.Bottom = 1023
@@ -1470,8 +1470,8 @@ Sub RotateCW(undoch As Changes)
     tmpobjectsCount = 0
 
     'first off, calculate the new positions of any objects
-    For i = Boundaries.Left To Boundaries.Right
-        For j = Boundaries.Top To Boundaries.Bottom
+    For i = boundaries.Left To boundaries.Right
+        For j = boundaries.Top To boundaries.Bottom
             tmp = seltiles(i, j)
             tmpisin(i, j) = isInSelection.value(i, j)
             If isInSelection.value(i, j) And (tmp = 217 Or tmp = 219 Or tmp = 220) Then
@@ -1480,8 +1480,8 @@ Sub RotateCW(undoch As Changes)
                     ReDim Preserve tmpobjects(tmpobjectsCount + 20)
                 End If
 
-                tmpobjects(tmpobjectsCount).X = newboundaries.Right - ((j - Boundaries.Top) + GetMaxSizeOfObject(tmp))
-                tmpobjects(tmpobjectsCount).Y = newboundaries.Top + (i - Boundaries.Left)
+                tmpobjects(tmpobjectsCount).X = newboundaries.Right - ((j - boundaries.Top) + GetMaxSizeOfObject(tmp))
+                tmpobjects(tmpobjectsCount).Y = newboundaries.Top + (i - boundaries.Left)
                 tmpobjects(tmpobjectsCount).tilenr = tmp
 
                 Call DestroySelObject(Me, i, j, Nothing, , , False)
@@ -1503,9 +1503,9 @@ Sub RotateCW(undoch As Changes)
     'Retile the new selection with corresponding tiles
     For j = newboundaries.Top To newboundaries.Bottom
         For i = newboundaries.Left To newboundaries.Right
-            isInSelection.value(i, j) = tmpisin(Boundaries.Left + (j - newboundaries.Top), Boundaries.Top + (newboundaries.Right - i))
-            If tmptile(Boundaries.Left + (j - newboundaries.Top), Boundaries.Top + (newboundaries.Right - i)) >= 0 Then
-                Call setSelTile(i, j, tmptile(Boundaries.Left + (j - newboundaries.Top), Boundaries.Top + (newboundaries.Right - i)), Nothing, True, False)
+            isInSelection.value(i, j) = tmpisin(boundaries.Left + (j - newboundaries.Top), boundaries.Top + (newboundaries.Right - i))
+            If tmptile(boundaries.Left + (j - newboundaries.Top), boundaries.Top + (newboundaries.Right - i)) >= 0 Then
+                Call setSelTile(i, j, tmptile(boundaries.Left + (j - newboundaries.Top), boundaries.Top + (newboundaries.Right - i)), Nothing, True, False)
             End If
 
         Next
@@ -1519,10 +1519,10 @@ Sub RotateCW(undoch As Changes)
     End If
 
     'Redefine selection with new parameters
-    Boundaries.Left = newboundaries.Left
-    Boundaries.Top = newboundaries.Top
-    Boundaries.Right = newboundaries.Right
-    Boundaries.Bottom = newboundaries.Bottom
+    boundaries.Left = newboundaries.Left
+    boundaries.Top = newboundaries.Top
+    boundaries.Right = newboundaries.Right
+    boundaries.Bottom = newboundaries.Bottom
 
 
     selectionchanged = True
@@ -1544,19 +1544,19 @@ Sub RotateCCW(undoch As Changes)
     Call undoch.AddSelRotate(270)
 
     'New parameters of selection
-    selctrx = (Boundaries.Right - Boundaries.Left) \ 2
-    selctry = (Boundaries.Bottom - Boundaries.Top) \ 2
-    newboundaries.Left = (selctrx - (selctry - Boundaries.Left))
-    newboundaries.Top = (selctry - (selctrx - Boundaries.Top))
+    selctrx = (boundaries.Right - boundaries.Left) \ 2
+    selctry = (boundaries.Bottom - boundaries.Top) \ 2
+    newboundaries.Left = (selctrx - (selctry - boundaries.Left))
+    newboundaries.Top = (selctry - (selctrx - boundaries.Top))
 
-    newboundaries.Right = newboundaries.Left + (Boundaries.Bottom - Boundaries.Top)
-    newboundaries.Bottom = newboundaries.Top + (Boundaries.Right - Boundaries.Left)
+    newboundaries.Right = newboundaries.Left + (boundaries.Bottom - boundaries.Top)
+    newboundaries.Bottom = newboundaries.Top + (boundaries.Right - boundaries.Left)
 
     Dim tmptile() As Integer
-    ReDim tmptile(Boundaries.Left To Boundaries.Right, Boundaries.Top To Boundaries.Bottom)
+    ReDim tmptile(boundaries.Left To boundaries.Right, boundaries.Top To boundaries.Bottom)
 
     Dim tmpisin() As Boolean
-    ReDim tmpisin(Boundaries.Left To Boundaries.Right, Boundaries.Top To Boundaries.Bottom)
+    ReDim tmpisin(boundaries.Left To boundaries.Right, boundaries.Top To boundaries.Bottom)
 
 
 
@@ -1564,7 +1564,7 @@ Sub RotateCCW(undoch As Changes)
     'Make sure new parameters aren't out of bounds
     If newboundaries.Left < 0 Then
         newboundaries.Left = 0
-        newboundaries.Right = newboundaries.Left + (Boundaries.Bottom - Boundaries.Top)
+        newboundaries.Right = newboundaries.Left + (boundaries.Bottom - boundaries.Top)
     ElseIf newboundaries.Right > 1023 Then
         newboundaries.Left = newboundaries.Left + (1023 - newboundaries.Right)
         newboundaries.Right = 1023
@@ -1572,7 +1572,7 @@ Sub RotateCCW(undoch As Changes)
 
     If newboundaries.Top < 0 Then
         newboundaries.Top = 0
-        newboundaries.Bottom = newboundaries.Top + (Boundaries.Right - Boundaries.Left)
+        newboundaries.Bottom = newboundaries.Top + (boundaries.Right - boundaries.Left)
     ElseIf newboundaries.Bottom > 1023 Then
         newboundaries.Top = newboundaries.Top + (1023 - newboundaries.Bottom)
         newboundaries.Bottom = 1023
@@ -1584,8 +1584,8 @@ Sub RotateCCW(undoch As Changes)
     tmpobjectsCount = 0
 
     'first off, calculate the new positions of any objects
-    For i = Boundaries.Left To Boundaries.Right
-        For j = Boundaries.Top To Boundaries.Bottom
+    For i = boundaries.Left To boundaries.Right
+        For j = boundaries.Top To boundaries.Bottom
             tmp = seltiles(i, j)
             tmpisin(i, j) = isInSelection.value(i, j)
             If isInSelection.value(i, j) And (tmp = 217 Or tmp = 219 Or tmp = 220) Then
@@ -1594,8 +1594,8 @@ Sub RotateCCW(undoch As Changes)
                     ReDim Preserve tmpobjects(tmpobjectsCount + 20)
                 End If
 
-                tmpobjects(tmpobjectsCount).X = newboundaries.Left + (j - Boundaries.Top)
-                tmpobjects(tmpobjectsCount).Y = newboundaries.Bottom - ((i - Boundaries.Left) + GetMaxSizeOfObject(tmp))
+                tmpobjects(tmpobjectsCount).X = newboundaries.Left + (j - boundaries.Top)
+                tmpobjects(tmpobjectsCount).Y = newboundaries.Bottom - ((i - boundaries.Left) + GetMaxSizeOfObject(tmp))
                 tmpobjects(tmpobjectsCount).tilenr = tmp
 
                 Call DestroySelObject(Me, i, j, Nothing, , , False)
@@ -1616,9 +1616,9 @@ Sub RotateCCW(undoch As Changes)
     'Retile the new selection with corresponding tiles
     For j = newboundaries.Top To newboundaries.Bottom
         For i = newboundaries.Left To newboundaries.Right
-            isInSelection.value(i, j) = tmpisin(Boundaries.Left + (newboundaries.Bottom - j), Boundaries.Top + (i - newboundaries.Left))
-            If tmptile(Boundaries.Left + (newboundaries.Bottom - j), Boundaries.Top + (i - newboundaries.Left)) >= 0 Then
-                Call setSelTile(i, j, tmptile(Boundaries.Left + (newboundaries.Bottom - j), Boundaries.Top + (i - newboundaries.Left)), Nothing, True, False)
+            isInSelection.value(i, j) = tmpisin(boundaries.Left + (newboundaries.Bottom - j), boundaries.Top + (i - newboundaries.Left))
+            If tmptile(boundaries.Left + (newboundaries.Bottom - j), boundaries.Top + (i - newboundaries.Left)) >= 0 Then
+                Call setSelTile(i, j, tmptile(boundaries.Left + (newboundaries.Bottom - j), boundaries.Top + (i - newboundaries.Left)), Nothing, True, False)
             End If
 
         Next
@@ -1633,10 +1633,10 @@ Sub RotateCCW(undoch As Changes)
 
 
     'Redefine selection with new parameters
-    Boundaries.Left = newboundaries.Left
-    Boundaries.Top = newboundaries.Top
-    Boundaries.Right = newboundaries.Right
-    Boundaries.Bottom = newboundaries.Bottom
+    boundaries.Left = newboundaries.Left
+    boundaries.Top = newboundaries.Top
+    boundaries.Right = newboundaries.Right
+    boundaries.Bottom = newboundaries.Bottom
 
 
 
@@ -1650,10 +1650,10 @@ Sub Rotate180(undoch As Changes)
     Dim tmp As Integer
 
     Dim tmptile() As Integer
-    ReDim tmptile(Boundaries.Left To Boundaries.Right, Boundaries.Top To Boundaries.Bottom)
+    ReDim tmptile(boundaries.Left To boundaries.Right, boundaries.Top To boundaries.Bottom)
 
     Dim tmpisin() As Boolean
-    ReDim tmpisin(Boundaries.Left To Boundaries.Right, Boundaries.Top To Boundaries.Bottom)
+    ReDim tmpisin(boundaries.Left To boundaries.Right, boundaries.Top To boundaries.Bottom)
 
     Call undoch.AddSelRotate(180)
 
@@ -1663,8 +1663,8 @@ Sub Rotate180(undoch As Changes)
     tmpobjectsCount = 0
 
     'first off, calculate the new positions of any objects
-    For i = Boundaries.Left To Boundaries.Right
-        For j = Boundaries.Top To Boundaries.Bottom
+    For i = boundaries.Left To boundaries.Right
+        For j = boundaries.Top To boundaries.Bottom
             tmp = seltiles(i, j)
             tmpisin(i, j) = isInSelection.value(i, j)
             If isInSelection.value(i, j) And (tmp = 217 Or tmp = 219 Or tmp = 220) Then
@@ -1673,8 +1673,8 @@ Sub Rotate180(undoch As Changes)
                     ReDim Preserve tmpobjects(tmpobjectsCount + 20)
                 End If
 
-                tmpobjects(tmpobjectsCount).X = Boundaries.Left + Boundaries.Right - (i + GetMaxSizeOfObject(tmp))
-                tmpobjects(tmpobjectsCount).Y = Boundaries.Top + Boundaries.Bottom - (j + GetMaxSizeOfObject(tmp))
+                tmpobjects(tmpobjectsCount).X = boundaries.Left + boundaries.Right - (i + GetMaxSizeOfObject(tmp))
+                tmpobjects(tmpobjectsCount).Y = boundaries.Top + boundaries.Bottom - (j + GetMaxSizeOfObject(tmp))
                 tmpobjects(tmpobjectsCount).tilenr = tmp
 
                 Call DestroySelObject(Me, i, j, Nothing, , , False)
@@ -1688,10 +1688,10 @@ Sub Rotate180(undoch As Changes)
     Next
 
     'now that the objects are temp gone we can flip the image
-    For j = Boundaries.Top To Boundaries.Bottom
-        For i = Boundaries.Left To Boundaries.Right
-            Call setSelTile(i, j, tmptile(Boundaries.Right - (i - Boundaries.Left), Boundaries.Bottom - (j - Boundaries.Top)), Nothing, True, False)
-            isInSelection.value(i, j) = tmpisin(Boundaries.Right - (i - Boundaries.Left), Boundaries.Bottom - (j - Boundaries.Top))
+    For j = boundaries.Top To boundaries.Bottom
+        For i = boundaries.Left To boundaries.Right
+            Call setSelTile(i, j, tmptile(boundaries.Right - (i - boundaries.Left), boundaries.Bottom - (j - boundaries.Top)), Nothing, True, False)
+            isInSelection.value(i, j) = tmpisin(boundaries.Right - (i - boundaries.Left), boundaries.Bottom - (j - boundaries.Top))
         Next
     Next
 
@@ -1746,14 +1746,14 @@ Sub RotateFree(angle As Double, undoch As Changes)
 
     'first off, calculate the new positions of any objects
 
-    tempboundaries = Boundaries
+    tempboundaries = boundaries
 
-    tmporigy = Boundaries.Top
-    tmporigysng = Boundaries.Top
-    For n = -(Boundaries.Bottom - Boundaries.Top) \ 2 To (Boundaries.Bottom - Boundaries.Top + 0.5) \ 2 Step 1!
-        tmporigx = Boundaries.Left
-        tmporigxsng = Boundaries.Left
-        For m = -(Boundaries.Right - Boundaries.Left) \ 2 To (Boundaries.Right - Boundaries.Left + 0.5) \ 2 Step 1!
+    tmporigy = boundaries.Top
+    tmporigysng = boundaries.Top
+    For n = -(boundaries.Bottom - boundaries.Top) \ 2 To (boundaries.Bottom - boundaries.Top + 0.5) \ 2 Step 1!
+        tmporigx = boundaries.Left
+        tmporigxsng = boundaries.Left
+        For m = -(boundaries.Right - boundaries.Left) \ 2 To (boundaries.Right - boundaries.Left + 0.5) \ 2 Step 1!
 
             tmp = seltiles(tmporigx, tmporigy)
             tmpisin(tmporigx, tmporigy) = isInSelection.value(tmporigx, tmporigy)
@@ -1774,8 +1774,8 @@ Sub RotateFree(angle As Double, undoch As Changes)
                     End If
 
                     'calculate new coordinates
-                    tmpdestx = Int(cosangle * (m + (GetMaxSizeOfObject(tmp) + 1) / 2) + sinangle * (n + (GetMaxSizeOfObject(tmp) + 1) / 2)) + Boundaries.Left + (Boundaries.Right - Boundaries.Left) \ 2 - (GetMaxSizeOfObject(tmp) + 1) / 2
-                    tmpdesty = Int(-sinangle * (m + (GetMaxSizeOfObject(tmp) + 1) / 2) + cosangle * (n + (GetMaxSizeOfObject(tmp) + 1) / 2)) + Boundaries.Top + (Boundaries.Bottom - Boundaries.Top) \ 2 - (GetMaxSizeOfObject(tmp) + 1) / 2
+                    tmpdestx = Int(cosangle * (m + (GetMaxSizeOfObject(tmp) + 1) / 2) + sinangle * (n + (GetMaxSizeOfObject(tmp) + 1) / 2)) + boundaries.Left + (boundaries.Right - boundaries.Left) \ 2 - (GetMaxSizeOfObject(tmp) + 1) / 2
+                    tmpdesty = Int(-sinangle * (m + (GetMaxSizeOfObject(tmp) + 1) / 2) + cosangle * (n + (GetMaxSizeOfObject(tmp) + 1) / 2)) + boundaries.Top + (boundaries.Bottom - boundaries.Top) \ 2 - (GetMaxSizeOfObject(tmp) + 1) / 2
 
                     tmpobjects(tmpobjectsCount).X = tmpdestx
                     tmpobjects(tmpobjectsCount).Y = tmpdesty
@@ -1857,14 +1857,14 @@ Sub RotateFree(angle As Double, undoch As Changes)
 
 
 
-    tmporigy = Boundaries.Top
-    tmporigysng = Boundaries.Top
-    For n = -(Boundaries.Bottom - Boundaries.Top) \ 2 To (Boundaries.Bottom - Boundaries.Top + 0.5) \ 2 Step 0.25
-        tmporigx = Boundaries.Left
-        tmporigxsng = Boundaries.Left
-        For m = -(Boundaries.Right - Boundaries.Left) \ 2 To (Boundaries.Right - Boundaries.Left + 0.5) \ 2 Step 0.25
-            tmpdestx = Int(cosangle * m + sinangle * n) + Boundaries.Left + (Boundaries.Right - Boundaries.Left) \ 2
-            tmpdesty = Int(-sinangle * m + cosangle * n) + Boundaries.Top + (Boundaries.Bottom - Boundaries.Top) \ 2
+    tmporigy = boundaries.Top
+    tmporigysng = boundaries.Top
+    For n = -(boundaries.Bottom - boundaries.Top) \ 2 To (boundaries.Bottom - boundaries.Top + 0.5) \ 2 Step 0.25
+        tmporigx = boundaries.Left
+        tmporigxsng = boundaries.Left
+        For m = -(boundaries.Right - boundaries.Left) \ 2 To (boundaries.Right - boundaries.Left + 0.5) \ 2 Step 0.25
+            tmpdestx = Int(cosangle * m + sinangle * n) + boundaries.Left + (boundaries.Right - boundaries.Left) \ 2
+            tmpdesty = Int(-sinangle * m + cosangle * n) + boundaries.Top + (boundaries.Bottom - boundaries.Top) \ 2
 
             'Call setSelTileAndisIn(tmpdestx, tmpdesty, tmptile(tmporigx, tmporigy), tmpisin(tmporigx, tmporigy), undoch)
             Call setSelTile(tmpdestx, tmpdesty, tmptile(tmporigx, tmporigy), Nothing, True, False)
@@ -1902,7 +1902,7 @@ Sub RotateFree(angle As Double, undoch As Changes)
         Next
     Next
 
-    Boundaries = tempboundaries
+    boundaries = tempboundaries
 
     selectionchanged = True
 
@@ -2043,14 +2043,14 @@ End Sub
 '
 'End Sub
 
-Sub Resize(Left As Integer, Top As Integer, Right As Integer, Bottom As Integer, Optional resizetype As Integer = 0, Optional refresh As Boolean = True)
+Sub Resize(Left As Integer, Top As Integer, Right As Integer, Bottom As Integer, Optional resizetype As Integer = 0, Optional Refresh As Boolean = True)
 'first move selection to left and top, then resize
     parent.undoredo.ResetRedo
     Set undoch = New Changes
 
-    Call Move(-Boundaries.Left + Left, -Boundaries.Top + Top, False)
+    Call Move(-boundaries.Left + Left, -boundaries.Top + Top, False)
 
-    Call undoch.AddSelMove(-Boundaries.Left + Left, -Boundaries.Top + Top)
+    Call undoch.AddSelMove(-boundaries.Left + Left, -boundaries.Top + Top)
 
     Dim newselection(1023, 1023) As Integer
     Dim newbitfield As boolArray
@@ -2060,7 +2060,7 @@ Sub Resize(Left As Integer, Top As Integer, Right As Integer, Bottom As Integer,
 
     'get nrOfLinesOnX
     Dim nrOfLinesOnX As Integer
-    nrOfLinesOnX = Round(((Bottom - Top) - (Boundaries.Bottom - Boundaries.Top)))
+    nrOfLinesOnX = Round(((Bottom - Top) - (boundaries.Bottom - boundaries.Top)))
     Dim shrink As Boolean
     If nrOfLinesOnX < 0 Then
         shrink = True
@@ -2080,12 +2080,12 @@ Sub Resize(Left As Integer, Top As Integer, Right As Integer, Bottom As Integer,
             'check which of lines previous and next has the most
             '0 tiles
             Dim prevnr As Integer
-            prevnr = TileCountOnLine(Boundaries.Top + oldlinecount - 1, 0, False, Boundaries)
+            prevnr = TileCountOnLine(boundaries.Top + oldlinecount - 1, 0, False, boundaries)
             Dim nextnr As Integer
-            nextnr = TileCountOnLine(Boundaries.Top + oldlinecount, 0, False, Boundaries)
+            nextnr = TileCountOnLine(boundaries.Top + oldlinecount, 0, False, boundaries)
             Dim curline As Integer
             Dim nextnextnr As Integer
-            nextnextnr = TileCountOnLine(Boundaries.Top + oldlinecount + 1, 0, False, Boundaries)
+            nextnextnr = TileCountOnLine(boundaries.Top + oldlinecount + 1, 0, False, boundaries)
 
             If shrink Then
                 'skip the line
@@ -2103,13 +2103,13 @@ Sub Resize(Left As Integer, Top As Integer, Right As Integer, Bottom As Integer,
                 End If
 
                 'draw the line
-                i = Boundaries.Left
-                For i = Boundaries.Left To Boundaries.Right
-                    If isInSelection.value(i, Boundaries.Top + curline) Then
-                        If seltiles(i, Boundaries.Top + curline) < 0 Then
+                i = boundaries.Left
+                For i = boundaries.Left To boundaries.Right
+                    If isInSelection.value(i, boundaries.Top + curline) Then
+                        If seltiles(i, boundaries.Top + curline) < 0 Then
                             newselection(i, j) = 0
                         Else
-                            newselection(i, j) = seltiles(i, Boundaries.Top + curline)
+                            newselection(i, j) = seltiles(i, boundaries.Top + curline)
                         End If
                         newbitfield.value(i, j) = True
                     End If
@@ -2144,26 +2144,26 @@ Sub Resize(Left As Integer, Top As Integer, Right As Integer, Bottom As Integer,
                 End If
 
                 'draw line
-                i = Boundaries.Left
-                For i = Boundaries.Left To Boundaries.Right
-                    If isInSelection.value(i, Boundaries.Top + curline) Then
-                        If seltiles(i, Boundaries.Top + curline) < 0 Then
+                i = boundaries.Left
+                For i = boundaries.Left To boundaries.Right
+                    If isInSelection.value(i, boundaries.Top + curline) Then
+                        If seltiles(i, boundaries.Top + curline) < 0 Then
                             newselection(i, j) = 0
                         Else
-                            newselection(i, j) = seltiles(i, Boundaries.Top + curline)
+                            newselection(i, j) = seltiles(i, boundaries.Top + curline)
                         End If
                         newbitfield.value(i, j) = True
                     End If
                 Next
             End If
         Else
-            i = Boundaries.Left
-            For i = Boundaries.Left To Boundaries.Right
-                If isInSelection.value(i, Boundaries.Top + oldlinecount) Then
-                    If seltiles(i, Boundaries.Top + oldlinecount) Then
-                        newselection(i, j) = seltiles(i, Boundaries.Top + oldlinecount)
+            i = boundaries.Left
+            For i = boundaries.Left To boundaries.Right
+                If isInSelection.value(i, boundaries.Top + oldlinecount) Then
+                    If seltiles(i, boundaries.Top + oldlinecount) Then
+                        newselection(i, j) = seltiles(i, boundaries.Top + oldlinecount)
                     Else
-                        newselection(i, j) = seltiles(i, Boundaries.Top + oldlinecount)
+                        newselection(i, j) = seltiles(i, boundaries.Top + oldlinecount)
                     End If
                     newbitfield.value(i, j) = True
                 End If
@@ -2183,7 +2183,7 @@ Sub Resize(Left As Integer, Top As Integer, Right As Integer, Bottom As Integer,
 '    Dim newnewbitfield(1023, 1023) As Boolean
 
     Dim nrOfLinesOnY As Integer
-    nrOfLinesOnY = Round(((Right - Left) - (Boundaries.Right - Boundaries.Left)))
+    nrOfLinesOnY = Round(((Right - Left) - (boundaries.Right - boundaries.Left)))
     If nrOfLinesOnY < 0 Then
         shrink = True
         nrOfLinesOnY = Abs(nrOfLinesOnY)
@@ -2194,7 +2194,7 @@ Sub Resize(Left As Integer, Top As Integer, Right As Integer, Bottom As Integer,
     Dim bnds As area
     bnds.Left = Left
     bnds.Top = Top
-    bnds.Right = Boundaries.Right
+    bnds.Right = boundaries.Right
     bnds.Bottom = Bottom
 
     oldlinecount = 0
@@ -2286,7 +2286,7 @@ Sub Resize(Left As Integer, Top As Integer, Right As Integer, Bottom As Integer,
 
     seltiles = newnewselection
     Set isInSelection = newnewbitfield
-    Boundaries = bnds
+    boundaries = bnds
 
 
     parent.pic1024selection.Cls
@@ -2312,25 +2312,25 @@ Sub Resize(Left As Integer, Top As Integer, Right As Integer, Bottom As Integer,
 
     hasAlreadySelectedParts = True
 
-    parent.pic1024selection.refresh
+    parent.pic1024selection.Refresh
 
     selectionchanged = True
 
-    If refresh Then parent.UpdateLevel
+    If Refresh Then parent.UpdateLevel
 End Sub
 
-Friend Function TileCountOnLine(j As Integer, tile As Integer, vert As Boolean, Boundaries As area)
+Friend Function TileCountOnLine(j As Integer, tile As Integer, vert As Boolean, boundaries As area)
     Dim i As Integer
     Dim count As Integer
 
     If vert Then
-        For i = Boundaries.Top To Boundaries.Bottom
+        For i = boundaries.Top To boundaries.Bottom
             If seltiles(j, i) = tile Then
                 count = count + 1
             End If
         Next
     Else
-        For i = Boundaries.Left To Boundaries.Right
+        For i = boundaries.Left To boundaries.Right
             If seltiles(i, j) = tile Then
                 count = count + 1
             End If
@@ -2349,13 +2349,13 @@ Sub ConverttoWalltiles(wallset As Integer, converttype As Integer)
     '    Dim isvalid As Boolean
 
   '  Erase checked
-    ReDim checked(Boundaries.Left - 1 To Boundaries.Right, Boundaries.Top - 1 To Boundaries.Bottom)
+    ReDim checked(boundaries.Left - 1 To boundaries.Right, boundaries.Top - 1 To boundaries.Bottom)
 
     parent.undoredo.ResetRedo
     Set undoch = New Changes
 
-    For j = Boundaries.Top To Boundaries.Bottom
-        For i = Boundaries.Left To Boundaries.Right
+    For j = boundaries.Top To boundaries.Bottom
+        For i = boundaries.Left To boundaries.Right
             'Check if it is possible to convert current tile
 
 
@@ -2655,7 +2655,7 @@ End Sub
 
 
 
-Private Sub CenterSelection(inScreen As Boolean, refresh As Boolean, undoch As Changes)
+Private Sub CenterSelection(inScreen As Boolean, Refresh As Boolean, undoch As Changes)
     Dim lbx As Integer    'lowestval for x
     Dim hbx As Integer    'highestval for x
     Dim lby As Integer    'lowestval for y
@@ -2687,17 +2687,17 @@ Private Sub CenterSelection(inScreen As Boolean, refresh As Boolean, undoch As C
 
     Dim cx As Integer
     Dim cy As Integer
-    cx = Boundaries.Left + (Boundaries.Right - Boundaries.Left) \ 2
-    cy = Boundaries.Top + (Boundaries.Bottom - Boundaries.Top) \ 2
+    cx = boundaries.Left + (boundaries.Right - boundaries.Left) \ 2
+    cy = boundaries.Top + (boundaries.Bottom - boundaries.Top) \ 2
     
     Call StartMove
     
-    Call Move(csx - cx, csy - cy, refresh, True)
+    Call Move(csx - cx, csy - cy, Refresh, True)
     
     Call EndMove(undoch)
     
             
-    Call parent.UpdatePreview(refresh)
+    Call parent.UpdatePreview(Refresh)
 End Sub
 
 
@@ -2739,10 +2739,10 @@ Sub AddTileToSelection(X As Integer, Y As Integer, undoch As Changes)
 End Sub
 
 Sub CreateTileInSelection(X As Integer, Y As Integer, tilenr As Integer, undoch As Changes)
-    If Boundaries.Left > X Then Boundaries.Left = X
-    If Boundaries.Right < X Then Boundaries.Right = X
-    If Boundaries.Top > Y Then Boundaries.Top = Y
-    If Boundaries.Bottom < Y Then Boundaries.Bottom = Y
+    If boundaries.Left > X Then boundaries.Left = X
+    If boundaries.Right < X Then boundaries.Right = X
+    If boundaries.Top > Y Then boundaries.Top = Y
+    If boundaries.Bottom < Y Then boundaries.Bottom = Y
 
     If isInSelection.value(X, Y) Then
         Call setSelTile(X, Y, tilenr, undoch)
@@ -2784,10 +2784,10 @@ Sub AddObjectToSelection(X As Integer, Y As Integer, undoch As Changes)
         Next
     Next
 
-    If Boundaries.Left > coords(0) Then Boundaries.Left = coords(0)
-    If Boundaries.Right < coords(0) + size Then Boundaries.Right = coords(0) + size
-    If Boundaries.Top > coords(1) Then Boundaries.Top = coords(1)
-    If Boundaries.Bottom < coords(1) + size Then Boundaries.Bottom = coords(1) + size
+    If boundaries.Left > coords(0) Then boundaries.Left = coords(0)
+    If boundaries.Right < coords(0) + size Then boundaries.Right = coords(0) + size
+    If boundaries.Top > coords(1) Then boundaries.Top = coords(1)
+    If boundaries.Bottom < coords(1) + size Then boundaries.Bottom = coords(1) + size
 End Sub
 
 
@@ -2819,12 +2819,12 @@ End Sub
 
 'Handles the undo/redo parts of moving the selection
 Sub StartMove()
-    moveboundaries = Boundaries
+    moveboundaries = boundaries
 End Sub
 
 Sub EndMove(undoch As Changes)
     If Not undoch Is Nothing Then
-        Call undoch.AddSelMove(Boundaries.Left - moveboundaries.Left, Boundaries.Top - moveboundaries.Top)
+        Call undoch.AddSelMove(boundaries.Left - moveboundaries.Left, boundaries.Top - moveboundaries.Top)
     End If
 End Sub
 

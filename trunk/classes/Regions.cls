@@ -26,7 +26,7 @@ Option Explicit
 'ByVal y1 As Long, ByVal x2 As Long, ByVal y2 As Long) As Long
 'Private Declare Function GetStockObject Lib "GDI32.dll" (ByVal nIndex As Long) As Long
 Private Declare Function SetROP2 Lib "GDI32.dll" ( _
-ByVal hDC As Long, ByVal nDrawMode As Long) As Long
+ByVal hDc As Long, ByVal nDrawMode As Long) As Long
 'Private Declare Function SetBkMode Lib "GDI32.dll" ( _
 'ByVal hdc As Long, ByVal nBkMode As Long) As Long
 'Private Declare Function SetBkColor Lib "GDI32.dll" ( _
@@ -69,6 +69,16 @@ Sub setParent(ByRef Main As frmMain)
     Set parent = Main
 End Sub
 
+
+
+Public Property Get RegionsCount() As Integer
+    RegionsCount = regionIdx + 1
+End Property
+
+
+
+
+
 Sub HideAllRegions()
     Dim i As Integer
     
@@ -97,7 +107,7 @@ Sub SelectRegion(id As Integer, Refresh As Boolean)
 End Sub
 
 
-Sub DrawOnLayer(hDC As Long, screenX As Integer, screenY As Integer, screenWidth As Integer, screenHeight As Integer, firstTileX As Integer, firstTileY As Integer, offsetX As Integer, offsetY As Integer)
+Sub DrawOnLayer(hDc As Long, screenX As Integer, screenY As Integer, screenWidth As Integer, screenHeight As Integer, firstTileX As Integer, firstTileY As Integer, offsetX As Integer, offsetY As Integer)
     Const MAX_DRAW_WIDTH = 1024
     Const MAX_DRAW_HEIGHT = 768
     
@@ -113,7 +123,7 @@ Sub DrawOnLayer(hDC As Long, screenX As Integer, screenY As Integer, screenWidth
     currenttilew = parent.currenttilew
     
     If currenttilew = 1 Then
-        BitBlt hDC, screenX, screenY, screenWidth, screenHeight, maindisp.hDC, firstTileX, firstTileY, vbSrcCopy
+        BitBlt hDc, screenX, screenY, screenWidth, screenHeight, maindisp.hDc, firstTileX, firstTileY, vbSrcCopy
     Else
         'Add to get the next complete tile
         screenWidth = screenWidth + offsetX
@@ -144,7 +154,7 @@ Sub DrawOnLayer(hDC As Long, screenX As Integer, screenY As Integer, screenWidth
                 If screenWidth - i < MAX_DRAW_WIDTH Then drawWidth = screenWidth - i Else drawWidth = MAX_DRAW_WIDTH
                 If screenHeight - j < MAX_DRAW_HEIGHT Then drawHeight = screenHeight - j Else drawHeight = MAX_DRAW_HEIGHT
 
-                StretchBlt hDC, screenX + i - offsetX, screenY + j - offsetY, drawWidth, drawHeight, maindisp.hDC, curtilex, curtiley, drawWidth \ currenttilew, drawHeight \ currenttilew, vbSrcCopy
+                StretchBlt hDc, screenX + i - offsetX, screenY + j - offsetY, drawWidth, drawHeight, maindisp.hDc, curtilex, curtiley, drawWidth \ currenttilew, drawHeight \ currenttilew, vbSrcCopy
 
 '                    frmGeneral.Label6.Caption = screenX + i - offsetX & "," & screenY + j - offsetY & "," & drawWidth & "," & drawHeight & "," & drawWidth \ currenttilew & "," & drawHeight \ currenttilew
               
@@ -161,13 +171,13 @@ End Sub
 Private Sub PaintRegionArea(regionID As Integer, x1 As Integer, y1 As Integer, x2 As Integer, y2 As Integer, selected As Boolean)
           
     maindisp.TextColor = vbBlack
-    SetBkColor maindisp.hDC, Regions(regionID).color
+    SetBkColor maindisp.hDc, Regions(regionID).color
    
     If selected Then
-        TransparentBlt maindisp.hDC, x1, y1, x2 - x1 + 1, y2 - y1 + 1, Regions(regionID).disphDC, x1, y1, vbBlack
+        TransparentBlt maindisp.hDc, x1, y1, x2 - x1 + 1, y2 - y1 + 1, Regions(regionID).disphDC, x1, y1, vbBlack
     Else
 '        TransAlphaBlt maindisp.hDC, x1, y1, x2 - x1 + 1, y2 - y1 + 1, Regions(regionID).disp.hDC, x1, y1, vbBlack, 64
-        BitBlt maindisp.hDC, x1, y1, x2 - x1 + 1, y2 - y1 + 1, Regions(regionID).disphDC, x1, y1, vbSrcPaint
+        BitBlt maindisp.hDc, x1, y1, x2 - x1 + 1, y2 - y1 + 1, Regions(regionID).disphDC, x1, y1, vbSrcPaint
     End If
 
 End Sub
@@ -281,18 +291,18 @@ Sub RedrawAllRegions()
     Call RedrawAllRegionsArea(0, 0, 1023, 1023)
 End Sub
 
-Sub AddToRegion(regionID As Integer, x As Integer, y As Integer, ByRef undoch As Changes)
+Sub AddToRegion(regionID As Integer, X As Integer, Y As Integer, ByRef undoch As Changes)
     If regionID >= 0 And regionID <= regionIdx Then
        
-        Call Regions(regionID).AddTile(x, y, undoch, regionID)
+        Call Regions(regionID).AddTile(X, Y, undoch, regionID)
 
     End If
 End Sub
 
-Sub RemoveFromRegion(regionID As Integer, x As Integer, y As Integer, undoch As Changes)
+Sub RemoveFromRegion(regionID As Integer, X As Integer, Y As Integer, undoch As Changes)
     If regionID >= 0 And regionID <= regionIdx Then
         
-        Call Regions(regionID).RemoveTile(x, y, undoch, regionID)
+        Call Regions(regionID).RemoveTile(X, Y, undoch, regionID)
         
     End If
 End Sub
@@ -396,11 +406,11 @@ End Function
 'End Sub
 
 
-Function getRegionsNamesAt(x As Integer, y As Integer) As String
+Function getRegionsNamesAt(X As Integer, Y As Integer) As String
     Dim i As Integer, count As Boolean
     
     For i = 0 To regionIdx
-        If Regions(i).value(x, y) Then
+        If Regions(i).value(X, Y) Then
                 
             
             If count Then
@@ -414,10 +424,10 @@ Function getRegionsNamesAt(x As Integer, y As Integer) As String
     Next
 End Function
 
-Function isRegionAt(x As Integer, y As Integer) As Integer
+Function isRegionAt(X As Integer, Y As Integer) As Integer
     Dim i As Integer
     For i = regionIdx To 0 Step -1
-        If Regions(i).value(x, y) Then
+        If Regions(i).value(X, Y) Then
             isRegionAt = i
             Exit Function
         End If

@@ -7,6 +7,9 @@ Global MouseDown As Integer
 
 Global bDEBUG As Boolean
 
+Global generalLoadStarted As Boolean    'frmGeneral has started to load
+Global generalLoaded As Boolean         'frmGeneral has finished loading
+Global generalHwnd As Long
 
 Global inSplash As Boolean
 
@@ -99,8 +102,15 @@ Public Type DrawOptions
     size As Integer
     step As Integer
     drawshape As DrawShapes
-    filled As Boolean
-    ignorethickness As Boolean
+    Filled As Boolean
+    Diagonal As Boolean
+    IgnoreThickness As Boolean
+    inScreen As Boolean
+    
+    TeethSize As Integer
+    TeethNumber As Integer
+    Density As Integer
+    
 End Type
 
 Global Const TOOLCOUNT = 22
@@ -117,7 +127,7 @@ Enum toolenum
     T_replacebrush
     T_bucket
     T_line
-    t_spline
+    T_spline
     T_rectangle
     T_ellipse
     T_filledrectangle
@@ -132,14 +142,14 @@ End Enum
 
 
 Enum customshapeEnum
-    s_cogwheel
-    s_star
-    s_regular
+    s_cogwheel = 0
+    s_star = 1
+    s_regular = 2
 End Enum
 
 
 Enum saveFlags
-    SFdefault = &HFFFF&
+
     
     '''PART OF DEFAULT
     SFsaveExtraTiles = &H1&
@@ -149,7 +159,7 @@ Enum saveFlags
 '    SFsaveRevert = &H8&
     
     
-    SFsaveELVL = &HFF00& 'includes all elvl
+    SFsaveELVL = &HBF00& 'includes all elvl
     SFsaveELVLattr = &H100&
     SFsaveELVLregn = &H200&
     SFsaveELVLdcwt = &H400&
@@ -160,14 +170,17 @@ Enum saveFlags
     SFsaveELVLunknown = &H8000&
     
     
+    SFdefault = &HFFFF&
+    SFoptimized = SFsaveExtraTiles Or SFsaveTileset Or SFsaveELVLattr Or SFsaveELVLunknown Or SFsaveELVLregn Or SFsaveLVZ
+    
     '''NOT PART OF DEFAULT
     SFsilent = &H10000
 End Enum
 
 Enum enumPasteType
-    p_trans 'transparent; empty tiles ignored
-    p_under 'under; can only drop/draw tiles in empty space
-    p_normal 'normal... duh
+    p_normal = 1 'normal... duh
+    p_under = 2 'under; can only drop/draw tiles in empty space
+    p_trans = 3 'transparent; empty tiles ignored
 End Enum
 
 ' THIS IS A MAP REGION, NOT HOW IT IS DEFINED IN THE ELVL STRUCTURE
@@ -393,7 +406,7 @@ Type LVZImageDefinition
     picHeight As Integer
     
     
-    currentFrame As Long
+    CurrentFrame As Long
     lastFrameChange As Long
 End Type
 
@@ -519,70 +532,116 @@ Global curCustomShape As customshapeEnum
 Global MAX_TOOL_SIZE(16) As Integer
 
 
-Function ToolName(t As Integer) As String
+
+Function ToolName(ByVal t As toolenum) As String
     Select Case t
-    Case 0
+    Case T_magnifier
         ToolName = "Magnifier"
-    Case 1
+    Case T_selection
         ToolName = "Selection"
-    Case 2
+    Case T_magicwand
         ToolName = "MagicWand"
-    Case 3
+    Case T_freehandselection
         ToolName = "FreehandSelection"
-    Case 4
+    Case T_hand
         ToolName = "Hand"
-    Case 5
+    Case T_pencil
         ToolName = "Pencil"
-    Case 6
+    Case T_dropper
         ToolName = "Dropper"
-    Case 7
+    Case T_Eraser
         ToolName = "Eraser"
-    Case 8
+    Case T_airbrush
         ToolName = "AirBrush"
-    Case 9
+    Case T_replacebrush
         ToolName = "ReplaceBrush"
-    Case 10
+    Case T_bucket
         ToolName = "Bucket"
-    Case 11
+    Case T_line
         ToolName = "Line"
-    Case 12
+    Case T_spline
         ToolName = "SpLine"
-    Case 13
+    Case T_rectangle
         ToolName = "Rectangle"
-    Case 14
+    Case T_ellipse
         ToolName = "Ellipse"
-    Case 15
+    Case T_filledrectangle
         ToolName = "FilledRectangle"
-    Case 16
+    Case T_filledellipse
         ToolName = "FilledEllipse"
-    Case 17
+    Case T_customshape
         ToolName = CustomShapeName(curCustomShape)
-    Case 18
+
         ToolName = "TileText"
-    Case 19
+    Case T_Region
         ToolName = "Regions"
-    Case 20
+    Case T_TestMap
         ToolName = "TestMap"
-    Case 21
+    Case T_lvz
         ToolName = "LVZ"
     Case Else
         ToolName = ""
     End Select
 End Function
 
+'Function GetToolFromName(sname As String) As toolenum
+'    Dim i As toolenum
+'
+'    If Len(sname) > 0 Then
+'        For i = 1 To TOOLCOUNT
+'            If ToolName(i) = sname Then
+'                GetToolFromName = i
+'                Exit Function
+'            End If
+'        Next
+'    End If
+'
+'    GetToolFromName = T_invalid
+'
+'End Function
+
 Function CustomShapeName(t As customshapeEnum) As String
     Select Case t
-    Case 0
+    Case s_cogwheel
         CustomShapeName = "Cogwheel"
-    Case 1
+    Case s_star
         CustomShapeName = "Star"
-    Case 2
-        CustomShapeName = "Regular"
+    Case s_regular
+        CustomShapeName = "Polygon"
     Case Else
         CustomShapeName = ""
     End Select
-
 End Function
+
+
+Function ToolHasTilePreview(t As toolenum) As Boolean
+    Select Case t
+    
+    Case T_bucket, T_customshape, T_ellipse, _
+            T_Eraser, T_filledellipse, T_filledrectangle, _
+             T_line, T_pencil, T_rectangle, T_spline
+             
+        ToolHasTilePreview = True
+        
+    Case Else
+        ToolHasTilePreview = False
+    End Select
+End Function
+
+
+'Function CustomShapeName(t As customshapeEnum) As String
+'    Select Case t
+'    Case 0
+'        CustomShapeName = "Cogwheel"
+'    Case 1
+'        CustomShapeName = "Star"
+'    Case 2
+'        CustomShapeName = "Regular"
+'    Case Else
+'        CustomShapeName = ""
+'    End Select
+'
+'End Function
 
 
 
@@ -638,11 +697,11 @@ Function FlagIsPartial(ByVal flags As saveFlags, Check As saveFlags) As Boolean
     FlagIsPartial = ((flags And Check) <> 0)
 End Function
 
-Function FlagIs(ByVal flags As saveFlags, Check As saveFlags) As Boolean
+Function FlagIs(ByVal flags As Long, Check As Long) As Boolean
     FlagIs = ((flags And Check) = Check)
 End Function
 
-Sub FlagAdd(ByRef flags As saveFlags, add As Boolean, ByVal newflag As saveFlags)
+Sub FlagAdd(ByRef flags As Long, add As Boolean, ByVal newflag As Long)
     If add Then
         flags = flags Or newflag
     Else

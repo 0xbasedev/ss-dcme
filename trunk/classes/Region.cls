@@ -21,6 +21,8 @@ Const F_ISNOANTIWARP = &H2
 Const F_ISNOWEAPON = &H4
 Const F_ISNOFLAGDROP = &H8
 Const F_ISAUTOWARP = &H10
+Const F_ISNORECEIVEANTI = &H20
+Const F_ISNORECEIVEWEAPONS = &H40
 
 'Private m_objbitfield As boolArray
 Private m_sname As String
@@ -61,13 +63,13 @@ Private Sub Class_Initialize()
     
     disphDC = disp.hDC
 
+    m_Flags = 0
 End Sub
 
 Public Sub InitRegion(nName As String, nColor As Long)
     m_bvisible = True
     m_lcolor = nColor
     m_sname = nName
-    
 End Sub
 
 Private Sub Class_Terminate()
@@ -117,66 +119,79 @@ Public Property Let name(ByVal sname As String)
 End Property
 
 
-
+'rBAS
 Public Property Get isBase() As Boolean
-    isBase = ((m_Flags And F_ISBASE) = F_ISBASE)
+    isBase = GetFlag(F_ISBASE)
 End Property
 
 Public Property Let isBase(ByVal bisBase As Boolean)
-    If bisBase Then
-        m_Flags = (m_Flags Or F_ISBASE)
-    Else
-        m_Flags = (m_Flags And Not F_ISBASE)
-    End If
+    Call SetFlag(F_ISBASE, bisBase)
 End Property
 
+
+
+'rNWP
 Public Property Get isNoWeapon() As Boolean
-    isNoWeapon = ((m_Flags And F_ISNOWEAPON) = F_ISNOWEAPON)
+    isNoWeapon = GetFlag(F_ISNOWEAPON)
 End Property
 
 Public Property Let isNoWeapon(ByVal bisNoWeapon As Boolean)
-    If bisNoWeapon Then
-        m_Flags = (m_Flags Or F_ISNOWEAPON)
-    Else
-        m_Flags = (m_Flags And Not F_ISNOWEAPON)
-    End If
+    Call SetFlag(F_ISNOWEAPON, bisNoWeapon)
 End Property
 
+
+'rNAW
 Public Property Get isNoAntiwarp() As Boolean
-    isNoAntiwarp = ((m_Flags And F_ISNOANTIWARP) = F_ISNOANTIWARP)
+    isNoAntiwarp = GetFlag(F_ISNOANTIWARP)
 End Property
 
 Public Property Let isNoAntiwarp(ByVal bisNoAntiwarp As Boolean)
-    If bisNoAntiwarp Then
-        m_Flags = (m_Flags Or F_ISNOANTIWARP)
-    Else
-        m_Flags = (m_Flags And Not F_ISNOANTIWARP)
-    End If
+    Call SetFlag(F_ISNOANTIWARP, bisNoAntiwarp)
 End Property
 
+
+'rNFD
 Public Property Get isNoFlagDrop() As Boolean
-    isNoFlagDrop = ((m_Flags And F_ISNOFLAGDROP) = F_ISNOFLAGDROP)
+    isNoFlagDrop = GetFlag(F_ISNOFLAGDROP)
 End Property
 
 Public Property Let isNoFlagDrop(ByVal bisNoFlagDrop As Boolean)
-    If bisNoFlagDrop Then
-        m_Flags = (m_Flags Or F_ISNOFLAGDROP)
-    Else
-        m_Flags = (m_Flags And Not F_ISNOFLAGDROP)
-    End If
+    Call SetFlag(F_ISNOFLAGDROP, bisNoFlagDrop)
 End Property
 
+
+'rAWP
 Public Property Get isAutoWarp() As Boolean
-    isAutoWarp = ((m_Flags And F_ISAUTOWARP) = F_ISAUTOWARP)
+    isAutoWarp = GetFlag(F_ISAUTOWARP)
 End Property
 
 Public Property Let isAutoWarp(ByVal bisAutoWarp As Boolean)
-    If bisAutoWarp Then
-        m_Flags = (m_Flags Or F_ISAUTOWARP)
-    Else
-        m_Flags = (m_Flags And Not F_ISAUTOWARP)
-    End If
+    Call SetFlag(F_ISAUTOWARP, bisAutoWarp)
 End Property
+
+
+'rNRW
+Public Property Get isNoReceiveWeapon() As Boolean
+    isNoReceiveWeapon = GetFlag(F_ISNORECEIVEWEAPONS)
+End Property
+
+Public Property Let isNoReceiveWeapon(ByVal bisNoReceiveWeapon As Boolean)
+    Call SetFlag(F_ISNORECEIVEWEAPONS, bisNoReceiveWeapon)
+End Property
+
+
+
+'rNRA
+Public Property Get isNoReceiveAntiwarp() As Boolean
+    isNoReceiveAntiwarp = GetFlag(F_ISNORECEIVEANTI)
+End Property
+
+Public Property Let isNoReceiveAntiwarp(ByVal bisNoReceiveAntiwarp As Boolean)
+    Call SetFlag(F_ISNORECEIVEANTI, bisNoReceiveAntiwarp)
+End Property
+
+
+
 
 Public Property Get color() As Long
 
@@ -278,17 +293,17 @@ Public Property Let visible(ByVal bvisible As Boolean)
 End Property
 
 
-Public Property Get value(x As Integer, y As Integer) As Boolean
+Public Property Get value(X As Integer, Y As Integer) As Boolean
 '    value = bitfield.value(X, Y)
 
-    value = GetPixel(disphDC, x, y)
+    value = GetPixel(disphDC, X, Y)
     
 End Property
 
-Public Property Let value(x As Integer, y As Integer, val As Boolean)
+Public Property Let value(X As Integer, Y As Integer, val As Boolean)
 '    m_objbitfield.value(X, Y) = val
     
-    Call SetPixel(disphDC, x, y, val)
+    Call SetPixel(disphDC, X, Y, val)
     
 
 End Property
@@ -298,26 +313,26 @@ End Property
 
 '''''''''''END OF PROPERTIES
 
-Public Sub AddTile(ByVal x As Integer, ByVal y As Integer, ByRef undoch As Changes, ByVal regionID As Integer)
+Public Sub AddTile(ByVal X As Integer, ByVal Y As Integer, ByRef undoch As Changes, ByVal regionID As Integer)
     If Not undoch Is Nothing Then
 
-        If Not value(x, y) Then Call undoch.AddTileChange(RegionAdd, x, y, regionID)
+        If Not value(X, Y) Then Call undoch.AddTileChange(RegionAdd, X, Y, regionID)
     
     End If
     
 
-    Call SetPixel(disphDC, x, y, vbWhite)
+    Call SetPixel(disphDC, X, Y, vbWhite)
 End Sub
 
-Public Sub RemoveTile(ByVal x As Integer, ByVal y As Integer, ByRef undoch As Changes, ByVal regionID As Integer)
+Public Sub RemoveTile(ByVal X As Integer, ByVal Y As Integer, ByRef undoch As Changes, ByVal regionID As Integer)
     If Not undoch Is Nothing Then
 
-        If value(x, y) Then Call undoch.AddTileChange(RegionRemove, x, y, regionID)
+        If value(X, Y) Then Call undoch.AddTileChange(RegionRemove, X, Y, regionID)
     
     End If
     
 
-    Call SetPixel(disphDC, x, y, vbBlack)
+    Call SetPixel(disphDC, X, Y, vbBlack)
 End Sub
 
 
@@ -375,7 +390,7 @@ Public Function SaveToFile(f As Integer) As Long
 
     
     'Name subchunk
-    AddDebug "      Region.SaveToFile, Putting Name at " & Seek(f)
+    AddDebug "      Region.SaveToFile, Putting Name (" & name & ") at " & Seek(f)
 
     Put #f, , stringToBytes("rNAM")
     Put #f, , CLng(Len(name))
@@ -452,7 +467,24 @@ Public Function SaveToFile(f As Integer) As Long
         Put #f, , stringToBytes("rNFL")
         Put #f, , CLng(0)
     End If
-
+    
+    'No receive antiwarp
+    If isNoReceiveAntiwarp Then
+        AddDebug "      Region.SaveToFile, Putting No Receive Antiwarp at " & Seek(f)
+        
+        Put #f, , stringToBytes("rNRA")
+        Put #f, , CLng(0)
+    End If
+    
+    'No receive weapon
+    If isNoReceiveWeapon Then
+        AddDebug "      Region.SaveToFile, Putting No Receive Weapons at " & Seek(f)
+        
+        Put #f, , stringToBytes("rNRW")
+        Put #f, , CLng(0)
+    End If
+    
+    
     'Python code
     If pythonCode <> "" Then
         AddDebug "      Region.SaveToFile, Putting Python at " & Seek(f)
@@ -790,3 +822,21 @@ Private Function MakeTileData(ByRef b() As Byte) As Long
     MakeTileData = bytesCount
 
 End Function
+
+
+
+
+Private Function GetFlag(f_flag As Long) As Boolean
+    GetFlag = ((m_Flags And f_flag) = f_flag)
+End Function
+
+Private Sub SetFlag(f_flag As Long, val As Boolean)
+    If val Then
+        m_Flags = (m_Flags Or f_flag)
+    Else
+        m_Flags = (m_Flags And Not f_flag)
+    End If
+End Sub
+
+
+

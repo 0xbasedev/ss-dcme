@@ -275,7 +275,8 @@ End Property
 'MemberInfo=5
 Public Sub Refresh()
 Attribute Refresh.VB_Description = "Forces a complete repaint of a object."
-     
+    Call InitScrollbars
+    Call Redraw
 End Sub
 
 
@@ -322,6 +323,10 @@ Private Sub UserControl_DblClick()
     RaiseEvent DblClick
 End Sub
 
+Public Property Get hDC() As Long
+    hDC = picfull.hDC
+End Property
+
 'WARNING! DO NOT REMOVE OR MODIFY THE FOLLOWING COMMENTED LINES!
 'MappingInfo=picbox,picbox,-1,Picture
 Public Property Get Picture() As Picture
@@ -341,15 +346,20 @@ Attribute Image.VB_Description = "Returns a handle, provided by Microsoft Window
     Set Image = picfull.Image
 End Property
 
+Private Sub UserControl_Initialize()
+    m_FramesX = 1
+    m_FramesY = 1
+End Sub
+
 Private Sub UserControl_Resize()
-    picbox.width = UserControl.ScaleWidth - Vscr.width
-    picbox.height = UserControl.ScaleHeight - Hscr.height
+    picbox.Width = UserControl.ScaleWidth - Vscr.Width
+    picbox.Height = UserControl.ScaleHeight - Hscr.Height
     
-    Vscr.Left = UserControl.ScaleWidth - Vscr.width
-    Vscr.height = UserControl.ScaleHeight - Hscr.height
+    Vscr.Left = UserControl.ScaleWidth - Vscr.Width
+    Vscr.Height = UserControl.ScaleHeight - Hscr.Height
     
-    Hscr.Top = UserControl.ScaleHeight - Hscr.height
-    Hscr.width = UserControl.ScaleWidth - Vscr.width
+    Hscr.Top = UserControl.ScaleHeight - Hscr.Height
+    Hscr.Width = UserControl.ScaleWidth - Vscr.Width
     
     Call InitScrollbars
     Call Redraw
@@ -361,11 +371,11 @@ End Sub
 'MappingInfo=picfull,picfull,-1,ScaleWidth
 Public Property Get imageWidth() As Single
 Attribute imageWidth.VB_Description = "Returns/sets the number of units for the horizontal measurement of an object's interior."
-    imageWidth = picfull.width
+    imageWidth = picfull.Width
 End Property
 
 Public Property Let imageWidth(ByVal New_ImageWidth As Single)
-    picfull.width() = New_ImageWidth
+    picfull.Width() = New_ImageWidth
     PropertyChanged "ImageWidth"
     
     
@@ -375,11 +385,11 @@ End Property
 'MappingInfo=picbox,picbox,-1,ScaleHeight
 Public Property Get imageHeight() As Single
 Attribute imageHeight.VB_Description = "Returns/sets the number of units for the vertical measurement of an object's interior."
-    imageHeight = picbox.height
+    imageHeight = picfull.Height
 End Property
 
 Public Property Let imageHeight(ByVal New_ImageHeight As Single)
-    picbox.height() = New_ImageHeight
+    picfull.Height() = New_ImageHeight
     PropertyChanged "ImageHeight"
 End Property
 
@@ -402,8 +412,8 @@ Private Sub UserControl_ReadProperties(PropBag As PropertyBag)
     m_BackStyle = PropBag.ReadProperty("BackStyle", m_def_BackStyle)
     picbox.BorderStyle = PropBag.ReadProperty("BorderStyle", 0)
     Set Picture = PropBag.ReadProperty("Picture", Nothing)
-    picfull.width = PropBag.ReadProperty("ImageWidth", 165)
-    picfull.height = PropBag.ReadProperty("ImageHeight", 117)
+    picfull.Width = PropBag.ReadProperty("ImageWidth", 165)
+    picfull.Height = PropBag.ReadProperty("ImageHeight", 117)
     
     m_isAnimation = PropBag.ReadProperty("Animation", False)
     m_AnimTime = PropBag.ReadProperty("AnimationTime", 100)
@@ -422,8 +432,8 @@ Private Sub UserControl_WriteProperties(PropBag As PropertyBag)
     Call PropBag.WriteProperty("BackStyle", m_BackStyle, m_def_BackStyle)
     Call PropBag.WriteProperty("BorderStyle", picbox.BorderStyle, 0)
     Call PropBag.WriteProperty("Picture", Picture, Nothing)
-    Call PropBag.WriteProperty("ImageWidth", picfull.width, 165)
-    Call PropBag.WriteProperty("ImageHeight", picfull.height, 117)
+    Call PropBag.WriteProperty("ImageWidth", picfull.Width, 165)
+    Call PropBag.WriteProperty("ImageHeight", picfull.Height, 117)
     Call PropBag.WriteProperty("Animation", m_isAnimation, False)
     Call PropBag.WriteProperty("AnimationTime", m_AnimTime, 100)
     Call PropBag.WriteProperty("AnimFramesX", m_FramesX, 1)
@@ -445,25 +455,25 @@ Private Sub InitScrollbars()
     Dim framew As Integer, frameh As Integer
     
     If m_isAnimation Then
-        framew = picfull.width \ m_FramesX
-        frameh = picfull.height \ m_FramesY
+        framew = picfull.Width \ m_FramesX
+        frameh = picfull.Height \ m_FramesY
     Else
-        framew = picfull.width
-        frameh = picfull.height
+        framew = picfull.Width
+        frameh = picfull.Height
     End If
     
     
     Dim z As Single
     z = zoom()
-    maxh = framew - picbox.width / z
-    maxv = frameh - picbox.height / z
+    maxh = framew - picbox.Width / z
+    maxv = frameh - picbox.Height / z
     
     
     If maxh >= 1 Then
         Hscr.Max = RoundAway(maxh)
         Hscr.Enabled = True
     Else
-        Hscr.value = 0
+        Hscr.Value = 0
         Hscr.Enabled = False
     End If
     
@@ -471,7 +481,7 @@ Private Sub InitScrollbars()
         Vscr.Max = RoundAway(maxv)
         Vscr.Enabled = True
     Else
-        Vscr.value = 0
+        Vscr.Value = 0
         Vscr.Enabled = False
     End If
   
@@ -489,12 +499,16 @@ Private Sub Redraw()
     
     Dim framew As Integer, frameh As Integer
     
+  If m_FramesX < 1 Then m_FramesX = 1
+  If m_FramesY < 1 Then m_FramesY = 1
+      
     If m_isAnimation Then
-        framew = picfull.width \ m_FramesX
-        frameh = picfull.height \ m_FramesY
+
+        framew = picfull.Width \ m_FramesX
+        frameh = picfull.Height \ m_FramesY
     Else
-        framew = picfull.width
-        frameh = picfull.height
+        framew = picfull.Width
+        frameh = picfull.Height
     End If
     
 
@@ -504,13 +518,13 @@ Private Sub Redraw()
     SrcY = ((CurrentFrame \ m_FramesX) Mod m_FramesY) * frameh
     
     piczoomframe.Cls
-    piczoomframe.width = framew
-    piczoomframe.height = frameh
+    piczoomframe.Width = framew
+    piczoomframe.Height = frameh
     
-    BitBlt piczoomframe.hDC, 0, 0, piczoomframe.width, piczoomframe.height, picfull.hDC, SrcX, SrcY, vbSrcCopy
+    BitBlt piczoomframe.hDC, 0, 0, piczoomframe.Width, piczoomframe.Height, picfull.hDC, SrcX, SrcY, vbSrcCopy
     
     If Abs(z) = 1# Then
-        BitBlt picbox.hDC, 0, 0, picbox.width, picbox.height, piczoomframe.hDC, Hscr.value, Vscr.value, vbSrcCopy
+        BitBlt picbox.hDC, 0, 0, picbox.Width, picbox.Height, piczoomframe.hDC, Hscr.Value, Vscr.Value, vbSrcCopy
     Else
         If z > 0 Then
             SetStretchBltMode picbox.hDC, COLORONCOLOR
@@ -518,7 +532,7 @@ Private Sub Redraw()
             SetStretchBltMode picbox.hDC, HALFTONE
         End If
         
-        StretchBlt picbox.hDC, 0, 0, picbox.width, picbox.height, piczoomframe.hDC, Hscr.value, Vscr.value, picbox.width / z, picbox.height / z, vbSrcCopy
+        StretchBlt picbox.hDC, 0, 0, picbox.Width, picbox.Height, piczoomframe.hDC, Hscr.Value, Vscr.Value, picbox.Width / z, picbox.Height / z, vbSrcCopy
     End If
     
     'BitBlt picbox.hDC, 0, 0, picbox.width, picbox.height, piczoomframe.hDC, hscr.Value * z, vscr.Value * z, vbSrcCopy
@@ -622,8 +636,8 @@ End Property
 
 Public Sub Clear()
     picfull.Cls
-    picfull.width = 1
-    picfull.height = 1
+    picfull.Width = 1
+    picfull.Height = 1
     Call InitScrollbars
     Call Redraw
 End Sub

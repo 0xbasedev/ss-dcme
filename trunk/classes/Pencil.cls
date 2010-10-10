@@ -19,7 +19,7 @@ Dim parent As frmMain
 
 Dim undoch As Changes
 
-Dim toolOptions As DrawOptions
+Dim tooloptions As DrawOptions
 Dim curSelection As TilesetSelection
 
 Sub setParent(Main As frmMain)
@@ -33,8 +33,8 @@ Sub MouseDown(Button As Integer, X As Single, Y As Single)
 
     If Button <> vbLeftButton And Button <> vbRightButton Then Exit Sub
     
-    curtilex = (parent.Hscr.value + X) \ parent.currenttilew
-    curtiley = (parent.Vscr.value + Y) \ parent.currenttilew
+    curtilex = (parent.hScr.Value + X) \ parent.currenttilew
+    curtiley = (parent.vScr.Value + Y) \ parent.currenttilew
 
     If curtilex < 0 Then curtilex = 0
     If curtiley < 0 Then curtiley = 0
@@ -74,7 +74,7 @@ Sub MouseDown(Button As Integer, X As Single, Y As Single)
     End If
         
     
-    Call parent.tline.SetOptions(toolOptions)
+    Call parent.tline.SetOptions(tooloptions)
     
 
 '    'Advanced pencil mode
@@ -149,8 +149,8 @@ Sub MouseMove(Button As Integer, X As Single, Y As Single)
 
     If oldpenciltilex = -1 Or oldpenciltiley = -1 Then Exit Sub
 
-    curtilex = (parent.Hscr.value + X) \ parent.currenttilew
-    curtiley = (parent.Vscr.value + Y) \ parent.currenttilew
+    curtilex = (parent.hScr.Value + X) \ parent.currenttilew
+    curtiley = (parent.vScr.Value + Y) \ parent.currenttilew
 
     If curtilex < 0 Then curtilex = 0
     If curtiley < 0 Then curtiley = 0
@@ -197,7 +197,7 @@ Sub MouseMove(Button As Integer, X As Single, Y As Single)
 
         
         'If using advanced pencil to do weird stuff
-        If frmGeneral.chkAdvancedPencil.value = vbChecked And curSelection.selectionType = TS_Tiles Then
+        If frmGeneral.chkAdvancedPencil.Value = vbChecked And curSelection.selectionType = TS_Tiles Then
             If curSelection.isSpecialObject Then
                 Call parent.setTile(curtilex - (curSelection.tileSize.X - 1) \ 2, curtiley - (curSelection.tileSize.Y - 1) \ 2, curSelection.tilenr, undoch, True)
                 Call parent.UpdateLevelTile(curtilex - (curSelection.tileSize.X - 1) \ 2, curtiley - (curSelection.tileSize.Y - 1) \ 2)

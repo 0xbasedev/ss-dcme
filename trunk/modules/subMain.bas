@@ -38,7 +38,7 @@ Sub Main()
         
         seq = GetTickCount
         
-        args = Command()
+        args = command()
         
         If PrintPathsToLoad(args, seq) Then
             'Tell the other instance to load these files
@@ -72,7 +72,7 @@ Sub Main()
             
             startingGeneral = True
             
-            currentWindowsVersion = getWindowsVersion
+            currentWindowsVersion = GetWindowsVersion
             
             Call HookMessageHandler
             'Messages can be received now
