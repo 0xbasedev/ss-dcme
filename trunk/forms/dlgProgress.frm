@@ -66,45 +66,45 @@ Option Explicit
 Dim Operation As String
 
 Public Sub InitProgressBar(sOperation As String, Max As Long)
-      'Initializes the progress bar
-          
-10        Operation = sOperation
-20        bar.Max = Max
-30        bar.value = 0
-40        lblAction.Caption = ""
-50        Call RefreshCaption
+'Initializes the progress bar
+    
+    Operation = sOperation
+    bar.Max = Max
+    bar.value = 0
+    lblAction.Caption = ""
+    Call RefreshCaption
 End Sub
 
 Sub SetValue(value As Long)
-      'Set the value of the progress bar
-          
-10        bar.value = value
+'Set the value of the progress bar
+    
+    bar.value = value
 End Sub
 
 Sub SetOperation(sOperation As String)
-      'Set the operation name
-          
-10        Operation = sOperation
-20        Call RefreshCaption
+'Set the operation name
+    
+    Operation = sOperation
+    Call RefreshCaption
 End Sub
 
 Sub SetLabel(newLabel As String)
-      'Set the progressbar caption
+'Set the progressbar caption
 
-10        lblAction.Caption = newLabel
+    lblAction.Caption = newLabel
 End Sub
 
 Private Sub RefreshCaption()
-      'Refreshes the caption
+'Refreshes the caption
 
-10        Me.Caption = bar.Text & " - " & Operation & "..."
+    Me.Caption = bar.Text & " - " & Operation & "..."
 End Sub
 
 Private Sub bar_change()
-      'Update caption
-10        Call RefreshCaption
+'Update caption
+    Call RefreshCaption
 End Sub
 
 Private Sub Form_Load()
-10        Set Me.Icon = frmGeneral.Icon
+    Set Me.Icon = frmGeneral.Icon
 End Sub

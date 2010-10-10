@@ -133,380 +133,380 @@ Dim refreshIDC As Boolean
 Dim bInit As Boolean
 
 Sub Init(p As PictureBox, Optional keepContents As Boolean)
-          'Initialise DMA Picture Access
-          
-10        Set Pic = p
-          
-          
-20        With bitmapinfo24.bmiHeader
-30            .biBitCount = 24
-40            .biCompression = BI_RGB
-50            .biPlanes = 1
-60            .biSize = Len(bitmapinfo24.bmiHeader)
-70            .biWidth = Pic.width ' viewBMP.bmWidth
-80            .biHeight = Pic.height 'viewBMP.bmHeight
-90        End With
-          
-          'create a dc and bitmap that we use to copy our DIB to, and be able to use it as a source for bitblt
-          'clear old ones if already made
-100       If idc <> 0 Then DeleteDC (idc)
-110       If ibitmap <> 0 Then DeleteObject (ibitmap)
-          
-120       idc = CreateCompatibleDC(0) 'create a compatible dc
-          'create a DIB section from the newly made idc
-130       ibitmap = CreateDIBSection(idc, bitmapinfo24, DIB_RGB_COLORS, ByVal 0&, ByVal 0&, ByVal 0&)
-140       SelectObject idc, ibitmap
-          
-150       If keepContents Then
-              'bitblt hdc --> idc
-160           BitBlt idc, 0, 0, Pic.width, Pic.height, Pic.hDC, 0, 0, vbSrcCopy
-170       End If
-          
-          
-180       Call CreatePicture(p)
-          
-          
-190       GetObjectAPI p.Picture, Len(viewBMP), viewBMP   'retrieve bitmap information about p
-          
-200       With viewSA
-210         .cbElements = 1
-220         .cDims = 1
-230         .Bounds(0).lLbound = 0
-240         .Bounds(0).cElements = viewBMP.bmHeight * viewBMP.bmWidthBytes '+ viewBMP.bmWidth
-            '.Bounds(1).lLbound = 0
-            '.Bounds(1).cElements = viewBMP.bmWidthBytes
-250         .pvData = viewBMP.bmBits
-260       End With
+    'Initialise DMA Picture Access
+    
+    Set Pic = p
+    
+    
+    With bitmapinfo24.bmiHeader
+        .biBitCount = 24
+        .biCompression = BI_RGB
+        .biPlanes = 1
+        .biSize = Len(bitmapinfo24.bmiHeader)
+        .biWidth = Pic.width ' viewBMP.bmWidth
+        .biHeight = Pic.height 'viewBMP.bmHeight
+    End With
+    
+    'create a dc and bitmap that we use to copy our DIB to, and be able to use it as a source for bitblt
+    'clear old ones if already made
+    If idc <> 0 Then DeleteDC (idc)
+    If ibitmap <> 0 Then DeleteObject (ibitmap)
+    
+    idc = CreateCompatibleDC(0) 'create a compatible dc
+    'create a DIB section from the newly made idc
+    ibitmap = CreateDIBSection(idc, bitmapinfo24, DIB_RGB_COLORS, ByVal 0&, ByVal 0&, ByVal 0&)
+    SelectObject idc, ibitmap
+    
+    If keepContents Then
+        'bitblt hdc --> idc
+        BitBlt idc, 0, 0, Pic.width, Pic.height, Pic.hDC, 0, 0, vbSrcCopy
+    End If
+    
+    
+    Call CreatePicture(p)
+    
+    
+    GetObjectAPI p.Picture, Len(viewBMP), viewBMP   'retrieve bitmap information about p
+    
+    With viewSA
+      .cbElements = 1
+      .cDims = 1
+      .Bounds(0).lLbound = 0
+      .Bounds(0).cElements = viewBMP.bmHeight * viewBMP.bmWidthBytes '+ viewBMP.bmWidth
+      '.Bounds(1).lLbound = 0
+      '.Bounds(1).cElements = viewBMP.bmWidthBytes
+      .pvData = viewBMP.bmBits
+    End With
 
-          ' copy bitmap data into byte array
-270       CopyMemory ByVal VarPtrArray(Data), VarPtr(viewSA), 4
+    ' copy bitmap data into byte array
+    CopyMemory ByVal VarPtrArray(Data), VarPtr(viewSA), 4
 
-280       r.Left = 0
-290       r.Top = 0
-300       r.Bottom = viewBMP.bmHeight
-310       r.Right = viewBMP.bmWidth
-          
-          
-320       If keepContents Then
-              '    GetDIBits idc, iBitmap, 0, bi24BitInfo.bmiHeader.biHeight, bBytes(1), bi24BitInfo, DIB_RGB_COLORS
-              'append pixel array
-330           GetDIBits idc, ibitmap, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
-              
-              'idc = pixel array
-340           refreshIDC = False
-350       End If
-          
-360       bInit = True
+    r.Left = 0
+    r.Top = 0
+    r.Bottom = viewBMP.bmHeight
+    r.Right = viewBMP.bmWidth
+    
+    
+    If keepContents Then
+        '    GetDIBits idc, iBitmap, 0, bi24BitInfo.bmiHeader.biHeight, bBytes(1), bi24BitInfo, DIB_RGB_COLORS
+        'append pixel array
+        GetDIBits idc, ibitmap, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
+        
+        'idc = pixel array
+        refreshIDC = False
+    End If
+    
+    bInit = True
 End Sub
 
 Private Sub CreatePicture(p As PictureBox)
-          'Creates a picture in memory
-          
-10        Set p.Picture = CreateDIBPicture(p.ScaleX(p.ScaleWidth, p.ScaleMode, vbPixels), p.ScaleY(p.ScaleHeight, p.ScaleMode, vbPixels), 24)
-20        Exit Sub
-          
-      '    create a temp picture'
-          Dim path As String
-          Dim nr As Integer
-        
-30        nr = Rnd() * 10000
-40        path = App.path & "\" & nr & ".bmp"
-        
-50        Do While Dir$(path) <> ""
-60            nr = Rnd() * 10000
-         '     path = App.path & "\" & nr & ".bmp"
-70        Loop
-80        Set p.Picture = p.Image
-90        Call SavePicture(p.Picture, path)
-100       p.Picture = LoadPicture(path)
-        
-110       Kill path
-          
+    'Creates a picture in memory
+    
+    Set p.Picture = CreateDIBPicture(p.ScaleX(p.ScaleWidth, p.ScaleMode, vbPixels), p.ScaleY(p.ScaleHeight, p.ScaleMode, vbPixels), 24)
+    Exit Sub
+    
+'    create a temp picture'
+    Dim path As String
+    Dim nr As Integer
+  
+    nr = Rnd() * 10000
+    path = App.path & "\" & nr & ".bmp"
+  
+    Do While Dir$(path) <> ""
+        nr = Rnd() * 10000
+   '     path = App.path & "\" & nr & ".bmp"
+    Loop
+    Set p.Picture = p.Image
+    Call SavePicture(p.Picture, path)
+    p.Picture = LoadPicture(path)
+  
+    Kill path
+    
 End Sub
 
 Private Function CreateDIBPicture(ByVal pixelWidth As Long, ByVal pixelHeight As Long, ByVal BitsPerPixel As Long) As StdPicture
-        'creates a DIB picture
-        
-        Dim IID_IDispatch As GUID
-        Dim pbmp As PicBmp
-        Dim Pic As StdPicture
-          
-10      With IID_IDispatch
-20        .Data1 = &H20400
-30        .Data4(0) = &HC0&
-40        .Data4(7) = &H46&
-50      End With
-          
-60      With pbmp
-70        .size = Len(pbmp)
-80        .Type = vbPicTypeBitmap
-90        .hBmp = CreateDIB(pixelWidth, pixelHeight, BitsPerPixel)
-100       .hPal = &H0&
-110     End With
-          
-120     OleCreatePictureIndirect pbmp, IID_IDispatch, 1, Pic
-130     Set CreateDIBPicture = Pic
-        
+  'creates a DIB picture
+  
+  Dim IID_IDispatch As GUID
+  Dim pbmp As PicBmp
+  Dim Pic As StdPicture
+    
+  With IID_IDispatch
+    .Data1 = &H20400
+    .Data4(0) = &HC0&
+    .Data4(7) = &H46&
+  End With
+    
+  With pbmp
+    .size = Len(pbmp)
+    .Type = vbPicTypeBitmap
+    .hBmp = CreateDIB(pixelWidth, pixelHeight, BitsPerPixel)
+    .hPal = &H0&
+  End With
+    
+  OleCreatePictureIndirect pbmp, IID_IDispatch, 1, Pic
+  Set CreateDIBPicture = Pic
+  
 End Function
 
 Private Function CreateDIB(width As Long, height As Long, BitsPerPixel As Long) As Long
-        'creates a DIB area
-        
-        Const BI_RGB As Long = 0
-        Const DIB_RGB_COLORS As Long = 0
+  'creates a DIB area
+  
+  Const BI_RGB As Long = 0
+  Const DIB_RGB_COLORS As Long = 0
 
-        Dim BMI As BITMAPINFO
-        Dim stride As Long, ptrToBits As Long, hDC As Long
+  Dim BMI As BITMAPINFO
+  Dim stride As Long, ptrToBits As Long, hDC As Long
 
-10      stride = (width * (BitsPerPixel \ 8) + 3) And &HFFFFFFFC
-        
-20      With BMI.bmiHeader
-30        .biSize = 40
-40        .biWidth = width
-50        .biHeight = height
-60        .biPlanes = 1
-70        .biBitCount = BitsPerPixel
-80        .biCompression = BI_RGB
-90        .biSizeImage = stride * height
-100     End With
-        
-110     hDC = CreateCompatibleDC(0)
-120       CreateDIB = CreateDIBSection(hDC, BMI, DIB_RGB_COLORS, ptrToBits, 0, 0)
-130     DeleteDC hDC
-        
+  stride = (width * (BitsPerPixel \ 8) + 3) And &HFFFFFFFC
+  
+  With BMI.bmiHeader
+    .biSize = 40
+    .biWidth = width
+    .biHeight = height
+    .biPlanes = 1
+    .biBitCount = BitsPerPixel
+    .biCompression = BI_RGB
+    .biSizeImage = stride * height
+  End With
+  
+  hDC = CreateCompatibleDC(0)
+    CreateDIB = CreateDIBSection(hDC, BMI, DIB_RGB_COLORS, ptrToBits, 0, 0)
+  DeleteDC hDC
+  
 End Function
 
 
 Sub stretchToDC(hDC As Long, X As Integer, Y As Integer, width As Integer, height As Integer, xSrc As Integer, ySrc As Integer, srcWidth As Integer, srcHeight As Integer, dwRop As Long)
-          'Stretches DIB -> hdc
-          
-          'append dc
-10        If refreshIDC Then SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
-           
-          'now bitblt idc --> hdc
-20        StretchBlt hDC, X, Y, width, height, idc, xSrc, ySrc, srcWidth, srcHeight, dwRop
-          
-          'idc = pixel array
-30        refreshIDC = False
+    'Stretches DIB -> hdc
+    
+    'append dc
+    If refreshIDC Then SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
+     
+    'now bitblt idc --> hdc
+    StretchBlt hDC, X, Y, width, height, idc, xSrc, ySrc, srcWidth, srcHeight, dwRop
+    
+    'idc = pixel array
+    refreshIDC = False
 End Sub
 
 Sub stretchFromDC(hDC As Long, X As Integer, Y As Integer, width As Integer, height As Integer, xSrc As Integer, ySrc As Integer, srcWidth As Integer, srcHeight As Integer, dwRop As Long)
-          'Stretches hdc --> DIB
-          
-          'make sure the idc is uptodate first
-          'append dc
-10        If refreshIDC Then SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
-          
-          'bitblt hdc --> idc
-20        StretchBlt idc, X, Y, width, height, hDC, xSrc, ySrc, srcWidth, srcHeight, dwRop
-          
-          '    GetDIBits idc, iBitmap, 0, bi24BitInfo.bmiHeader.biHeight, bBytes(1), bi24BitInfo, DIB_RGB_COLORS
-          'append pixel array
-30        GetDIBits idc, ibitmap, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
-          
-          'idc = pixel array
-40        refreshIDC = False
+    'Stretches hdc --> DIB
+    
+    'make sure the idc is uptodate first
+    'append dc
+    If refreshIDC Then SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
+    
+    'bitblt hdc --> idc
+    StretchBlt idc, X, Y, width, height, hDC, xSrc, ySrc, srcWidth, srcHeight, dwRop
+    
+    '    GetDIBits idc, iBitmap, 0, bi24BitInfo.bmiHeader.biHeight, bBytes(1), bi24BitInfo, DIB_RGB_COLORS
+    'append pixel array
+    GetDIBits idc, ibitmap, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
+    
+    'idc = pixel array
+    refreshIDC = False
 End Sub
 
 Sub setStretchMode(nStretchMode As Long)
-          'sets the stretch mode of our hdc
-          
-10        Call SetStretchBltMode(idc, nStretchMode)
+    'sets the stretch mode of our hdc
+    
+    Call SetStretchBltMode(idc, nStretchMode)
 End Sub
 
 Sub bltToDC(hDC As Long, X As Integer, Y As Integer, width As Integer, height As Integer, xSrc As Integer, ySrc As Integer, dwRop As Long)
-          'blits DIB -> hdc
-          
-          'append dc
-10        If refreshIDC Then SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
-           
-          'now bitblt idc --> hdc
-20        BitBlt hDC, X, Y, width, height, idc, xSrc, ySrc, dwRop
-          
-          'idc = pixel array
-30        refreshIDC = False
+    'blits DIB -> hdc
+    
+    'append dc
+    If refreshIDC Then SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
+     
+    'now bitblt idc --> hdc
+    BitBlt hDC, X, Y, width, height, idc, xSrc, ySrc, dwRop
+    
+    'idc = pixel array
+    refreshIDC = False
 End Sub
 
 Sub bltFromDC(hDC As Long, X As Integer, Y As Integer, width As Integer, height As Integer, xSrc As Integer, ySrc As Integer, dwRop As Long)
-          'blits hdc -> DIB
+    'blits hdc -> DIB
 
-          'make sure the idc is uptodate first
-          'append dc
-10        If refreshIDC Then SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
-          
-          'bitblt hdc --> idc
-20        BitBlt idc, X, Y, width, height, hDC, xSrc, ySrc, dwRop
-          
-          '    GetDIBits idc, iBitmap, 0, bi24BitInfo.bmiHeader.biHeight, bBytes(1), bi24BitInfo, DIB_RGB_COLORS
-          'append pixel array
-30        GetDIBits idc, ibitmap, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
-          
-          'idc = pixel array
-40        refreshIDC = False
+    'make sure the idc is uptodate first
+    'append dc
+    If refreshIDC Then SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
+    
+    'bitblt hdc --> idc
+    BitBlt idc, X, Y, width, height, hDC, xSrc, ySrc, dwRop
+    
+    '    GetDIBits idc, iBitmap, 0, bi24BitInfo.bmiHeader.biHeight, bBytes(1), bi24BitInfo, DIB_RGB_COLORS
+    'append pixel array
+    GetDIBits idc, ibitmap, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
+    
+    'idc = pixel array
+    refreshIDC = False
 End Sub
 
 Sub transToDC(hDC As Long, X As Integer, Y As Integer, width As Integer, height As Integer, xSrc As Integer, ySrc As Integer, color As Long)
-          'blits DIB -> hdc
-          
-          'append dc
-10        If refreshIDC Then SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
-           
-          'now bitblt idc --> hdc
-20        TransparentBlt hDC, X, Y, width, height, idc, xSrc, ySrc, color
-          
-          'idc = pixel array
-30        refreshIDC = False
+    'blits DIB -> hdc
+    
+    'append dc
+    If refreshIDC Then SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
+     
+    'now bitblt idc --> hdc
+    TransparentBlt hDC, X, Y, width, height, idc, xSrc, ySrc, color
+    
+    'idc = pixel array
+    refreshIDC = False
 End Sub
 
 Sub transFromDC(hDC As Long, X As Integer, Y As Integer, width As Integer, height As Integer, xSrc As Integer, ySrc As Integer, color As Long)
-          'blits hdc -> DIB
+    'blits hdc -> DIB
 
-          'make sure the idc is uptodate first
-          'append dc
-10        If refreshIDC Then SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
-          
-          
-          
-          'bitblt hdc --> idc
-20        TransparentBlt idc, X, Y, width, height, hDC, xSrc, ySrc, color
-          
-          '    GetDIBits idc, iBitmap, 0, bi24BitInfo.bmiHeader.biHeight, bBytes(1), bi24BitInfo, DIB_RGB_COLORS
-          'append pixel array
-30        GetDIBits idc, ibitmap, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
-          
-          'idc = pixel array
-40        refreshIDC = False
+    'make sure the idc is uptodate first
+    'append dc
+    If refreshIDC Then SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
+    
+    
+    
+    'bitblt hdc --> idc
+    TransparentBlt idc, X, Y, width, height, hDC, xSrc, ySrc, color
+    
+    '    GetDIBits idc, iBitmap, 0, bi24BitInfo.bmiHeader.biHeight, bBytes(1), bi24BitInfo, DIB_RGB_COLORS
+    'append pixel array
+    GetDIBits idc, ibitmap, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
+    
+    'idc = pixel array
+    refreshIDC = False
 End Sub
 
 Sub Refresh()
-          'Refreshes the picture window
-          
-10        InvalidateRect Pic.hWnd, r, False
+    'Refreshes the picture window
+    
+    InvalidateRect Pic.hWnd, r, False
 End Sub
 
 Sub setPixel1D(idx As Long, r As Byte, g As Byte, b As Byte)
-10        On Error Resume Next
-20        Data(idx) = b
-30        Data(idx + 1) = g
-40        Data(idx + 2) = r
-          
-50        refreshIDC = True
+    On Error Resume Next
+    Data(idx) = b
+    Data(idx + 1) = g
+    Data(idx + 2) = r
+    
+    refreshIDC = True
 End Sub
 
 
 
 Sub SetPixel(X As Integer, Y As Integer, r As Byte, g As Byte, b As Byte)
-              
-          'Sets a pixel
-10        On Error Resume Next
-          
-          Dim idx As Long
-20        idx = ((viewBMP.bmHeight - 1) - Y) * viewBMP.bmWidthBytes + X * 3
-          
-30        Data(idx) = b
-40        Data(idx + 1) = g
-50        Data(idx + 2) = r
-          
-60        refreshIDC = True
+        
+    'Sets a pixel
+    On Error Resume Next
+    
+    Dim idx As Long
+    idx = ((viewBMP.bmHeight - 1) - Y) * viewBMP.bmWidthBytes + X * 3
+    
+    Data(idx) = b
+    Data(idx + 1) = g
+    Data(idx + 2) = r
+    
+    refreshIDC = True
 End Sub
 
 Sub setPixelLong(ByRef X As Integer, ByRef Y As Integer, ByRef color As Long)
-10        Call SetPixel(X, Y, color And 255, (color And 65280) \ 256, (color And 16711680) \ 65535)
+    Call SetPixel(X, Y, color And 255, (color And 65280) \ 256, (color And 16711680) \ 65535)
 End Sub
 
 Sub GetPixelRGB(ByRef X As Integer, ByRef Y As Integer, b() As Byte)
-          Dim idx As Long
-10        idx = ((viewBMP.bmHeight - 1) - Y) * viewBMP.bmWidthBytes + X * 3
-              
-20        CopyMemory ByVal VarPtr(b(0)), ByVal VarPtr(Data(idx)), 3
+    Dim idx As Long
+    idx = ((viewBMP.bmHeight - 1) - Y) * viewBMP.bmWidthBytes + X * 3
+        
+    CopyMemory ByVal VarPtr(b(0)), ByVal VarPtr(Data(idx)), 3
 
 End Sub
 
 Function GetPixel(ByRef X As Integer, ByRef Y As Integer) As Long
-          Dim idx As Long
-10        idx = ((viewBMP.bmHeight - 1) - Y) * viewBMP.bmWidthBytes + X * 3
+    Dim idx As Long
+    idx = ((viewBMP.bmHeight - 1) - Y) * viewBMP.bmWidthBytes + X * 3
 
-20        GetPixel = RGB(Data(idx + 2), Data(idx + 1), Data(idx))
+    GetPixel = RGB(Data(idx + 2), Data(idx + 1), Data(idx))
 End Function
 
 Sub Clear()
-10        ZeroMemory ByVal VarPtr(Data(0)), UBound(Data) + 1
-20        refreshIDC = True
-          
+    ZeroMemory ByVal VarPtr(Data(0)), UBound(Data) + 1
+    refreshIDC = True
+    
 End Sub
 
 Sub Fill(grey As Byte)
-10        FillMemory ByVal VarPtr(Data(0)), UBound(Data) + 1, ByVal grey
-20        refreshIDC = True
+    FillMemory ByVal VarPtr(Data(0)), UBound(Data) + 1, ByVal grey
+    refreshIDC = True
 End Sub
 
 Sub fillarea(grey As Byte, Left As Long, Top As Long, Right As Long, Bottom As Long)
-          Dim ptr As Long, row As Long, width As Long
-          
-10        ptr = VarPtr(Data(Top * viewBMP.bmWidthBytes + Left))
-          
-20        width = Right - Left + 1
-          
-30        For row = Top To Bottom
-40            FillMemory ByVal ptr, width, grey
-              
-              
-50            ptr = ptr + viewBMP.bmWidthBytes
-60        Next row
-          
-70        refreshIDC = True
+    Dim ptr As Long, row As Long, width As Long
+    
+    ptr = VarPtr(Data(Top * viewBMP.bmWidthBytes + Left))
+    
+    width = Right - Left + 1
+    
+    For row = Top To Bottom
+        FillMemory ByVal ptr, width, grey
+        
+        
+        ptr = ptr + viewBMP.bmWidthBytes
+    Next row
+    
+    refreshIDC = True
 End Sub
 
 Sub FillRGB(r As Byte, g As Byte, b As Byte)
-          Dim i As Long, j As Long, idx As Long
-          
-10        For j = 0 To viewBMP.bmHeight - 1
-20            idx = j * viewBMP.bmWidthBytes
-              
-30            For i = 0 To viewBMP.bmWidth - 1
-40                Data(idx) = b
-50                Data(idx + 1) = g
-60                Data(idx + 2) = r
+    Dim i As Long, j As Long, idx As Long
+    
+    For j = 0 To viewBMP.bmHeight - 1
+        idx = j * viewBMP.bmWidthBytes
+        
+        For i = 0 To viewBMP.bmWidth - 1
+            Data(idx) = b
+            Data(idx + 1) = g
+            Data(idx + 2) = r
 
-70                idx = idx + 3
-80            Next
-90        Next
-          
-100       refreshIDC = True
+            idx = idx + 3
+        Next
+    Next
+    
+    refreshIDC = True
 End Sub
 
 Sub FillAreaRGB(r As Byte, g As Byte, b As Byte, Left As Long, Top As Long, Right As Long, Bottom As Long)
-          Dim idx As Long, row As Long, col As Long, width As Long
-          
-10        idx = VarPtr(Data(Top * viewBMP.bmWidthBytes + Left))
-          
-20        width = Right - Left + 1
-          
-30        For row = Top To Bottom
-40            idx = row * viewBMP.bmWidthBytes + Left
-              
-50            For col = Left To Right
-                  
-60                Data(idx) = b
-70                Data(idx + 1) = g
-80                Data(idx + 2) = r
+    Dim idx As Long, row As Long, col As Long, width As Long
+    
+    idx = VarPtr(Data(Top * viewBMP.bmWidthBytes + Left))
+    
+    width = Right - Left + 1
+    
+    For row = Top To Bottom
+        idx = row * viewBMP.bmWidthBytes + Left
+        
+        For col = Left To Right
+            
+            Data(idx) = b
+            Data(idx + 1) = g
+            Data(idx + 2) = r
 
-90                idx = idx + 3
-100           Next col
-110       Next row
-          
-120       refreshIDC = True
+            idx = idx + 3
+        Next col
+    Next row
+    
+    refreshIDC = True
 End Sub
 
 
 Private Sub UpdateIDC()
-          'append dc
-10        SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
-20        refreshIDC = False
+    'append dc
+    SetDIBitsToDevice idc, 0, 0, bitmapinfo24.bmiHeader.biWidth, bitmapinfo24.bmiHeader.biHeight, 0, 0, 0, bitmapinfo24.bmiHeader.biHeight, Data(0), bitmapinfo24, DIB_RGB_COLORS
+    refreshIDC = False
 End Sub
 
 Private Sub Class_Terminate()
-10        Call Destroy
+    Call Destroy
 End Sub
 
 
@@ -571,82 +571,82 @@ End Sub
 
 
 Public Property Get width() As Integer
-10        width = viewBMP.bmWidth
+    width = viewBMP.bmWidth
 End Property
 
 Public Property Get WidthBytes() As Integer
-10        WidthBytes = viewBMP.bmWidthBytes
+    WidthBytes = viewBMP.bmWidthBytes
 End Property
 
 Public Property Get height() As Integer
-10        height = viewBMP.bmHeight
+    height = viewBMP.bmHeight
 End Property
 
 
 Sub DrawLine(ByVal InitialX As Integer, ByVal InitialY As Integer, ByVal FinalX As Integer, ByVal FinalY As Integer, color As Long)
-         ' Bresenham's line algorithm for Microsoft Visual Basic 6.0
-         ' Implementation by Robert Lee <rlee0001@maine.rr.com> July, 2002 Public Domain
-          
-         Dim Steep As Boolean
-         Dim DeltaX As Integer, DeltaY As Integer, Delta As Integer
-         Dim StepX As Integer, StepY As Integer
-         Dim coord As Integer
-          
-10       Steep = False
-20       DeltaX = Abs(FinalX - InitialX)
-30       If (FinalX - InitialX) > 0 Then
-40           StepX = 1
-50       Else
-60           StepX = -1
-70       End If
-80       DeltaY = Abs(FinalY - InitialY)
-90       If (FinalY - InitialY) > 0 Then
-100          StepY = 1
-110      Else
-120          StepY = -1
-130      End If
-140      If DeltaY > DeltaX Then
-150          Steep = True
-160          Swap InitialX, InitialY
-170          Swap DeltaX, DeltaY
-180          Swap StepX, StepY
-190      End If
-200      Delta = (DeltaY * 2) - DeltaX
-210      For coord = 0 To DeltaX - 1
-220          If Steep Then
-230              Call setPixelLong(InitialY, InitialX, color)
-240          Else
-                 'Me.PSet (InitialX, InitialY)
-250              Call setPixelLong(InitialX, InitialY, color)
-260          End If
-270          While Delta >= 0
-280              InitialY = InitialY + StepY
-290              Delta = Delta - (DeltaX * 2)
-300          Wend
-310          InitialX = InitialX + StepX
-320          Delta = Delta + (DeltaY * 2)
-330      Next coord
-         'Me.PSet (FinalX, FinalY)
-340      Call setPixelLong(FinalX, FinalY, color)
+   ' Bresenham's line algorithm for Microsoft Visual Basic 6.0
+   ' Implementation by Robert Lee <rlee0001@maine.rr.com> July, 2002 Public Domain
+    
+   Dim Steep As Boolean
+   Dim DeltaX As Integer, DeltaY As Integer, Delta As Integer
+   Dim StepX As Integer, StepY As Integer
+   Dim coord As Integer
+    
+   Steep = False
+   DeltaX = Abs(FinalX - InitialX)
+   If (FinalX - InitialX) > 0 Then
+       StepX = 1
+   Else
+       StepX = -1
+   End If
+   DeltaY = Abs(FinalY - InitialY)
+   If (FinalY - InitialY) > 0 Then
+       StepY = 1
+   Else
+       StepY = -1
+   End If
+   If DeltaY > DeltaX Then
+       Steep = True
+       Swap InitialX, InitialY
+       Swap DeltaX, DeltaY
+       Swap StepX, StepY
+   End If
+   Delta = (DeltaY * 2) - DeltaX
+   For coord = 0 To DeltaX - 1
+       If Steep Then
+           Call setPixelLong(InitialY, InitialX, color)
+       Else
+           'Me.PSet (InitialX, InitialY)
+           Call setPixelLong(InitialX, InitialY, color)
+       End If
+       While Delta >= 0
+           InitialY = InitialY + StepY
+           Delta = Delta - (DeltaX * 2)
+       Wend
+       InitialX = InitialX + StepX
+       Delta = Delta + (DeltaY * 2)
+   Next coord
+   'Me.PSet (FinalX, FinalY)
+   Call setPixelLong(FinalX, FinalY, color)
 End Sub
 
 Private Sub Swap(ByRef a As Integer, ByRef b As Integer)
-          Dim X As Integer
-10        X = a
-20        a = b
-30        b = X
+    Dim X As Integer
+    X = a
+    a = b
+    b = X
 End Sub
 
 
 Sub Destroy()
-10        If Not bInit Then Exit Sub
-            
-            'clear up reference
-20        CopyMemory ByVal VarPtrArray(Data), 0&, 4
-            
-30        Set Pic = Nothing
-40        Erase Data
-50        Call DeleteDC(idc)
-60        Call DeleteObject(ibitmap)
+    If Not bInit Then Exit Sub
+      
+      'clear up reference
+    CopyMemory ByVal VarPtrArray(Data), 0&, 4
+      
+    Set Pic = Nothing
+    Erase Data
+    Call DeleteDC(idc)
+    Call DeleteObject(ibitmap)
 
 End Sub

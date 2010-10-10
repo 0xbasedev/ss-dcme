@@ -67,14 +67,14 @@ Option Explicit
 Dim autoHide As Boolean
 
 Private Sub Form_Activate()
-10        BitBlt pictileset.hDC, 0, 0, 304, 224, frmGeneral.cTileset.Pic_Tileset.hDC, 0, 0, vbSrcCopy
+    BitBlt pictileset.hDC, 0, 0, 304, 224, frmGeneral.cTileset.Pic_Tileset.hDC, 0, 0, vbSrcCopy
 
-20        Call UpdateSelections
-30        autoHide = True
+    Call UpdateSelections
+    autoHide = True
 End Sub
 
 Private Sub Form_Deactivate()
-10        If autoHide Then Me.visible = False
+    If autoHide Then Me.visible = False
 End Sub
 
 
@@ -83,17 +83,17 @@ Private Sub Form_Load()
 End Sub
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub MakeSelectionFit(ByRef shape As shape, ByRef refshape As shape)
-          'Gives the same position and size to 'shape'
-10        With shape
-20            If .Top <> refshape.Top Then .Top = refshape.Top
-30            If .Left <> refshape.Left Then .Left = refshape.Left
-40            If .width <> refshape.width Then .width = refshape.width
-50            If .height <> refshape.height Then .height = refshape.height
-60        End With
+    'Gives the same position and size to 'shape'
+    With shape
+        If .Top <> refshape.Top Then .Top = refshape.Top
+        If .Left <> refshape.Left Then .Left = refshape.Left
+        If .width <> refshape.width Then .width = refshape.width
+        If .height <> refshape.height Then .height = refshape.height
+    End With
 End Sub
 
 Private Sub UpdateSelections()

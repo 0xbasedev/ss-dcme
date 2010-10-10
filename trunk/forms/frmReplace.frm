@@ -195,233 +195,233 @@ Private tilesetleft As Integer
 Private tilesetright As Integer
 
 Public Sub setParent(Main As frmMain)
-10        Set parent = Main
+    Set parent = Main
 End Sub
 
 
 
 Private Sub cmdCancel_Click()
-      'Cancels the form
-10        Set parent = Nothing
-          
-20        Unload Me
+'Cancels the form
+    Set parent = Nothing
+    
+    Unload Me
 End Sub
 
 Private Sub cmdOK_Click()
-      'Proceed with replace or switching, and pass the attributes
-      'to the general form
+'Proceed with replace or switching, and pass the attributes
+'to the general form
 
-          Dim using As replaceenum
-          'holds the source and destination tile for replace
-          '(when switching it doesn't matter which is src and
-          'which is dest)
-          Dim tilesrc As Integer
-          Dim tiledest As Integer
+    Dim using As replaceenum
+    'holds the source and destination tile for replace
+    '(when switching it doesn't matter which is src and
+    'which is dest)
+    Dim tilesrc As Integer
+    Dim tiledest As Integer
 
-          'no tiles bigger than 1 tile
-10        If TileIsSpecial(tilesetleft) Or TileIsSpecial(tilesetright) Then
-20            MessageBox "You can not use special tiles for tile switching/replacing", vbInformation
-30            Exit Sub
-40        End If
+    'no tiles bigger than 1 tile
+    If TileIsSpecial(tilesetleft) Or TileIsSpecial(tilesetright) Then
+        MessageBox "You can not use special tiles for tile switching/replacing", vbInformation
+        Exit Sub
+    End If
 
-          'check for uselessness
-50        If tilesetleft = tilesetright And tilesetleft <= 256 Then
-60            MessageBox "You can't switch or replace a tile by the same tile... that's useless.", vbInformation
-70            Exit Sub
-80        End If
+    'check for uselessness
+    If tilesetleft = tilesetright And tilesetleft <= 256 Then
+        MessageBox "You can't switch or replace a tile by the same tile... that's useless.", vbInformation
+        Exit Sub
+    End If
 
-          'determine the operation
-90        If optswitchleftright.value Then
-100           using = switchleftright
-110       ElseIf optreplaceleftright.value Then
-120           using = replaceleftright
-130       End If
+    'determine the operation
+    If optswitchleftright.value Then
+        using = switchleftright
+    ElseIf optreplaceleftright.value Then
+        using = replaceleftright
+    End If
 
-          'check to avoid filling the entire map with tiles
-140       If chkinselection.value = vbUnchecked Then
-150           If (using = replaceleftright And tilesetleft = 0) Or _
-                 (using = switchleftright And (tilesetleft = 0 Or tilesetright = 0)) Then
-160               MessageBox "You can't replace empty tiles all over the map.", vbInformation
-170               Exit Sub
-180           End If
-190       End If
-
-
+    'check to avoid filling the entire map with tiles
+    If chkinselection.value = vbUnchecked Then
+        If (using = replaceleftright And tilesetleft = 0) Or _
+           (using = switchleftright And (tilesetleft = 0 Or tilesetright = 0)) Then
+            MessageBox "You can't replace empty tiles all over the map.", vbInformation
+            Exit Sub
+        End If
+    End If
 
 
-200       tilesrc = tilesetleft
-210       tiledest = tilesetright
 
-          'pass the info to the executereplace method and execute it
-220       Call frmGeneral.ExecuteReplace(using, tilesrc, tiledest, chkinselection.value = vbChecked, chkRedraw.value = vbChecked)
+
+    tilesrc = tilesetleft
+    tiledest = tilesetright
+
+    'pass the info to the executereplace method and execute it
+    Call frmGeneral.ExecuteReplace(using, tilesrc, tiledest, chkinselection.value = vbChecked, chkRedraw.value = vbChecked)
 
 
 End Sub
 
 Private Sub Form_Activate()
-      'Updates the preview when activated
-10        DoEvents
-20        UpdatePreview
+'Updates the preview when activated
+    DoEvents
+    UpdatePreview
 End Sub
 
 Private Sub Form_Load()
-      'Copies the tileset from the general form
-10        Set Me.Icon = frmGeneral.Icon
+'Copies the tileset from the general form
+    Set Me.Icon = frmGeneral.Icon
 
-20        BitBlt pictileset.hDC, 0, 0, pictileset.width, pictileset.height, frmGeneral.cTileset.Pic_Tileset.hDC, 0, 0, vbSrcCopy
-30        pictileset.Refresh
+    BitBlt pictileset.hDC, 0, 0, pictileset.width, pictileset.height, frmGeneral.cTileset.Pic_Tileset.hDC, 0, 0, vbSrcCopy
+    pictileset.Refresh
 
 
 End Sub
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-      'Cancel the form
-10        cmdCancel_Click
+'Cancel the form
+    cmdCancel_Click
 End Sub
 
 
 
 Private Sub Form_Unload(Cancel As Integer)
-10        Set parent = Nothing
+    Set parent = Nothing
 End Sub
 
 Private Sub lblswap_Click()
-          Dim tmp As Integer
-10        tmp = tilesetleft
-20        Call SetLeftSelection(tilesetright)
-30        Call SetRightSelection(tmp)
+    Dim tmp As Integer
+    tmp = tilesetleft
+    Call SetLeftSelection(tilesetright)
+    Call SetRightSelection(tmp)
 End Sub
 
 Private Sub optreplaceleftright_Click()
-      'Hide one part of the arrow
-10        Line4.visible = False
-20        Line5.visible = False
+'Hide one part of the arrow
+    Line4.visible = False
+    Line5.visible = False
 
-30        chkRedraw.Enabled = True
+    chkRedraw.Enabled = True
 
-40        UpdatePreview
+    UpdatePreview
 End Sub
 
 Private Sub optswitchleftright_Click()
-      'Show both sides of the arrow
-10        Line4.visible = True
-20        Line5.visible = True
+'Show both sides of the arrow
+    Line4.visible = True
+    Line5.visible = True
 
-30        chkRedraw.Enabled = False
+    chkRedraw.Enabled = False
 
-40        UpdatePreview
+    UpdatePreview
 End Sub
 
 Private Sub pictileset_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
-      'Selects the tile
-10        If Not (X > 0 And Y > 0 And X < pictileset.width And Y < pictileset.height) Then
-              'out of range, don't select it
-20            Exit Sub
-30        End If
+'Selects the tile
+    If Not (X > 0 And Y > 0 And X < pictileset.width And Y < pictileset.height) Then
+        'out of range, don't select it
+        Exit Sub
+    End If
 
-          'set the selected tile
-40        If Button = vbLeftButton Then
-50            SetLeftSelection ((Y \ TILEW) * 19 + (X \ TILEW) + 1)
-60        Else
-70            SetRightSelection ((Y \ TILEW) * 19 + (X \ TILEW) + 1)
-80        End If
+    'set the selected tile
+    If Button = vbLeftButton Then
+        SetLeftSelection ((Y \ TILEW) * 19 + (X \ TILEW) + 1)
+    Else
+        SetRightSelection ((Y \ TILEW) * 19 + (X \ TILEW) + 1)
+    End If
 
 End Sub
 
 Private Sub pictileset_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-      'Do the same as mousedown
-10        If Button Then
-20            Call pictileset_MouseDown(Button, Shift, X, Y)
-30        End If
+'Do the same as mousedown
+    If Button Then
+        Call pictileset_MouseDown(Button, Shift, X, Y)
+    End If
 
-          Dim tilenr As Integer
-40        tilenr = (Y \ TILEW) * 19 + (X \ TILEW) + 1
-50        pictileset.tooltiptext = TilesetToolTipText(tilenr)
+    Dim tilenr As Integer
+    tilenr = (Y \ TILEW) * 19 + (X \ TILEW) + 1
+    pictileset.tooltiptext = TilesetToolTipText(tilenr)
 
 End Sub
 
 Sub InitSelections()
-          'TODO: IMPROVE
-10        If parent.tileset.selection(vbLeftButton).selectionType = TS_Tiles Then
-20            tilesetleft = parent.tileset.selection(vbLeftButton).tilenr
-30        ElseIf parent.tileset.selection(vbLeftButton).selectionType = TS_Walltiles Then
-40            tilesetleft = parent.tileset.selection(vbLeftButton).group + 259
-50        Else
-60            tilesetleft = 1
-70        End If
-          
-80        If parent.tileset.selection(vbRightButton).selectionType = TS_Tiles Then
-90            tilesetright = parent.tileset.selection(vbRightButton).tilenr
-100       ElseIf parent.tileset.selection(vbRightButton).selectionType = TS_Walltiles Then
-110           tilesetright = parent.tileset.selection(vbRightButton).group + 259
-120       Else
-130           tilesetright = 2
-140       End If
+    'TODO: IMPROVE
+    If parent.tileset.selection(vbLeftButton).selectionType = TS_Tiles Then
+        tilesetleft = parent.tileset.selection(vbLeftButton).tilenr
+    ElseIf parent.tileset.selection(vbLeftButton).selectionType = TS_Walltiles Then
+        tilesetleft = parent.tileset.selection(vbLeftButton).group + 259
+    Else
+        tilesetleft = 1
+    End If
+    
+    If parent.tileset.selection(vbRightButton).selectionType = TS_Tiles Then
+        tilesetright = parent.tileset.selection(vbRightButton).tilenr
+    ElseIf parent.tileset.selection(vbRightButton).selectionType = TS_Walltiles Then
+        tilesetright = parent.tileset.selection(vbRightButton).group + 259
+    Else
+        tilesetright = 2
+    End If
 
-          'set the left and right tile
-150       Call SetLeftSelection(tilesetleft)
-160       Call SetRightSelection(tilesetright)
-          
+    'set the left and right tile
+    Call SetLeftSelection(tilesetleft)
+    Call SetRightSelection(tilesetright)
+    
 End Sub
 
 
 Private Sub SetLeftSelection(tilenr)
-      'Set left selection of the tileset on the given tilenr
-10        If tilenr = 0 Then Exit Sub
-20        If tilenr > 256 And tilenr < 259 Then Exit Sub
+'Set left selection of the tileset on the given tilenr
+    If tilenr = 0 Then Exit Sub
+    If tilenr > 256 And tilenr < 259 Then Exit Sub
 
-          'move the left shape
-30        leftsel.visible = True
-40        leftsel.Left = ((tilenr - 1) Mod 19) * TILEW
-50        leftsel.Top = ((tilenr - 1) \ 19) * TILEW
+    'move the left shape
+    leftsel.visible = True
+    leftsel.Left = ((tilenr - 1) Mod 19) * TILEW
+    leftsel.Top = ((tilenr - 1) \ 19) * TILEW
 
-60        If tilenr = 256 Then tilenr = 0
-70        tilesetleft = tilenr
+    If tilenr = 256 Then tilenr = 0
+    tilesetleft = tilenr
 
-          'if both shapes overlap make them white
-80        If tilesetleft = tilesetright Then
-90            rightsel.BorderColor = vbWhite
-100       Else
-110           rightsel.BorderColor = vbYellow
-120       End If
+    'if both shapes overlap make them white
+    If tilesetleft = tilesetright Then
+        rightsel.BorderColor = vbWhite
+    Else
+        rightsel.BorderColor = vbYellow
+    End If
 
-          'update the preview
-130       UpdatePreview
+    'update the preview
+    UpdatePreview
 
 End Sub
 
 Private Sub SetRightSelection(tilenr)
-      'Set right selection of the tileset on the given tilenr
-10        If tilenr = 0 Then Exit Sub
-20        If tilenr > 256 And tilenr < 259 Then Exit Sub
+'Set right selection of the tileset on the given tilenr
+    If tilenr = 0 Then Exit Sub
+    If tilenr > 256 And tilenr < 259 Then Exit Sub
 
-          'move the right shape
-30        rightsel.visible = True
-40        rightsel.Left = ((tilenr - 1) Mod 19) * TILEW
-50        rightsel.Top = ((tilenr - 1) \ 19) * TILEW
+    'move the right shape
+    rightsel.visible = True
+    rightsel.Left = ((tilenr - 1) Mod 19) * TILEW
+    rightsel.Top = ((tilenr - 1) \ 19) * TILEW
 
-60        If tilenr = 256 Then tilenr = 0
-70        tilesetright = tilenr
+    If tilenr = 256 Then tilenr = 0
+    tilesetright = tilenr
 
-          'if both of them overlap make them white
-80        If tilesetleft = tilesetright Then
-90            rightsel.BorderColor = vbWhite
-100       Else
-110           rightsel.BorderColor = vbYellow
-120       End If
+    'if both of them overlap make them white
+    If tilesetleft = tilesetright Then
+        rightsel.BorderColor = vbWhite
+    Else
+        rightsel.BorderColor = vbYellow
+    End If
 
-130       UpdatePreview
+    UpdatePreview
 End Sub
 
 Private Sub UpdatePreview()
-      'Updates the preview
-      'stretch the 2 selected tiles from the tileset into the 2 large preview
-10        StretchBlt pictilesetlarge.hDC, shpleft.Left + 1, shpleft.Top + 1, shpleft.width - 2, shpleft.height - 2, pictileset.hDC, leftsel.Left, leftsel.Top, TILEW, TILEW, vbSrcCopy
-20        StretchBlt pictilesetlarge.hDC, shpright.Left + 1, shpright.Top + 1, shpright.width - 2, shpright.height - 2, pictileset.hDC, rightsel.Left, rightsel.Top, TILEW, TILEW, vbSrcCopy
+'Updates the preview
+'stretch the 2 selected tiles from the tileset into the 2 large preview
+    StretchBlt pictilesetlarge.hDC, shpleft.Left + 1, shpleft.Top + 1, shpleft.width - 2, shpleft.height - 2, pictileset.hDC, leftsel.Left, leftsel.Top, TILEW, TILEW, vbSrcCopy
+    StretchBlt pictilesetlarge.hDC, shpright.Left + 1, shpright.Top + 1, shpright.width - 2, shpright.height - 2, pictileset.hDC, rightsel.Left, rightsel.Top, TILEW, TILEW, vbSrcCopy
 
-          'update the numbers
-30        lblred.Caption = tilesetleft
-40        lblyellow.Caption = tilesetright
+    'update the numbers
+    lblred.Caption = tilesetleft
+    lblyellow.Caption = tilesetright
 End Sub
 
 

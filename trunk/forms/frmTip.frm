@@ -110,103 +110,103 @@ Dim CurrentTip As Long
 
 
 Private Sub DoNextTip()
-          Dim tmpcurrenttip As Long
-          ' Select a tip at random.
-10        tmpcurrenttip = CurrentTip
-          
-20        If chkRandom.value = vbChecked Then
-30            Do While CurrentTip = tmpcurrenttip
-40                CurrentTip = Int((tips.count * Rnd) + 1)
-                  ' Or, you could cycle through the Tips in order
-50            Loop
-60        Else
-70            CurrentTip = CurrentTip + 1
-80            If tips.count < CurrentTip Then
-90                CurrentTip = 1
-100           End If
-110       End If
-          
-          ' Show it.
-120       frmTip.DisplayCurrentTip
+    Dim tmpcurrenttip As Long
+    ' Select a tip at random.
+    tmpcurrenttip = CurrentTip
+    
+    If chkRandom.value = vbChecked Then
+        Do While CurrentTip = tmpcurrenttip
+            CurrentTip = Int((tips.count * Rnd) + 1)
+            ' Or, you could cycle through the Tips in order
+        Loop
+    Else
+        CurrentTip = CurrentTip + 1
+        If tips.count < CurrentTip Then
+            CurrentTip = 1
+        End If
+    End If
+    
+    ' Show it.
+    frmTip.DisplayCurrentTip
 
 End Sub
 
 Private Sub chkLoadTipsAtStartup_Click()
-      ' save whether or not this form should be displayed at startup
-10        Call SetSetting("ShowTips", chkLoadTipsAtStartup.value)
-20        Call SaveSettings
+' save whether or not this form should be displayed at startup
+    Call SetSetting("ShowTips", chkLoadTipsAtStartup.value)
+    Call SaveSettings
 End Sub
 
 Private Sub chkRandom_Click()
-10        If chkRandom.value = vbChecked Then
-20            cmdPreviousTip.Enabled = False
-30        Else
-40            cmdPreviousTip.Enabled = True
-50        End If
-60        Call SetSetting("ShowTipsRandom", chkRandom.value)
-70        Call SaveSettings
+    If chkRandom.value = vbChecked Then
+        cmdPreviousTip.Enabled = False
+    Else
+        cmdPreviousTip.Enabled = True
+    End If
+    Call SetSetting("ShowTipsRandom", chkRandom.value)
+    Call SaveSettings
 End Sub
 
 Private Sub cmdNextTip_Click()
-10        DoNextTip
+    DoNextTip
 End Sub
 
 Private Sub cmdOK_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub cmdPreviousTip_Click()
-10        CurrentTip = CurrentTip - 1
-20        If 1 > CurrentTip Then
-30            CurrentTip = tips.count
-40        End If
+    CurrentTip = CurrentTip - 1
+    If 1 > CurrentTip Then
+        CurrentTip = tips.count
+    End If
 
-          
-          ' Show it.
-50        frmTip.DisplayCurrentTip
+    
+    ' Show it.
+    frmTip.DisplayCurrentTip
 End Sub
 
 Public Sub DisplayCurrentTip()
-10        If tips.count > 0 Then
-20            lblTipText.Caption = tips.item(CurrentTip)
-30        End If
+    If tips.count > 0 Then
+        lblTipText.Caption = tips.item(CurrentTip)
+    End If
 End Sub
 
 Private Sub Form_Load()
 '10        forceLoad = False
-          
-          Dim ShowAtStartup As Integer
+    
+    Dim ShowAtStartup As Integer
 
-20        Set Me.Icon = frmGeneral.Icon
+    Set Me.Icon = frmGeneral.Icon
 
 '          ' See if we should be shown at startup
-30        ShowAtStartup = GetSetting("ShowTips", 1)
+    ShowAtStartup = GetSetting("ShowTips", 1)
 '40        If ShowAtStartup = 0 And Not forceLoad Then
 '50            Unload Me
 '60            Exit Sub
 '70        End If
 
-80        chkLoadTipsAtStartup = ShowAtStartup
+    chkLoadTipsAtStartup = ShowAtStartup
 
-90        chkRandom.value = GetSetting("ShowTipsRandom", vbChecked)
-100       If chkRandom.value = vbChecked Then
-110           cmdPreviousTip.Enabled = False
-120       Else
-130           cmdPreviousTip.Enabled = True
-              'Seed Rnd
+    chkRandom.value = GetSetting("ShowTipsRandom", vbChecked)
+    If chkRandom.value = vbChecked Then
+        cmdPreviousTip.Enabled = False
+    Else
+        cmdPreviousTip.Enabled = True
+        'Seed Rnd
 
-131           Randomize
-140       End If
-          
-
-
-          Dim i As Integer
-160       For i = 0 To lstTips.ListCount - 1
-170           If lstTips.list(i) <> "" Then
-180               tips.add lstTips.list(i)
-190           End If
-200       Next
+        Randomize
+    End If
+    
 
 
-210       DoNextTip
+    Dim i As Integer
+    For i = 0 To lstTips.ListCount - 1
+        If lstTips.list(i) <> "" Then
+            tips.add lstTips.list(i)
+        End If
+    Next
+
+
+    DoNextTip
 End Sub

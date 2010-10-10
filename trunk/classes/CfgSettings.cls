@@ -18,8 +18,8 @@ Dim parent As frmMain
 Dim cfgpath As String
 
 Sub setParent(Main As frmMain)
-10        Set parent = Main
-20        If Not parent Is Nothing Then Call SearchCfg
+    Set parent = Main
+    If Not parent Is Nothing Then Call SearchCfg
 End Sub
 
 Sub SetCfgSetting(section As String, Key As String, newsetting As String)
@@ -27,49 +27,49 @@ Sub SetCfgSetting(section As String, Key As String, newsetting As String)
 End Sub
 
 Function GetCfgSettingStr(section As String, Key As String) As String
-10        GetCfgSettingStr = INIload(section, Key, CStr(default), cfgpath)
+    GetCfgSettingStr = INIload(section, Key, CStr(default), cfgpath)
 End Function
 
 Function GetCfgSetting(section As String, Key As String, Optional default As Long = 0) As Long
-10        GetCfgSetting = CLng(INIload(section, Key, CStr(default), cfgpath))
+    GetCfgSetting = CLng(INIload(section, Key, CStr(default), cfgpath))
 End Function
 
 
 Function GetCfgPath() As String
-10        GetCfgPath = cfgpath
+    GetCfgPath = cfgpath
 End Function
 
 Sub SearchCfg()
-10        If FileExists(GetPathTo(parent.activeFile) & GetFileNameWithoutExtension(parent.activeFile) & ".cfg") Then
-20            cfgpath = GetPathTo(parent.activeFile) & GetFileNameWithoutExtension(parent.activeFile) & ".cfg"
-30        ElseIf FileExists(App.path & DEFAULTPATH) Then
-40            cfgpath = App.path & DEFAULTPATH
-50        Else
-60            cfgpath = ""
-70        End If
-          
-80        UpdateSettingsLabel
+    If FileExists(GetPathTo(parent.activeFile) & GetFileNameWithoutExtension(parent.activeFile) & ".cfg") Then
+        cfgpath = GetPathTo(parent.activeFile) & GetFileNameWithoutExtension(parent.activeFile) & ".cfg"
+    ElseIf FileExists(App.path & DEFAULTPATH) Then
+        cfgpath = App.path & DEFAULTPATH
+    Else
+        cfgpath = ""
+    End If
+    
+    UpdateSettingsLabel
 End Sub
 
 Sub SetCfgPath(path As String)
-10        If FileExists(path) Then
-20            cfgpath = path
-30        Else
-40            Call SearchCfg
-50        End If
-          
-60        UpdateSettingsLabel
+    If FileExists(path) Then
+        cfgpath = path
+    Else
+        Call SearchCfg
+    End If
+    
+    UpdateSettingsLabel
 End Sub
 
 Sub UpdateSettingsLabel()
-10        If cfgpath <> "" Then
-20            frmGeneral.lblCurrentSettings.Caption = "Settings: " & replace(cfgpath, App.path, "...", , 1)
-30        Else
-40            frmGeneral.lblCurrentSettings.Caption = "Settings: <DEFAULT>"
-50        End If
+    If cfgpath <> "" Then
+        frmGeneral.lblCurrentSettings.Caption = "Settings: " & replace(cfgpath, App.path, "...", , 1)
+    Else
+        frmGeneral.lblCurrentSettings.Caption = "Settings: <DEFAULT>"
+    End If
 End Sub
 
 Private Sub Class_Terminate()
-10        Set parent = Nothing
-          
+    Set parent = Nothing
+    
 End Sub

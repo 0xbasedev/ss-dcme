@@ -106,67 +106,72 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
+
+
+
 Private Sub cmdCancel_Click()
-      'Cancels the form
-10        Unload Me
+'Cancels the form
+    Unload Me
 End Sub
 
 Private Sub cmdRotate180_Click()
-      'Rotate 180°
-10        Call frmGeneral.ExecuteRotate(2)
+'Rotate 180°
+    Call frmGeneral.ExecuteRotate(2)
 End Sub
 
 Private Sub cmdRotate270_Click()
-      'Rotate either 90 or 270
-10        If optDir(0).value Then
-20            Call frmGeneral.ExecuteRotate(3)
-30        ElseIf optDir(1).value Then
-40            Call frmGeneral.ExecuteRotate(1)
-50        End If
+'Rotate either 90 or 270
+    If optDir(0).value Then
+        Call frmGeneral.ExecuteRotate(3)
+    ElseIf optDir(1).value Then
+        Call frmGeneral.ExecuteRotate(1)
+    End If
 End Sub
 
 Private Sub cmdRotate90_Click()
-      'Rotate either 90 or 270
-10        If optDir(0).value Then
-20            Call frmGeneral.ExecuteRotate(1)
-30        ElseIf optDir(1).value Then
-40            Call frmGeneral.ExecuteRotate(3)
-50        End If
+'Rotate either 90 or 270
+    If optDir(0).value Then
+        Call frmGeneral.ExecuteRotate(1)
+    ElseIf optDir(1).value Then
+        Call frmGeneral.ExecuteRotate(3)
+    End If
 End Sub
 
 Private Sub cmdRotateFree_Click()
-10        If val(txtRotate.Text) = 0 Then
-20            Exit Sub
+    If val(txtRotate.Text) = 0 Then
+        Exit Sub
 
-              'Commented out for now, so we can test the method's accuracy
-30        ElseIf val(txtRotate.Text) = 90 Then
-40            cmdRotate90_Click
-50        ElseIf val(txtRotate.Text) = 180 Then
-60            cmdRotate180_Click
-70        ElseIf val(txtRotate.Text) = 270 Then
-80            cmdRotate270_Click
-90        Else
-100           If optDir(0).value Then
-110               Call frmGeneral.ExecuteRotate(4, CDbl(-(val(txtRotate.Text) * 3.14159) / 180))
-120           ElseIf optDir(1).value Then
-130               Call frmGeneral.ExecuteRotate(4, CDbl((val(txtRotate.Text) * 3.14159) / 180))
-140           End If
-150       End If
+        'Commented out for now, so we can test the method's accuracy
+    ElseIf val(txtRotate.Text) = 90 Then
+        cmdRotate90_Click
+    ElseIf val(txtRotate.Text) = 180 Then
+        cmdRotate180_Click
+    ElseIf val(txtRotate.Text) = 270 Then
+        cmdRotate270_Click
+    Else
+        If optDir(0).value Then
+            Call frmGeneral.ExecuteRotate(4, CDbl(-(val(txtRotate.Text) * 3.14159) / 180))
+        ElseIf optDir(1).value Then
+            Call frmGeneral.ExecuteRotate(4, CDbl((val(txtRotate.Text) * 3.14159) / 180))
+        End If
+    End If
 
-160       Call SetSetting("FreeRotateAngle", txtRotate.Text)
+    Call SetSetting("FreeRotateAngle", txtRotate.Text)
 End Sub
 
 Private Sub Form_Load()
-10        Set Me.Icon = frmGeneral.Icon
+    Set Me.Icon = frmGeneral.Icon
 
-20        txtRotate.Text = GetSetting("FreeRotateAngle", "0")
+    txtRotate.Text = GetSetting("FreeRotateAngle", "0")
 End Sub
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-      'Cancels the form
-10        cmdCancel_Click
+'Cancels the form
+    cmdCancel_Click
 End Sub
 
+
+
 Private Sub txtRotate_Change()
-10        Call removeDisallowedCharacters(txtRotate, 0, 360)
+    Call removeDisallowedCharacters(txtRotate, 0, 360)
 End Sub

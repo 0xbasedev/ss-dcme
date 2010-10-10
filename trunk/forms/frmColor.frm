@@ -200,178 +200,178 @@ Dim oldcolor As Long
 Dim filledpreview As Boolean
 
 Sub SetData(old As Long, ByVal ptr As Long, default As Long, showdefault As Boolean, filledprev As Boolean)
-10        colorptr = ptr
-          
-20        defaultColor = default
-30        oldcolor = old
-40        color = old
-          
-50        filledpreview = filledprev
+    colorptr = ptr
+    
+    defaultColor = default
+    oldcolor = old
+    color = old
+    
+    filledpreview = filledprev
 
-60        cmd_default.visible = showdefault
-          
-70        Call UpdatePointer
-80        Call UpdateValues
-          
+    cmd_default.visible = showdefault
+    
+    Call UpdatePointer
+    Call UpdateValues
+    
 End Sub
 
 Private Sub SetColor(val As Long)
-10        If colorptr Then
-20            CopyMemory ByVal colorptr, ByVal VarPtr(val), Len(val)
-30        Else
-              
-40        End If
+    If colorptr Then
+        CopyMemory ByVal colorptr, ByVal VarPtr(val), Len(val)
+    Else
+        
+    End If
 End Sub
 
 Private Sub Cmd_cancel_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub cmd_current_Click()
 
-10        color = oldcolor
-          
-20        Call UpdatePointer
-30        Call UpdateValues
+    color = oldcolor
+    
+    Call UpdatePointer
+    Call UpdateValues
 
 End Sub
 
 
 Private Sub cmd_default_Click()
 
-10        color = defaultColor
-          
-20        Call UpdatePointer
-30        Call UpdateValues
+    color = defaultColor
+    
+    Call UpdatePointer
+    Call UpdateValues
 
 End Sub
 
 Private Sub cmd_OK_Click()
-10        Call SetColor(color)
-          
-20        Unload Me
+    Call SetColor(color)
+    
+    Unload Me
 End Sub
 
 Private Sub colormap_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
-10        If X <= 0 Then X = 0
-20        If X >= colormap.ScaleWidth - 1 Then X = colormap.ScaleWidth - 1
-30        If Y <= 0 Then Y = 0
-40        If Y >= colormap.ScaleHeight - 1 Then Y = colormap.ScaleHeight - 1
+    If X <= 0 Then X = 0
+    If X >= colormap.ScaleWidth - 1 Then X = colormap.ScaleWidth - 1
+    If Y <= 0 Then Y = 0
+    If Y >= colormap.ScaleHeight - 1 Then Y = colormap.ScaleHeight - 1
 
-50        color = GetPixel(colormap.hDC, X, Y)
-60        Call UpdateValues
-70        Call PlacePointer(X, Y)
+    color = GetPixel(colormap.hDC, X, Y)
+    Call UpdateValues
+    Call PlacePointer(X, Y)
 
 End Sub
 
 Private Sub colormap_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-10        If Button Then Call colormap_MouseDown(Button, Shift, X, Y)
+    If Button Then Call colormap_MouseDown(Button, Shift, X, Y)
 End Sub
 
 Private Sub Form_Load()
 
-10        Set Me.Icon = frmGeneral.Icon
+    Set Me.Icon = frmGeneral.Icon
 
 End Sub
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub txtRGB_Change(Index As Integer)
-10        Call removeDisallowedCharacters(txtRGB(Index), 0, 255)
+    Call removeDisallowedCharacters(txtRGB(Index), 0, 255)
 End Sub
 
 Private Sub txtRGB_GotFocus(Index As Integer)
-10        txtRGB(Index).selstart = 0
-20        txtRGB(Index).sellength = Len(txtRGB(Index).Text)
+    txtRGB(Index).selstart = 0
+    txtRGB(Index).sellength = Len(txtRGB(Index).Text)
 End Sub
 
 Private Sub txtRGB_LostFocus(Index As Integer)
-10        color = RGB(val(txtRGB(0).Text), val(txtRGB(1).Text), val(txtRGB(2).Text))
+    color = RGB(val(txtRGB(0).Text), val(txtRGB(1).Text), val(txtRGB(2).Text))
 
-20        Call UpdatePointer
-30        Call UpdateValues(Index)
+    Call UpdatePointer
+    Call UpdateValues(Index)
 End Sub
 
 Private Sub UpdatePointer()
-          Dim coord() As Single
-10        ReDim coord(1) As Single
-20        coord = FindColor(color)
-30        Call PlacePointer(coord(0), coord(1))
+    Dim coord() As Single
+    ReDim coord(1) As Single
+    coord = FindColor(color)
+    Call PlacePointer(coord(0), coord(1))
 End Sub
 
 Private Sub UpdateValues(Optional ignoreindex As Integer = -1)
 
-10        If ignoreindex <> 0 Then txtRGB(0).Text = GetRED(color)
-20        If ignoreindex <> 1 Then txtRGB(1).Text = GetGREEN(color)
-30        If ignoreindex <> 2 Then txtRGB(2).Text = GetBLUE(color)
+    If ignoreindex <> 0 Then txtRGB(0).Text = GetRED(color)
+    If ignoreindex <> 1 Then txtRGB(1).Text = GetGREEN(color)
+    If ignoreindex <> 2 Then txtRGB(2).Text = GetBLUE(color)
 
-40        preview1.BorderColor = color
-50        preview2.BorderColor = color
-60        preview3.FillColor = color
-70        If filledpreview = True Then
-80            preview3.FillStyle = 0
-90            preview1.visible = False
-100           preview2.visible = False
-110       Else
-120           preview3.FillStyle = 1
-130           preview1.visible = True
-140           preview2.visible = True
-150       End If
+    preview1.BorderColor = color
+    preview2.BorderColor = color
+    preview3.FillColor = color
+    If filledpreview = True Then
+        preview3.FillStyle = 0
+        preview1.visible = False
+        preview2.visible = False
+    Else
+        preview3.FillStyle = 1
+        preview1.visible = True
+        preview2.visible = True
+    End If
 
 End Sub
 
 Private Sub PlacePointer(X As Single, Y As Single)
-10        colorpicker.Left = X - 3
-20        colorpicker.Top = Y - 3
+    colorpicker.Left = X - 3
+    colorpicker.Top = Y - 3
 
-30        colorline1.x1 = X
-40        colorline1.x2 = X
-50        colorline1.y1 = Y - 5
-60        colorline1.y2 = Y + 5
+    colorline1.x1 = X
+    colorline1.x2 = X
+    colorline1.y1 = Y - 5
+    colorline1.y2 = Y + 5
 
-70        colorline2.x1 = X - 5
-80        colorline2.x2 = X + 5
-90        colorline2.y1 = Y
-100       colorline2.y2 = Y
+    colorline2.x1 = X - 5
+    colorline2.x2 = X + 5
+    colorline2.y1 = Y
+    colorline2.y2 = Y
 End Sub
 
 Private Function FindColor(color As Long) As Single()
-          Dim retVal() As Single
-10        ReDim retVal(1) As Single
-          Dim i As Integer
-          Dim j As Integer
+    Dim retVal() As Single
+    ReDim retVal(1) As Single
+    Dim i As Integer
+    Dim j As Integer
 
-          Dim curpixel As Long
-          Dim curdelta As Integer
+    Dim curpixel As Long
+    Dim curdelta As Integer
 
-          Dim mindelta As Integer
-          Dim minx As Single
-          Dim miny As Single
+    Dim mindelta As Integer
+    Dim minx As Single
+    Dim miny As Single
 
-20        mindelta = 255 * 3
+    mindelta = 255 * 3
 
-30        For j = 0 To colormap.ScaleWidth
-40            For i = 0 To colormap.ScaleHeight
-50                curpixel = GetPixel(colormap.hDC, i, j)
-60                curdelta = Abs(GetRED(curpixel) - GetRED(color)) + Abs(GetGREEN(curpixel) - GetGREEN(color)) + Abs(GetBLUE(curpixel) - GetBLUE(color))
-70                If curdelta < mindelta Then
-80                    mindelta = curdelta
-90                    minx = i
-100                   miny = j
-110               End If
-120               If mindelta = 0 Then
-130                   retVal(0) = minx
-140                   retVal(1) = miny
-150                   FindColor = retVal
-160                   Exit Function
-170               End If
-180           Next
-190       Next
-200       retVal(0) = minx
-210       retVal(1) = miny
-220       FindColor = retVal
+    For j = 0 To colormap.ScaleWidth
+        For i = 0 To colormap.ScaleHeight
+            curpixel = GetPixel(colormap.hDC, i, j)
+            curdelta = Abs(GetRED(curpixel) - GetRED(color)) + Abs(GetGREEN(curpixel) - GetGREEN(color)) + Abs(GetBLUE(curpixel) - GetBLUE(color))
+            If curdelta < mindelta Then
+                mindelta = curdelta
+                minx = i
+                miny = j
+            End If
+            If mindelta = 0 Then
+                retVal(0) = minx
+                retVal(1) = miny
+                FindColor = retVal
+                Exit Function
+            End If
+        Next
+    Next
+    retVal(0) = minx
+    retVal(1) = miny
+    FindColor = retVal
 End Function
 

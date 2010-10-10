@@ -1,6 +1,6 @@
 VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Begin VB.MDIForm frmGeneral 
    BackColor       =   &H8000000C&
    Caption         =   "Drake Continuum Map Editor"
@@ -3715,10 +3715,10 @@ Private Function SpeedTest() As Double
           Dim hbx As Integer    'highestval for x
           Dim lby As Integer    'lowestval for y
           Dim hby As Integer    'highestval for y
-        lbx = (Maps(activemap).Hscr.value \ (TILEW * Maps(activemap).magnifier.zoom))
-        hbx = ((Maps(activemap).Hscr.value + Maps(activemap).picPreview.width) \ (TILEW * Maps(activemap).magnifier.zoom))
-        lby = (Maps(activemap).Vscr.value \ (TILEW * Maps(activemap).magnifier.zoom))
-        hby = ((Maps(activemap).Vscr.value + Maps(activemap).picPreview.height) \ (TILEW * Maps(activemap).magnifier.zoom))
+        lbx = (Maps(activemap).hScr.value \ (TILEW * Maps(activemap).magnifier.zoom))
+        hbx = ((Maps(activemap).hScr.value + Maps(activemap).picPreview.width) \ (TILEW * Maps(activemap).magnifier.zoom))
+        lby = (Maps(activemap).vScr.value \ (TILEW * Maps(activemap).magnifier.zoom))
+        hby = ((Maps(activemap).vScr.value + Maps(activemap).picPreview.height) \ (TILEW * Maps(activemap).magnifier.zoom))
 
           Dim tick As Long
           Dim finalresult As Long
@@ -4473,7 +4473,7 @@ Private Sub MDIForm_Load()
     
     'load settings from which toolbars are shown
     Toolbarleft.visible = CBool(GetSetting("ShowToolbarTools", "1"))
-    ToolbarTop.visible = CBool(GetSetting("ShowToolbarStandard", "1"))
+    toolbartop.visible = CBool(GetSetting("ShowToolbarStandard", "1"))
     tlbTabs.visible = CBool(GetSetting("ShowToolbarMapTabs", "1"))
 
     'set main tool on hand
@@ -5608,10 +5608,10 @@ Private Sub mnuSelectNoneVisible_Click()
     Dim hbx As Integer    'highestval for x
     Dim lby As Integer    'lowestval for y
     Dim hby As Integer    'highestval for y
-    lbx = Int(Maps(activemap).Hscr.value / (Maps(activemap).currenttilew))
-    hbx = Int((Maps(activemap).Hscr.value + Maps(activemap).picPreview.width) / (Maps(activemap).currenttilew))
-    lby = Int(Maps(activemap).Vscr.value / (Maps(activemap).currenttilew))
-    hby = Int((Maps(activemap).Vscr.value + Maps(activemap).picPreview.height) / (Maps(activemap).currenttilew))
+    lbx = Int(Maps(activemap).hScr.value / (Maps(activemap).currenttilew))
+    hbx = Int((Maps(activemap).hScr.value + Maps(activemap).picPreview.width) / (Maps(activemap).currenttilew))
+    lby = Int(Maps(activemap).vScr.value / (Maps(activemap).currenttilew))
+    hby = Int((Maps(activemap).vScr.value + Maps(activemap).picPreview.height) / (Maps(activemap).currenttilew))
 
     Dim undoch As New Changes
     Maps(activemap).undoredo.ResetRedo
@@ -6455,12 +6455,12 @@ Sub ExecuteZoom(out As Boolean)
     'use center tile for zooming in or out
     If Not out Then
         Call Maps(activemap).magnifier.ZoomIn( _
-             (Int(((Maps(activemap).Hscr.value + Maps(activemap).picPreview.width / 2)) / (TILEW * Maps(activemap).magnifier.zoom))), _
-             (Int(((Maps(activemap).Vscr.value + Maps(activemap).picPreview.height / 2)) / (TILEW * Maps(activemap).magnifier.zoom))))
+             (Int(((Maps(activemap).hScr.value + Maps(activemap).picPreview.width / 2)) / (TILEW * Maps(activemap).magnifier.zoom))), _
+             (Int(((Maps(activemap).vScr.value + Maps(activemap).picPreview.height / 2)) / (TILEW * Maps(activemap).magnifier.zoom))))
     Else
         Call Maps(activemap).magnifier.ZoomOut( _
-             (Int(((Maps(activemap).Hscr.value + Maps(activemap).picPreview.width / 2)) / (TILEW * Maps(activemap).magnifier.zoom))), _
-             (Int(((Maps(activemap).Vscr.value + Maps(activemap).picPreview.height / 2)) / (TILEW * Maps(activemap).magnifier.zoom))))
+             (Int(((Maps(activemap).hScr.value + Maps(activemap).picPreview.width / 2)) / (TILEW * Maps(activemap).magnifier.zoom))), _
+             (Int(((Maps(activemap).vScr.value + Maps(activemap).picPreview.height / 2)) / (TILEW * Maps(activemap).magnifier.zoom))))
     End If
 
     frmGeneral.IsBusy("frmGeneral.ExecuteZoom") = False
@@ -6477,8 +6477,8 @@ Friend Sub ExecuteZoomFocus(out As Boolean, ByRef mousepos As POINTAPI)
     'curtiley = (parent.Vscr.value + Y) \ parent.currenttilew
     ScreenToClient Maps(activemap).picPreview.hWnd, mousepos
     
-    Dim OffsetX As Integer
-    Dim OffsetY As Integer
+    Dim offsetX As Integer
+    Dim offsetY As Integer
 
     frmGeneral.IsBusy("frmGeneral.ExecuteZoomFocus") = True
     
@@ -6487,8 +6487,8 @@ Friend Sub ExecuteZoomFocus(out As Boolean, ByRef mousepos As POINTAPI)
 '
 '50        tileX = (Maps(activemap).Hscr.Value + mouseX - offsetX) \ Maps(activemap).currenttilew
 '60        tileY = (Maps(activemap).Vscr.Value + mouseY - offsetY) \ Maps(activemap).currenttilew
-    tileX = (Maps(activemap).Hscr.value + mousepos.X) \ Maps(activemap).currenttilew
-    tileY = (Maps(activemap).Vscr.value + mousepos.Y) \ Maps(activemap).currenttilew
+    tileX = (Maps(activemap).hScr.value + mousepos.X) \ Maps(activemap).currenttilew
+    tileY = (Maps(activemap).vScr.value + mousepos.Y) \ Maps(activemap).currenttilew
 
     'use center tile for zooming in or out
     If Not out Then
@@ -7769,8 +7769,8 @@ Sub UpdateToolBarButtons()
     
     If Not gotMap Then
         
-        ToolbarTop.Buttons("ZoomIn").Enabled = False
-        ToolbarTop.Buttons("ZoomOut").Enabled = False
+        toolbartop.Buttons("ZoomIn").Enabled = False
+        toolbartop.Buttons("ZoomOut").Enabled = False
         
         
         mnuUndo.Caption = "Undo Unavailable"
@@ -7841,8 +7841,8 @@ Sub UpdateToolBarButtons()
 
         mnuRevert.Enabled = (Maps(activemap).mapchanged And Maps(activemap).activeFile <> "")
 
-        ToolbarTop.Buttons("ZoomIn").Enabled = (Maps(activemap).magnifier.zoom <> 2)
-        ToolbarTop.Buttons("ZoomOut").Enabled = (Maps(activemap).magnifier.zoom <> 1 / 16)
+        toolbartop.Buttons("ZoomIn").Enabled = (Maps(activemap).magnifier.zoom <> 2)
+        toolbartop.Buttons("ZoomOut").Enabled = (Maps(activemap).magnifier.zoom <> 1 / 16)
         
         'update the menu items according the default tileset being used
         mnudiscardtileset.Enabled = Not Maps(activemap).usingDefaultTileset
@@ -7854,24 +7854,24 @@ Sub UpdateToolBarButtons()
         
         'update according to usingtilenr
         mnuTileNR.checked = Maps(activemap).usingtilenr
-        ToolbarTop.Buttons("TileNr").value = IIf(Maps(activemap).usingtilenr, tbrPressed, tbrUnpressed)
+        toolbartop.Buttons("TileNr").value = IIf(Maps(activemap).usingtilenr, tbrPressed, tbrUnpressed)
 
         'update according to usinggrid
         If Maps(activemap).TestMap.isRunning Then
             mnuGrid.checked = Maps(activemap).usinggridTest
-            ToolbarTop.Buttons("Grid").value = IIf(Maps(activemap).usinggridTest, tbrPressed, tbrUnpressed)
+            toolbartop.Buttons("Grid").value = IIf(Maps(activemap).usinggridTest, tbrPressed, tbrUnpressed)
         Else
             mnuGrid.checked = Maps(activemap).usinggrid
-            ToolbarTop.Buttons("Grid").value = IIf(Maps(activemap).usinggrid, tbrPressed, tbrUnpressed)
+            toolbartop.Buttons("Grid").value = IIf(Maps(activemap).usinggrid, tbrPressed, tbrUnpressed)
         End If
         
         'show regions?
         mnuShowRegions.checked = Maps(activemap).ShowRegions
-        ToolbarTop.Buttons("ShowRegions").value = IIf(Maps(activemap).ShowRegions, tbrPressed, tbrUnpressed)
+        toolbartop.Buttons("ShowRegions").value = IIf(Maps(activemap).ShowRegions, tbrPressed, tbrUnpressed)
 
         'show lvz?
         mnuShowLVZ.checked = Maps(activemap).ShowLVZ
-        ToolbarTop.Buttons("ShowLVZ").value = IIf(Maps(activemap).ShowLVZ, tbrPressed, tbrUnpressed)
+        toolbartop.Buttons("ShowLVZ").value = IIf(Maps(activemap).ShowLVZ, tbrPressed, tbrUnpressed)
         
         
 
@@ -7881,19 +7881,19 @@ Sub UpdateToolBarButtons()
         Select Case Maps(activemap).pastetype
         Case enumPasteType.p_normal
 '            toolbartop.Buttons("PasteType").ButtonMenus("PasteUnder").
-            ToolbarTop.Buttons("PasteType").Image = "PasteNormal"
+            toolbartop.Buttons("PasteType").Image = "PasteNormal"
             mnuNormalPaste.checked = True
             mnuTransparentPaste.checked = False
             mnuPasteUnder.checked = False
             
         Case enumPasteType.p_trans
-            ToolbarTop.Buttons("PasteType").Image = "PasteTransparent"
+            toolbartop.Buttons("PasteType").Image = "PasteTransparent"
             mnuTransparentPaste.checked = True
             mnuNormalPaste.checked = False
             mnuPasteUnder.checked = False
             
         Case enumPasteType.p_under
-            ToolbarTop.Buttons("PasteType").Image = "PasteUnder"
+            toolbartop.Buttons("PasteType").Image = "PasteUnder"
             mnuPasteUnder.checked = True
             mnuTransparentPaste.checked = False
             mnuNormalPaste.checked = False
@@ -8000,34 +8000,34 @@ Sub UpdateToolBarButtons()
     tlbTileset.Buttons("DiscardTileset").Enabled = mnudiscardtileset.Enabled
     tlbTileset.Buttons("EditWalltiles").Enabled = mnuWallTiles.Enabled
         
-    ToolbarTop.Buttons("Cut").Enabled = mnuCut.Enabled
-    ToolbarTop.Buttons("Copy").Enabled = mnuCopy.Enabled
+    toolbartop.Buttons("Cut").Enabled = mnuCut.Enabled
+    toolbartop.Buttons("Copy").Enabled = mnuCopy.Enabled
 
-    ToolbarTop.Buttons("Flip").Enabled = mnuFlip.Enabled
-    ToolbarTop.Buttons("Mirror").Enabled = mnuMirror.Enabled
-    ToolbarTop.Buttons("Rotate").Enabled = mnuRotate.Enabled
+    toolbartop.Buttons("Flip").Enabled = mnuFlip.Enabled
+    toolbartop.Buttons("Mirror").Enabled = mnuMirror.Enabled
+    toolbartop.Buttons("Rotate").Enabled = mnuRotate.Enabled
     
 
-    ToolbarTop.Buttons("Redo").Enabled = mnuRedo.Enabled
-    ToolbarTop.Buttons("Undo").Enabled = mnuUndo.Enabled
-    ToolbarTop.Buttons("Undo").tooltiptext = mnuUndo.Caption
-    ToolbarTop.Buttons("Redo").tooltiptext = mnuRedo.Caption
+    toolbartop.Buttons("Redo").Enabled = mnuRedo.Enabled
+    toolbartop.Buttons("Undo").Enabled = mnuUndo.Enabled
+    toolbartop.Buttons("Undo").tooltiptext = mnuUndo.Caption
+    toolbartop.Buttons("Redo").tooltiptext = mnuRedo.Caption
     
-    ToolbarTop.Buttons("Save").Enabled = mnuSave.Enabled
+    toolbartop.Buttons("Save").Enabled = mnuSave.Enabled
     
     
-    ToolbarTop.Buttons("Paste").Enabled = mnuPaste.Enabled
-    ToolbarTop.Buttons("Grid").Enabled = mnuGrid.Enabled
-    ToolbarTop.Buttons("TileNr").Enabled = mnuTileNR.Enabled
-    ToolbarTop.Buttons("Replace").Enabled = mnuReplace.Enabled
-    ToolbarTop.Buttons("TextToMap").Enabled = mnuTextToMap.Enabled
-    ToolbarTop.Buttons("PicToMap").Enabled = mnuPTM.Enabled
-    ToolbarTop.Buttons("PasteType").Enabled = mnuDrawMode.Enabled
-    ToolbarTop.Buttons("EditELVL").Enabled = mnuElvl.Enabled
+    toolbartop.Buttons("Paste").Enabled = mnuPaste.Enabled
+    toolbartop.Buttons("Grid").Enabled = mnuGrid.Enabled
+    toolbartop.Buttons("TileNr").Enabled = mnuTileNR.Enabled
+    toolbartop.Buttons("Replace").Enabled = mnuReplace.Enabled
+    toolbartop.Buttons("TextToMap").Enabled = mnuTextToMap.Enabled
+    toolbartop.Buttons("PicToMap").Enabled = mnuPTM.Enabled
+    toolbartop.Buttons("PasteType").Enabled = mnuDrawMode.Enabled
+    toolbartop.Buttons("EditELVL").Enabled = mnuElvl.Enabled
     tlbTileset.Buttons("EditLVZ").Enabled = mnuManageLVZ.Enabled
 
-    ToolbarTop.Buttons("ShowRegions").Enabled = mnuShowRegions.Enabled
-    ToolbarTop.Buttons("ShowLVZ").Enabled = mnuShowLVZ.Enabled
+    toolbartop.Buttons("ShowRegions").Enabled = mnuShowRegions.Enabled
+    toolbartop.Buttons("ShowLVZ").Enabled = mnuShowLVZ.Enabled
     
         
     '''''''''''''''
@@ -8035,10 +8035,10 @@ Sub UpdateToolBarButtons()
     
     If CBool(GetSetting("ShowToolbarStandard", "1")) Then
         mnuToolbarStandard.checked = True
-        ToolbarTop.visible = True
+        toolbartop.visible = True
     Else
         mnuToolbarStandard.checked = False
-        ToolbarTop.visible = False
+        toolbartop.visible = False
     End If
 
     If CBool(GetSetting("ShowToolbarTools", "1")) Then
@@ -8838,7 +8838,7 @@ Private Sub PopupTileset()
     dontUpdatePreview = True
 
     FloatTileset.Left = picRightBar.Left - FloatTileset.width + frmGeneral.Left + (3 * Screen.TwipsPerPixelX)
-    FloatTileset.Top = frmGeneral.Top + ToolbarTop.height + picRightBar.Top + (picsmalltilepreview.Top * Screen.TwipsPerPixelY) + (TILEW * Screen.TwipsPerPixelY)
+    FloatTileset.Top = frmGeneral.Top + toolbartop.height + picRightBar.Top + (picsmalltilepreview.Top * Screen.TwipsPerPixelY) + (TILEW * Screen.TwipsPerPixelY)
     FloatTileset.show
     AutoHideTileset = True
 End Sub
@@ -8859,7 +8859,7 @@ Private Sub PopupRadar()
     FloatRadar.width = picradar.width * Screen.TwipsPerPixelX
     FloatRadar.height = picradar.height * Screen.TwipsPerPixelY
     FloatRadar.Left = picRightBar.Left - FloatRadar.width + frmGeneral.Left + (3 * Screen.TwipsPerPixelX)
-    FloatRadar.Top = frmGeneral.Top + ToolbarTop.height + picRightBar.Top + (picradar.Top * Screen.TwipsPerPixelY)
+    FloatRadar.Top = frmGeneral.Top + toolbartop.height + picRightBar.Top + (picradar.Top * Screen.TwipsPerPixelY)
     FloatRadar.picradar.width = FloatRadar.ScaleWidth
     FloatRadar.picradar.height = FloatRadar.ScaleHeight
 

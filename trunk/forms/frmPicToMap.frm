@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Begin VB.Form frmPicToMap 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Picture to Map"
@@ -104,138 +104,138 @@ Private parent As frmMain
 
 
 Public Sub setParent(Main As frmMain)
-10        Set parent = Main
+    Set parent = Main
 End Sub
 
 Private Sub cmdBrowse_Click()
-      'Opens a dialog for selecting a picture (bmp or jpg)
+'Opens a dialog for selecting a picture (bmp or jpg)
 
-      'dialog settings
-10        On Error GoTo errh
-20        cd.DialogTitle = "Open a picture..."
-30        cd.flags = cdlOFNHideReadOnly
-40        cd.Filter = "Supported image files (*.bmp, *.png, *.jpg, *.gif)|*.bmp;*.jpg;*.png;*.gif;*.bm2;*.jpeg"
-50        cd.ShowOpen
+'dialog settings
+    On Error GoTo errh
+    cd.DialogTitle = "Open a picture..."
+    cd.flags = cdlOFNHideReadOnly
+    cd.Filter = "Supported image files (*.bmp, *.png, *.jpg, *.gif)|*.bmp;*.jpg;*.png;*.gif;*.bm2;*.jpeg"
+    cd.ShowOpen
 
-          'update the label with the filename
-60        lblname.Caption = cd.filetitle
+    'update the label with the filename
+    lblname.Caption = cd.filetitle
 
-          'load the picture in the picturebox and give it the correct size
-70        Call LoadPic(picpic, cd.filename)
-80        picpic.AutoSize = True
-90        picpic.AutoSize = False
+    'load the picture in the picturebox and give it the correct size
+    Call LoadPic(picpic, cd.filename)
+    picpic.AutoSize = True
+    picpic.AutoSize = False
 
-          'make sure the picture isn't bigger than 1024 pixels, or it would be bigger
-          'than the map itself
-100       If picpic.width > 1024 Then
-110           picpic.width = 1024
-120       End If
+    'make sure the picture isn't bigger than 1024 pixels, or it would be bigger
+    'than the map itself
+    If picpic.width > 1024 Then
+        picpic.width = 1024
+    End If
 
-130       If picpic.height > 1024 Then
-140           picpic.height = 1024
-150       End If
+    If picpic.height > 1024 Then
+        picpic.height = 1024
+    End If
 
-          'show the preview
-160       SetStretchBltMode picpreview.hDC, HALFTONE
-170       StretchBlt picpreview.hDC, 0, 0, picpreview.width, picpreview.height, picpic.hDC, 0, 0, picpic.width, picpic.height, vbSrcCopy
-180       picpreview.Refresh
+    'show the preview
+    SetStretchBltMode picPreview.hDC, HALFTONE
+    StretchBlt picPreview.hDC, 0, 0, picPreview.width, picPreview.height, picpic.hDC, 0, 0, picpic.width, picpic.height, vbSrcCopy
+    picPreview.Refresh
 
-          'blt the picture onto the image of the picture box
-190       BitBlt picpic.hDC, 0, 0, picpic.width, picpic.height, picpic.hDC, 0, 0, vbSrcCopy
-200       picpic.Refresh
+    'blt the picture onto the image of the picture box
+    BitBlt picpic.hDC, 0, 0, picpic.width, picpic.height, picpic.hDC, 0, 0, vbSrcCopy
+    picpic.Refresh
 
-          'preparations are now ready, enable the go
-210       cmdGo.Enabled = True
+    'preparations are now ready, enable the go
+    cmdGo.Enabled = True
 
-220       Exit Sub
+    Exit Sub
 errh:
-          'pressed cancel in dialog box, do nothing
-230       If Err = cdlCancel Then
-240           Exit Sub
-250       End If
+    'pressed cancel in dialog box, do nothing
+    If Err = cdlCancel Then
+        Exit Sub
+    End If
 
 End Sub
 
 Private Sub cmdCancel_Click()
-      'Cancels the form
-      'enable the general form again and unload this form
-10        Set parent = Nothing
-          
-20        Unload Me
+'Cancels the form
+'enable the general form again and unload this form
+    Set parent = Nothing
+    
+    Unload Me
 End Sub
 
 Private Sub cmdGo_Click()
-      'Do the diffusion, build the array and pass it to the general form, afterwards unload this form
-      ' use error diffusion dithering to convert the image to black and
-      ' white, then scan like TTM
-10        On Error GoTo cmdGo_Click_Error
-          
-20        frmGeneral.IsBusy("frmPicToMap.cmgGo_Click") = True
-          
-          'Create a monochrome pic
-30        Call FloydSteinberg(picpic)
+'Do the diffusion, build the array and pass it to the general form, afterwards unload this form
+' use error diffusion dithering to convert the image to black and
+' white, then scan like TTM
+    On Error GoTo cmdGo_Click_Error
+    
+    frmGeneral.IsBusy("frmPicToMap.cmgGo_Click") = True
+    
+    'Create a monochrome pic
+    Call FloydSteinberg(picpic)
 
-          'now create an array
-          Dim Pic() As Integer
-40        ReDim Pic(picpic.width, picpic.height)
+    'now create an array
+    Dim Pic() As Integer
+    ReDim Pic(picpic.width, picpic.height)
 
-          Dim i As Integer, j As Integer
-          Dim TileToUse As Integer
-          
-50        If parent.tileset.selection(vbLeftButton).selectionType = TS_Tiles Then
-60            TileToUse = parent.tileset.selection(vbLeftButton).tilenr
-70        Else
-80            TileToUse = 1
-90        End If
-          
-          Dim isInverted As Boolean
-100       isInverted = (chkInverted.value = vbChecked)
-          
-          Dim c As Long
-          
-          'check every pixel and see if it's black or not
-110       For j = 0 To picpic.height
-120           For i = 0 To picpic.width
-130               c = GetPixel(picpic.hDC, i, j)
+    Dim i As Integer, j As Integer
+    Dim TileToUse As Integer
+    
+    If parent.tileset.selection(vbLeftButton).selectionType = TS_Tiles Then
+        TileToUse = parent.tileset.selection(vbLeftButton).tilenr
+    Else
+        TileToUse = 1
+    End If
+    
+    Dim isInverted As Boolean
+    isInverted = (chkInverted.value = vbChecked)
+    
+    Dim c As Long
+    
+    'check every pixel and see if it's black or not
+    For j = 0 To picpic.height
+        For i = 0 To picpic.width
+            c = GetPixel(picpic.hDC, i, j)
 
-                  'if option inverted is on then switch the statements
-140               If (c = vbBlack) = isInverted Then
-150                   Pic(i, j) = TileToUse
-160               Else
-170                   Pic(i, j) = 0
-180               End If
-190           Next
-200       Next
+            'if option inverted is on then switch the statements
+            If (c = vbBlack) = isInverted Then
+                Pic(i, j) = TileToUse
+            Else
+                Pic(i, j) = 0
+            End If
+        Next
+    Next
 
-          'reenable the general form
-          'pass the info to the ExecutePicToMap and unload this form
-          'Call frmGeneral.ExecutePicToMap(Pic, picpic.width, picpic.height)
-210       Call parent.sel.PicToMap(Pic, picpic.width, picpic.height)
-          
-220       frmGeneral.IsBusy("frmPicToMap.cmgGo_Click") = False
-          
-230       Unload Me
+    'reenable the general form
+    'pass the info to the ExecutePicToMap and unload this form
+    'Call frmGeneral.ExecutePicToMap(Pic, picpic.width, picpic.height)
+    Call parent.sel.PicToMap(Pic, picpic.width, picpic.height)
+    
+    frmGeneral.IsBusy("frmPicToMap.cmgGo_Click") = False
+    
+    Unload Me
 
-          
-240       On Error GoTo 0
-250       Exit Sub
+    
+    On Error GoTo 0
+    Exit Sub
 
 cmdGo_Click_Error:
-260       frmGeneral.IsBusy("frmPicToMap.cmgGo_Click") = False
-270       HandleError Err, "frmPicToMap.cmgGo_Click"
+    frmGeneral.IsBusy("frmPicToMap.cmgGo_Click") = False
+    HandleError Err, "frmPicToMap.cmgGo_Click"
 End Sub
 
 Private Sub Form_Load()
-      'Disable the general form and go button
-10        Set Me.Icon = frmGeneral.Icon
-20        cmdGo.Enabled = False
+'Disable the general form and go button
+    Set Me.Icon = frmGeneral.Icon
+    cmdGo.Enabled = False
 End Sub
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-      'If we press X, then do cancel
-10        cmdCancel_Click
+'If we press X, then do cancel
+    cmdCancel_Click
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-10        Set parent = Nothing
+    Set parent = Nothing
 End Sub

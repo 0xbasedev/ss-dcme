@@ -175,38 +175,38 @@ Private Sub cmdAddProperty_Click()
 
 End Sub
 
-Private Sub AddStandardProperties()
-    Dim idx As Integer
-    idx = lstProperties.ListItems.count
-
-    If Not itemExistsInList(lstProperties, "Name", False) Then
-        Call lstProperties.ListItems.add(, "Name", "Name")
-        lstProperties.ListItems.item(lstProperties.ListItems.count).SubItems(1) = GetFileNameWithoutExtension(parent.Caption)
-    End If
-
-    If Not itemExistsInList(lstProperties, "Version", False) Then
-        Call lstProperties.ListItems.add(, "Version", "Version")
-        lstProperties.ListItems.item(lstProperties.ListItems.count).SubItems(1) = "1.0"
-    End If
-
-    If Not itemExistsInList(lstProperties, "Zone", False) Then
-        Call lstProperties.ListItems.add(, "Zone", "Zone")
-    End If
-
-    If Not itemExistsInList(lstProperties, "MapCreator", False) Then
-        Call lstProperties.ListItems.add(, "MapCreator", "MapCreator")
-        lstProperties.ListItems.item(lstProperties.ListItems.count).SubItems(1) = GetUserName
-    End If
-
-    If Not itemExistsInList(lstProperties, "Program", False) Then
-        Call lstProperties.ListItems.add(, "Program", "Program")
-        lstProperties.ListItems.item(lstProperties.ListItems.count).SubItems(1) = "DCME " & App.Major & "." & App.Minor & "." & App.Revision
-    End If
-
-    If Not itemExistsInList(lstProperties, "TilesetCreator", False) Then
-        Call lstProperties.ListItems.add(, "TilesetCreator", "TilesetCreator")
-    End If
-End Sub
+'Private Sub AddStandardProperties()
+'    Dim idx As Integer
+'    idx = lstProperties.ListItems.count
+'
+'    If Not itemExistsInList(lstProperties, "Name", False) Then
+'        Call lstProperties.ListItems.add(, "Name", "Name")
+'        lstProperties.ListItems.item(lstProperties.ListItems.count).SubItems(1) = GetFileNameWithoutExtension(parent.Caption)
+'    End If
+'
+'    If Not itemExistsInList(lstProperties, "Version", False) Then
+'        Call lstProperties.ListItems.add(, "Version", "Version")
+'        lstProperties.ListItems.item(lstProperties.ListItems.count).SubItems(1) = "1.0"
+'    End If
+'
+'    If Not itemExistsInList(lstProperties, "Zone", False) Then
+'        Call lstProperties.ListItems.add(, "Zone", "Zone")
+'    End If
+'
+'    If Not itemExistsInList(lstProperties, "MapCreator", False) Then
+'        Call lstProperties.ListItems.add(, "MapCreator", "MapCreator")
+'        lstProperties.ListItems.item(lstProperties.ListItems.count).SubItems(1) = GetUserName
+'    End If
+'
+'    If Not itemExistsInList(lstProperties, "Program", False) Then
+'        Call lstProperties.ListItems.add(, "Program", "Program")
+'        lstProperties.ListItems.item(lstProperties.ListItems.count).SubItems(1) = "DCME " & App.Major & "." & App.Minor & "." & App.Revision
+'    End If
+'
+'    If Not itemExistsInList(lstProperties, "TilesetCreator", False) Then
+'        Call lstProperties.ListItems.add(, "TilesetCreator", "TilesetCreator")
+'    End If
+'End Sub
 
 
 
@@ -342,18 +342,18 @@ Private Sub Form_Load()
     Call parent.eLVL.getAttributeList(lstProperties.ListItems)
 
 
-    Call AddStandardProperties
+'    Call AddStandardProperties
 
 
     Call tbsElvl_Click
 End Sub
 
 Sub setParent(map As frmMain)
-10        Set parent = map
+    Set parent = map
 End Sub
 
 Private Sub cmdCancel_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub cmdOK_Click()
@@ -397,7 +397,7 @@ End Sub
 
 
 Private Sub Form_Unload(Cancel As Integer)
-10        Set parent = Nothing
+    Set parent = Nothing
 End Sub
 
 

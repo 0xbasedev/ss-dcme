@@ -38,32 +38,32 @@ End Enum
 
 Public Function CompressData(TheData() As Byte) As Long
 
-10    OriginalSize = UBound(TheData) + 1
+OriginalSize = UBound(TheData) + 1
 
-      'Allocate memory for byte array
-      Dim BufferSize As Long
-      Dim TempBuffer() As Byte
-      Dim result As Long
+'Allocate memory for byte array
+Dim BufferSize As Long
+Dim TempBuffer() As Byte
+Dim result As Long
 
-20    BufferSize = UBound(TheData) + 1
-30    BufferSize = BufferSize + (BufferSize * 0.01) + 12
-40    ReDim TempBuffer(BufferSize)
+BufferSize = UBound(TheData) + 1
+BufferSize = BufferSize + (BufferSize * 0.01) + 12
+ReDim TempBuffer(BufferSize)
 
-      'Compress byte array (data)
-50    result = compress(TempBuffer(0), BufferSize, TheData(0), UBound(TheData) + 1)
+'Compress byte array (data)
+result = compress(TempBuffer(0), BufferSize, TheData(0), UBound(TheData) + 1)
 
-      'Truncate to compressed size
-60    ReDim Preserve TheData(BufferSize - 1)
-70    CopyMemory TheData(0), TempBuffer(0), BufferSize
+'Truncate to compressed size
+ReDim Preserve TheData(BufferSize - 1)
+CopyMemory TheData(0), TempBuffer(0), BufferSize
 
-      'Cleanup
-80    Erase TempBuffer
+'Cleanup
+Erase TempBuffer
 
-      'Set properties if no error occurred
-90    If result = 0 Then CompressedSize = UBound(TheData) + 1
+'Set properties if no error occurred
+If result = 0 Then CompressedSize = UBound(TheData) + 1
 
-      'Return error code (if any)
-100   CompressData = result
+'Return error code (if any)
+CompressData = result
 
 End Function
 
@@ -100,30 +100,30 @@ End Function
 
 Public Function DecompressData(TheData() As Byte, OrigSize As Long) As Long
 
-      'Allocate memory for buffers
-      Dim BufferSize As Long
-      Dim TempBuffer() As Byte
-      Dim result As Long
+'Allocate memory for buffers
+Dim BufferSize As Long
+Dim TempBuffer() As Byte
+Dim result As Long
 
-10    BufferSize = OrigSize
-20    BufferSize = BufferSize + (BufferSize * 0.01) + 12
-30    ReDim TempBuffer(BufferSize)
+BufferSize = OrigSize
+BufferSize = BufferSize + (BufferSize * 0.01) + 12
+ReDim TempBuffer(BufferSize)
 
-      'Decompress data
-40    result = uncompress(TempBuffer(0), BufferSize, TheData(0), UBound(TheData) + 1)
+'Decompress data
+result = uncompress(TempBuffer(0), BufferSize, TheData(0), UBound(TheData) + 1)
 
-      'Truncate buffer to compressed size
-50    ReDim Preserve TheData(BufferSize - 1)
-60    CopyMemory TheData(0), TempBuffer(0), BufferSize
+'Truncate buffer to compressed size
+ReDim Preserve TheData(BufferSize - 1)
+CopyMemory TheData(0), TempBuffer(0), BufferSize
 
-      'Reset properties
-70    If result = 0 Then
-80    CompressedSize = 0
-90    OriginalSize = 0
-100   End If
+'Reset properties
+If result = 0 Then
+CompressedSize = 0
+OriginalSize = 0
+End If
 
-      'Return error code (if any)
-110   DecompressData = result
+'Return error code (if any)
+DecompressData = result
 
 End Function
 
@@ -153,18 +153,18 @@ End Function
 'End Function
 
 Public Property Get CompressedSize() As Long
-10        CompressedSize = m_CompressedSize
+    CompressedSize = m_CompressedSize
 End Property
 
 Public Property Let CompressedSize(ByVal New_CompressedSize As Long)
-10        m_CompressedSize = New_CompressedSize
+    m_CompressedSize = New_CompressedSize
 End Property
 
 Public Property Get OriginalSize() As Long
-10        OriginalSize = m_OriginalSize
+    OriginalSize = m_OriginalSize
 End Property
 
 Public Property Let OriginalSize(ByVal New_OriginalSize As Long)
-10        m_OriginalSize = New_OriginalSize
+    m_OriginalSize = New_OriginalSize
 End Property
 

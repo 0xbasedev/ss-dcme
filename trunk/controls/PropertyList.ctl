@@ -70,6 +70,7 @@ Private Type POINTAPI
     Y As Long
 End Type
 
+Private Declare Function GetWindowRect Lib "user32" (ByVal hWnd As Long, lpRect As RECT) As Long
 Private Declare Function GetDesktopWindow Lib "user32" () As Long
 Private Declare Function ShowWindow Lib "user32" (ByVal hWnd As Long, ByVal nCmdShow As Long) As Long
 Private Declare Function setParent Lib "user32" Alias "SetParent" (ByVal hWndChild As Long, ByVal hWndNewParent As Long) As Long
@@ -110,376 +111,379 @@ Event PropertyChanged(propName As String)
 
 
 Private Sub lst_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-          Dim overlstItem As ListItem
-          
-10        Set overlstItem = lst.HitTest(X, Y)
-          
-20        If overlstItem Is Nothing Then
-30            lst.tooltiptext = ""
-40        Else
-50            lst.tooltiptext = props(overlstItem.Index - 1).tooltip
-60        End If
+    Dim overlstItem As ListItem
+    
+    Set overlstItem = lst.HitTest(X, Y)
+    
+    If overlstItem Is Nothing Then
+        lst.tooltiptext = ""
+    Else
+        lst.tooltiptext = props(overlstItem.Index - 1).tooltip
+    End If
 End Sub
 
 Private Sub lst_Mouseup(Button As Integer, Shift As Integer, X As Single, Y As Single)
-10        If edit Then
-20            EditOff (True)
-30            Exit Sub
-40        End If
-          
-50        curX = X
-60        curY = Y
-70        Call EditOn
+    If edit Then
+        EditOff (True)
+        Exit Sub
+    End If
+    
+    curX = X
+    curY = Y
+    Call EditOn
 End Sub
 
 Private Sub lstChoice_Click()
-10        If edit Then EditOff (True)
-          
+    If edit Then EditOff (True)
 End Sub
 
 Private Sub txt_Change()
-10        If edit And props(curlstItem.Index - 1).Type = p_number Then
-20            Call removeDisallowedCharacters(txt, CSng(props(curlstItem.Index - 1).lbnd), CSng(props(curlstItem.Index - 1).ubnd), False)
-30        End If
+    If edit And props(curlstItem.Index - 1).Type = p_number Then
+        Call removeDisallowedCharacters(txt, CSng(props(curlstItem.Index - 1).lbnd), CSng(props(curlstItem.Index - 1).ubnd), False)
+    End If
 End Sub
 
 Private Sub txt_KeyPress(KeyAscii As Integer)
-10        If KeyAscii = vbKeyReturn Then EditOff (True)
-20        If KeyAscii = vbKeyEscape Then EditOff (False)
-              
+    If KeyAscii = vbKeyReturn Then EditOff (True)
+    If KeyAscii = vbKeyEscape Then EditOff (False)
+        
 End Sub
 
 Private Sub UserControl_Initialize()
-10        ReDim props(0)
-20        propcount = 0
+    ReDim props(0)
+    propcount = 0
 End Sub
 
 Private Sub UserControl_LostFocus()
-10        If edit Then EditOff (True)
+    If edit Then EditOff (True)
 End Sub
 
 Private Sub UserControl_Resize()
-10        lst.width = UserControl.width
-20        lst.height = UserControl.height
-          
-30        If propcount > 0 Then
-40            If (propcount + 1) * lst.height > UserControl.height Then
-              'scrollbar will appear
-50                lst.ColumnHeaders(1).width = (lst.width / 2) - 9 * Screen.TwipsPerPixelX
-60                lst.ColumnHeaders(2).width = lst.width / 2 - 9 * Screen.TwipsPerPixelX
-70            Else
-80                lst.ColumnHeaders(1).width = lst.width / 2 - 1 * Screen.TwipsPerPixelX
-90                lst.ColumnHeaders(2).width = lst.width / 2 - 1 * Screen.TwipsPerPixelX
-100           End If
-110       Else
-120           lst.ColumnHeaders(1).width = lst.width / 2 - 1 * Screen.TwipsPerPixelX
-130           lst.ColumnHeaders(2).width = lst.width / 2 - 1 * Screen.TwipsPerPixelX
-140       End If
+    lst.width = UserControl.width
+    lst.height = UserControl.height
+    
+    If propcount > 0 Then
+        If (propcount + 1) * lst.height > UserControl.height Then
+        'scrollbar will appear
+            lst.ColumnHeaders(1).width = (lst.width / 2) - 9 * Screen.TwipsPerPixelX
+            lst.ColumnHeaders(2).width = lst.width / 2 - 9 * Screen.TwipsPerPixelX
+        Else
+            lst.ColumnHeaders(1).width = lst.width / 2 - 1 * Screen.TwipsPerPixelX
+            lst.ColumnHeaders(2).width = lst.width / 2 - 1 * Screen.TwipsPerPixelX
+        End If
+    Else
+        lst.ColumnHeaders(1).width = lst.width / 2 - 1 * Screen.TwipsPerPixelX
+        lst.ColumnHeaders(2).width = lst.width / 2 - 1 * Screen.TwipsPerPixelX
+    End If
 End Sub
 
 Sub AddProperty(name As String, proptype As propertyType, Optional lbnd As Long = -2147483647, Optional ubnd As Long = 2147483647)
-10        If propcount > UBound(props) Then
-20            ReDim Preserve props(UBound(props) + 5)
-30        End If
-          
-          Dim val As Integer
-40        val = getPropertyIndex(name)
-50        If val <> -1 Then
-60            Call Err.Raise(10002, , "Property '" & name & "' already exists")
-70            Exit Sub
-80        End If
-          
-90        props(propcount).name = name
-100       props(propcount).Type = proptype
-          
-110       If proptype = p_number Then
-120           props(propcount).value = 0
-130           props(propcount).lbnd = lbnd
-140           props(propcount).ubnd = ubnd
-150       ElseIf proptype = p_list Then
-160           ReDim props(propcount).choices(0)
-170       End If
-          
-180       If lst.Enabled Then Call lst.ListItems.add(propcount + 1, name, name)
-          
-190       If (propcount + 1) * lst.ListItems(name).height > UserControl.height Then
-              'scrollbar will appear
-200           lst.ColumnHeaders(1).width = (lst.width / 2) - 9 * Screen.TwipsPerPixelX
-210           lst.ColumnHeaders(2).width = lst.width / 2 - 9 * Screen.TwipsPerPixelX
-220       End If
-                  
-          
-230       propcount = propcount + 1
+    If propcount > UBound(props) Then
+        ReDim Preserve props(UBound(props) + 5)
+    End If
+    
+    Dim val As Integer
+    val = getPropertyIndex(name)
+    If val <> -1 Then
+        Call Err.Raise(10002, , "Property '" & name & "' already exists")
+        Exit Sub
+    End If
+    
+    props(propcount).name = name
+    props(propcount).Type = proptype
+    
+    If proptype = p_number Then
+        props(propcount).value = 0
+        props(propcount).lbnd = lbnd
+        props(propcount).ubnd = ubnd
+    ElseIf proptype = p_list Then
+        ReDim props(propcount).choices(0)
+    End If
+    
+    If lst.Enabled Then Call lst.ListItems.add(propcount + 1, name, name)
+    
+    If (propcount + 1) * lst.ListItems(name).height > UserControl.height Then
+        'scrollbar will appear
+        lst.ColumnHeaders(1).width = (lst.width / 2) - 9 * Screen.TwipsPerPixelX
+        lst.ColumnHeaders(2).width = lst.width / 2 - 9 * Screen.TwipsPerPixelX
+    End If
+            
+    
+    propcount = propcount + 1
 End Sub
 
 Sub setPropertyToolTipText(name As String, tooltiptext As String)
-          Dim idx As Integer
-10        idx = getPropertyIndex(name)
-          
-20        If idx = -1 Then
-30            Call Err.Raise(10000, , "Property '" & name & "' does not exist")
-40            Exit Sub
-50        End If
-          
-60        props(idx).tooltip = tooltiptext
+    Dim idx As Integer
+    idx = getPropertyIndex(name)
+    
+    If idx = -1 Then
+        Call Err.Raise(10000, , "Property '" & name & "' does not exist")
+        Exit Sub
+    End If
+    
+    props(idx).tooltip = tooltiptext
 End Sub
 
 Sub setPropertyChoiceList(name As String, chlst() As String)
-          Dim idx As Integer
-10        idx = getPropertyIndex(name)
-              
-20        If idx = -1 Then
-30            Call Err.Raise(10000, , "Property '" & name & "' does not exist")
-40            Exit Sub
-50        End If
-          
-60        If props(idx).Type = p_list Then
-70            props(idx).choices = chlst
-              
-80            props(idx).value = 0
-              'check if the current value is in the choice list, if it isn't, take the first choice
-              'Dim i As Integer
-              'Dim found As Boolean
-              'For i = 0 To UBound(props(idx).choices)
-              '    If props(idx).value = props(idx).choices(i) Then
-              '        found = True
-              '        Exit For
-              '    End If
-              'Next
-              'If Not found Then
-              '    props(idx).value = props(idx).choices(0)
-              '
-              '    If lst.Enabled Then lst.ListItems(idx + 1).SubItems(1) = props(idx).value
-              'End If
-90        Else
-100           Call Err.Raise(10001, , "Property is not a list type")
-110       End If
+    Dim idx As Integer
+    idx = getPropertyIndex(name)
+        
+    If idx = -1 Then
+        Call Err.Raise(10000, , "Property '" & name & "' does not exist")
+        Exit Sub
+    End If
+    
+    If props(idx).Type = p_list Then
+        props(idx).choices = chlst
+        
+        props(idx).value = 0
+        'check if the current value is in the choice list, if it isn't, take the first choice
+        'Dim i As Integer
+        'Dim found As Boolean
+        'For i = 0 To UBound(props(idx).choices)
+        '    If props(idx).value = props(idx).choices(i) Then
+        '        found = True
+        '        Exit For
+        '    End If
+        'Next
+        'If Not found Then
+        '    props(idx).value = props(idx).choices(0)
+        '
+        '    If lst.Enabled Then lst.ListItems(idx + 1).SubItems(1) = props(idx).value
+        'End If
+    Else
+        Call Err.Raise(10001, , "Property is not a list type")
+    End If
 End Sub
 
 Sub setPropertyNumberBoundaries(name As String, lbnd As Long, ubnd As Long)
-          Dim idx As Integer
-10        idx = getPropertyIndex(name)
-          
-20        If idx = -1 Then
-30            Call Err.Raise(10000, , "Property '" & name & "' does not exist")
-40            Exit Sub
-50        End If
-          
-60        If props(idx).Type = p_number Then
-70            props(idx).lbnd = lbnd
-80            props(idx).ubnd = ubnd
-90        Else
-100           Call Err.Raise(10001, "Property is not a number type")
-110       End If
+    Dim idx As Integer
+    idx = getPropertyIndex(name)
+    
+    If idx = -1 Then
+        Call Err.Raise(10000, , "Property '" & name & "' does not exist")
+        Exit Sub
+    End If
+    
+    If props(idx).Type = p_number Then
+        props(idx).lbnd = lbnd
+        props(idx).ubnd = ubnd
+    Else
+        Call Err.Raise(10001, "Property is not a number type")
+    End If
 End Sub
 
 Sub setPropertyValue(name As String, value As String)
-          
-          Dim idx As Integer
-10        idx = getPropertyIndex(name)
-          
-20        If idx = -1 Then
-30            Call Err.Raise(10000, , "Property '" & name & "' does not exist")
-40            Exit Sub
-50        End If
-          
-60        If props(idx).Type = p_list Then
-70            props(idx).value = val(value)
-80        End If
-          
-90        If lst.Enabled Then
-100           If props(idx).Type = p_list Then
-110               lst.ListItems(props(idx).name).SubItems(1) = props(idx).choices(value)
-120           Else
-130               lst.ListItems(props(idx).name).SubItems(1) = value
-140           End If
-150       End If
+    
+    Dim idx As Integer
+    idx = getPropertyIndex(name)
+    
+    If idx = -1 Then
+        Call Err.Raise(10000, , "Property '" & name & "' does not exist")
+        Exit Sub
+    End If
+    
+    If props(idx).Type = p_list Then
+        props(idx).value = val(value)
+    End If
+    
+    If lst.Enabled Then
+        If props(idx).Type = p_list Then
+            lst.ListItems(props(idx).name).SubItems(1) = props(idx).choices(value)
+        Else
+            lst.ListItems(props(idx).name).SubItems(1) = value
+        End If
+    End If
 End Sub
 
 Sub setPropertyLocked(name As String, locked As Boolean)
-          Dim idx As Integer
-10        idx = getPropertyIndex(name)
-          
-20        If idx = -1 Then
-30            Call Err.Raise(10000, , "Property '" & name & "' does not exist")
-40            Exit Sub
-50        End If
-          
-60        props(idx).locked = locked
+    Dim idx As Integer
+    idx = getPropertyIndex(name)
+    
+    If idx = -1 Then
+        Call Err.Raise(10000, , "Property '" & name & "' does not exist")
+        Exit Sub
+    End If
+    
+    props(idx).locked = locked
 End Sub
 
 Function getPropertyValue(name As String) As String
-          Dim idx As Integer
-10        idx = getPropertyIndex(name)
-          
-20        If idx = -1 Then
-30            Call Err.Raise(10000, , "Property '" & name & "' does not exist")
-40            Exit Function
-50        End If
-          
-60        getPropertyValue = props(idx).value
+    Dim idx As Integer
+    idx = getPropertyIndex(name)
+    
+    If idx = -1 Then
+        Call Err.Raise(10000, , "Property '" & name & "' does not exist")
+        Exit Function
+    End If
+    
+    getPropertyValue = props(idx).value
 End Function
 
 Sub RemoveProperty(name As String)
-10        If propcount < UBound(props) - 5 Then
-20            ReDim Preserve props(UBound(props) - 5)
-30        End If
-          
-          Dim idx As Integer
-40        idx = getPropertyIndex(name)
-          
-50        If idx <> -1 Then
-              Dim i As Integer
-60            For i = idx + 1 To propcount - 1
-70                props(i - 1) = props(i)
-80            Next
-90        End If
+    If propcount < UBound(props) - 5 Then
+        ReDim Preserve props(UBound(props) - 5)
+    End If
+    
+    Dim idx As Integer
+    idx = getPropertyIndex(name)
+    
+    If idx <> -1 Then
+        Dim i As Integer
+        For i = idx + 1 To propcount - 1
+            props(i - 1) = props(i)
+        Next
+    End If
 
 End Sub
 
 Private Function getPropertyIndex(name As String) As Integer
-          Dim i As Integer
-10        For i = 0 To propcount - 1
-20            If props(i).name = name Then
-30                getPropertyIndex = i
-40                Exit Function
-50            End If
-60        Next
-          
-70        getPropertyIndex = -1
+    Dim i As Integer
+    For i = 0 To propcount - 1
+        If props(i).name = name Then
+            getPropertyIndex = i
+            Exit Function
+        End If
+    Next
+    
+    getPropertyIndex = -1
 End Function
 
 Sub EditOn()
-10        Set curlstItem = lst.HitTest(curX, curY)
-          
-20        If curlstItem Is Nothing Then
-30            Exit Sub
-40        End If
-          
-50        If props(curlstItem.Index - 1).locked Then
-60            Exit Sub
-70        End If
-          
-80        Select Case props(curlstItem.Index - 1).Type
-          
-              Case p_text, p_number
-90                txt.width = lst.ColumnHeaders(2).width - 2 * Screen.TwipsPerPixelX
-100               txt.height = curlstItem.height - 1 * Screen.TwipsPerPixelY
-110               txt.Left = lst.Left + curlstItem.Left + lst.ColumnHeaders(1).width
-120               txt.Top = lst.Top + curlstItem.Top + 2 * Screen.TwipsPerPixelY
-130               txt.Text = curlstItem.SubItems(1)
-140               txt.selstart = 0
-150               txt.sellength = Len(txt.Text)
-160               txt.visible = True
-170               txt.setfocus
-                  
-180           Case p_list
+    Set curlstItem = lst.HitTest(curX, curY)
+    
+    If curlstItem Is Nothing Then
+        Exit Sub
+    End If
+    
+    If props(curlstItem.Index - 1).locked Then
+        Exit Sub
+    End If
+    
+    Select Case props(curlstItem.Index - 1).Type
+    
+        Case p_text, p_number
+            txt.width = lst.ColumnHeaders(2).width - 2 * Screen.TwipsPerPixelX
+            txt.height = curlstItem.height - 1 * Screen.TwipsPerPixelY
+            txt.Left = lst.Left + curlstItem.Left + lst.ColumnHeaders(1).width
+            txt.Top = lst.Top + curlstItem.Top + 2 * Screen.TwipsPerPixelY
+            txt.Text = curlstItem.SubItems(1)
+            txt.selstart = 0
+            txt.sellength = Len(txt.Text)
+            txt.visible = True
+            txt.setfocus
+            
+        Case p_list
 
-190               lstChoice.Left = lst.Left + curlstItem.Left + lst.ColumnHeaders(1).width
-200               lstChoice.Top = lst.Top + curlstItem.Top + 1 * Screen.TwipsPerPixelY + curlstItem.height
-210               lstChoice.width = lst.ColumnHeaders(2).width - 1 * Screen.TwipsPerPixelX
+            lstChoice.Left = lst.Left + curlstItem.Left + lst.ColumnHeaders(1).width
+            lstChoice.Top = lst.Top + curlstItem.Top + 1 * Screen.TwipsPerPixelY + curlstItem.height
+            lstChoice.width = lst.ColumnHeaders(2).width - 1 * Screen.TwipsPerPixelX
 
-                  
-220               lstChoice.Clear
-                  Dim i As Integer
-                  
-230               For i = 0 To UBound(props(curlstItem.Index - 1).choices)
-240                   If props(curlstItem.Index - 1).choices(i) <> "" Then
-250                       lstChoice.addItem props(curlstItem.Index - 1).choices(i)
-260                   End If
-                  '    If lstChoice.list(lstChoice.Listcount - 1) = props(curlstItem.Index - 1).value Then
-                 '         lstChoice.ListIndex = i
-                 '     End If
-270               Next
-280               lstChoice.ListIndex = val(props(curlstItem.Index - 1).value)
-                  
-290               If lstChoice.ListIndex = -1 Then lstChoice.ListIndex = 0
+            
+            lstChoice.Clear
+            Dim i As Integer
+            
+            For i = 0 To UBound(props(curlstItem.Index - 1).choices)
+                If props(curlstItem.Index - 1).choices(i) <> "" Then
+                    lstChoice.addItem props(curlstItem.Index - 1).choices(i)
+                End If
+            '    If lstChoice.list(lstChoice.Listcount - 1) = props(curlstItem.Index - 1).value Then
+           '         lstChoice.ListIndex = i
+           '     End If
+            Next
+            lstChoice.ListIndex = val(props(curlstItem.Index - 1).value)
+            
+            If lstChoice.ListIndex = -1 Then lstChoice.ListIndex = 0
 
-300               If lstChoice.ListCount < 5 Then
-310                   lstChoice.height = (curlstItem.height + 1) * lstChoice.ListCount
-320               Else
-330                   lstChoice.height = curlstItem.height * 5
-340               End If
-                  
-                  
-                  'show the lstchoice, give it to the desktopwindow, and move it to the right position
-                  Dim pt As POINTAPI
-350               pt.X = ScaleX(lstChoice.Left, vbTwips, vbPixels) '+ UserControl.parent.Left
-360               pt.Y = ScaleY(lstChoice.Top, vbTwips, vbPixels)
-370               ClientToScreen UserControl.hWnd, pt
-                  'pt.x = pt.x + lstChoice.Left '+ UserControl.parent.Left
-                  'pt.y = pt.y + lstChoice.Top
-380               setParent lstChoice.hWnd, GetDesktopWindow
-390               lstChoice.Move ScaleX(pt.X, vbPixels, vbTwips), ScaleY(pt.Y, vbPixels, vbTwips)
-                  'lstChoice.Left = pt.x
-                  'lstChoice.Top = pt.y
-                  'MakeTopMost lstChoice.hWnd
-                  'RestoreWin lstChoice.hWnd, False
-                  'ShowWindow lstChoice.hWnd, SW_SHOWNORMAL
-400               ShowWindow lstChoice.hWnd, SW_SHOWNOACTIVATE
-410               BringWindowToTop lstChoice.hWnd
-420               lstChoice.visible = True
+            If lstChoice.ListCount < 5 Then
+                lstChoice.height = (curlstItem.height + 1) * lstChoice.ListCount
+            Else
+                lstChoice.height = curlstItem.height * 5
+            End If
+            
+            
+            'show the lstchoice, give it to the desktopwindow, and move it to the right position
+            Dim pt As POINTAPI, parentrect As RECT
+            
+            pt.X = ScaleX(lstChoice.Left, vbTwips, vbPixels) '+ UserControl.parent.Left
+            pt.Y = ScaleY(lstChoice.Top, vbTwips, vbPixels)
 
-                  'ShowWindow , SW_SHOWNORMAL
-                  'lstChoice.setfocus
-                  
-                  
-430       End Select
+            ClientToScreen UserControl.hWnd, pt
           
-440       edit = True
+          
+            GetWindowRect UserControl.ContainerHwnd, parentrect
+            
+            setParent lstChoice.hWnd, UserControl.ContainerHwnd
+          
+          'Make sure the box appears within the parent container
+          If pt.Y + ScaleY(lstChoice.height, vbTwips, vbPixels) > parentrect.Bottom Then
+              pt.Y = parentrect.Bottom - ScaleY(lstChoice.height, vbTwips, vbPixels)
+          End If
+                          
+          lstChoice.Move ScaleX(pt.X - parentrect.Left, vbPixels, vbTwips), ScaleY(pt.Y - parentrect.Top, vbPixels, vbTwips)
+
+
+          lstChoice.visible = True
+            ShowWindow lstChoice.hWnd, SW_SHOWNORMAL
+
+
+            
+    End Select
+    
+    edit = True
 End Sub
 
 Sub EditOff(apply As Boolean)
-          Dim changed As Boolean
-          
-10        If Not edit Then Exit Sub
-          
-20        Select Case props(curlstItem.Index - 1).Type
-              Case p_text, p_number
-                              
-30                If apply Then
-40                    If props(curlstItem.Index - 1).value <> txt.Text Then changed = True
-50                    props(curlstItem.Index - 1).value = txt.Text
-60                End If
-                      
-70                curlstItem.SubItems(1) = txt.Text
-80                txt.visible = False
-90                If changed Then RaiseEvent PropertyChanged(props(curlstItem.Index - 1).name)
-                  
-100           Case p_list
-110               If apply Then
-120                   If props(curlstItem.Index - 1).value <> lstChoice.ListIndex Then changed = True
-130                   props(curlstItem.Index - 1).value = lstChoice.ListIndex
-140               End If
-150               curlstItem.SubItems(1) = lstChoice.list(lstChoice.ListIndex)
-160               lstChoice.visible = False
-                  'show the lstchoice, give it to the desktopwindow, and move it to the right position
-170               setParent lstChoice.hWnd, UserControl.hWnd
-180               lstChoice.Left = 0
-190               lstChoice.Top = 0
-                  'ShowWindow lstChoice.hWnd, SW_SHOWNOACTIVATE
-                  
-                  
-200               If changed Then RaiseEvent PropertyChanged(props(curlstItem.Index - 1).name)
-                  
-210       End Select
-220       edit = False
-          
+    Dim changed As Boolean
+    
+    If Not edit Then Exit Sub
+    
+    Select Case props(curlstItem.Index - 1).Type
+        Case p_text, p_number
+                        
+            If apply Then
+                If props(curlstItem.Index - 1).value <> txt.Text Then changed = True
+                props(curlstItem.Index - 1).value = txt.Text
+            End If
+                
+            curlstItem.SubItems(1) = txt.Text
+            txt.visible = False
+            If changed Then RaiseEvent PropertyChanged(props(curlstItem.Index - 1).name)
+            
+        Case p_list
+            If apply Then
+                If props(curlstItem.Index - 1).value <> lstChoice.ListIndex Then changed = True
+                props(curlstItem.Index - 1).value = lstChoice.ListIndex
+            End If
+            curlstItem.SubItems(1) = lstChoice.list(lstChoice.ListIndex)
+            lstChoice.visible = False
+            'show the lstchoice, give it to the desktopwindow, and move it to the right position
+            setParent lstChoice.hWnd, UserControl.hWnd
+            lstChoice.Left = 0
+            lstChoice.Top = 0
+            'ShowWindow lstChoice.hWnd, SW_SHOWNOACTIVATE
+            
+            
+            If changed Then RaiseEvent PropertyChanged(props(curlstItem.Index - 1).name)
+            
+    End Select
+    edit = False
+    
 End Sub
 
 Sub UpdateList()
-10        lst.ListItems.Clear
-          
-          Dim i As Integer
-20        For i = 0 To propcount - 1
-30            Call lst.ListItems.add(, props(i).name, props(i).name)
-40            If props(i).Type = p_list Then
-50                lst.ListItems.item(props(i).name).SubItems(1) = props(i).choices(props(i).value)
-60            Else
-70                lst.ListItems.item(props(i).name).SubItems(1) = props(i).value
-80            End If
-90        Next
-          
+    lst.ListItems.Clear
+    
+    Dim i As Integer
+    For i = 0 To propcount - 1
+        Call lst.ListItems.add(, props(i).name, props(i).name)
+        If props(i).Type = p_list Then
+            lst.ListItems.item(props(i).name).SubItems(1) = props(i).choices(props(i).value)
+        Else
+            lst.ListItems.item(props(i).name).SubItems(1) = props(i).value
+        End If
+    Next
+    
 End Sub
 
 'It is in general.bas
@@ -525,35 +529,35 @@ End Sub
 'End Sub
 
 Public Property Get ListCount() As Integer
-10        ListCount = propcount
+    ListCount = propcount
 End Property
 
 Public Property Get ListIndex() As Integer
-10        If curlstItem Is Nothing Then
-20            ListIndex = -1
-30        Else
-40            ListIndex = curlstItem.Index - 1
-50        End If
+    If curlstItem Is Nothing Then
+        ListIndex = -1
+    Else
+        ListIndex = curlstItem.Index - 1
+    End If
 End Property
 
 Public Property Get Enabled() As Boolean
-10        Enabled = lst.Enabled
+    Enabled = lst.Enabled
 End Property
 
 Public Property Let Enabled(ByVal newval As Boolean)
-10        If lst.Enabled = False And newval = True Then
-20            lst.HideSelection = False
-30            lst.ColumnHeaders(1).Text = "Property"
-40            lst.ColumnHeaders(2).Text = "Value"
-50            UpdateList
-60        ElseIf lst.Enabled = True And newval = False Then
-70            lst.HideSelection = True
-80            lst.ColumnHeaders(1).Text = ""
-90            lst.ColumnHeaders(2).Text = ""
-100           lst.ListItems.Clear
-110       End If
-          
-120       lst.Enabled = newval
+    If lst.Enabled = False And newval = True Then
+        lst.HideSelection = False
+        lst.ColumnHeaders(1).Text = "Property"
+        lst.ColumnHeaders(2).Text = "Value"
+        UpdateList
+    ElseIf lst.Enabled = True And newval = False Then
+        lst.HideSelection = True
+        lst.ColumnHeaders(1).Text = ""
+        lst.ColumnHeaders(2).Text = ""
+        lst.ListItems.Clear
+    End If
+    
+    lst.Enabled = newval
 End Property
 
 
@@ -606,3 +610,6 @@ Private Sub removeInvalidExpressionCharacters(ByRef txtbox As TextBox, lowerBoun
 
 End Sub
 
+Private Sub UserControl_Terminate()
+    '...
+End Sub

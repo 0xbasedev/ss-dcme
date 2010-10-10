@@ -1,3 +1,82 @@
+Line 115: Class MSComctlLib.TreeView of control tvScreenObjects was not a loaded control class.
 Line 134: Class DCME.PropertyList of control lstScreenObjectProperties was not a loaded control class.
-Line 238: Class DCME.PropertyList of control lstMapObjectProperties was not a loaded control class.
+Line 155: Class DCME.PropertyList of control lstMapObjectProperties was not a loaded control class.
+Line 211: Class MSComctlLib.TreeView of control tvMapObjects was not a loaded control class.
+Line 306: Class MSComctlLib.TreeView of control tvImageDefinitions was not a loaded control class.
+Line 332: Class MSComctlLib.TreeView of control tvAvailableFiles was not a loaded control class.
 Line 351: Class DCME.PropertyList of control lstImageDefinitionProperties was not a loaded control class.
+Line 411: Class MSComctlLib.TreeView of control tvLVZfiles was not a loaded control class.
+Line 527: Class MSComctlLib.ImageList of control imglst was not a loaded control class.
+Line 557: Class MSComctlLib.TabStrip of control tblvz was not a loaded control class.
+Line 590: Class MSComDlg.CommonDialog of control cd was not a loaded control class.
+Line 121: The property name _ExtentX in tvScreenObjects is invalid.
+Line 122: The property name _ExtentY in tvScreenObjects is invalid.
+Line 123: The property name _Version in tvScreenObjects is invalid.
+Line 124: The property name HideSelection in tvScreenObjects is invalid.
+Line 125: The property name Indentation in tvScreenObjects is invalid.
+Line 126: The property name LabelEdit in tvScreenObjects is invalid.
+Line 127: The property name LineStyle in tvScreenObjects is invalid.
+Line 128: The property name Style in tvScreenObjects is invalid.
+Line 129: The property name FullRowSelect in tvScreenObjects is invalid.
+Line 130: The property name ImageList in tvScreenObjects is invalid.
+Line 140: The property name _ExtentX in lstScreenObjectProperties is invalid.
+Line 141: The property name _ExtentY in lstScreenObjectProperties is invalid.
+Line 161: The property name _ExtentX in lstMapObjectProperties is invalid.
+Line 162: The property name _ExtentY in lstMapObjectProperties is invalid.
+Line 217: The property name _ExtentX in tvMapObjects is invalid.
+Line 218: The property name _ExtentY in tvMapObjects is invalid.
+Line 219: The property name _Version in tvMapObjects is invalid.
+Line 220: The property name HideSelection in tvMapObjects is invalid.
+Line 221: The property name Indentation in tvMapObjects is invalid.
+Line 222: The property name LabelEdit in tvMapObjects is invalid.
+Line 223: The property name LineStyle in tvMapObjects is invalid.
+Line 224: The property name Style in tvMapObjects is invalid.
+Line 225: The property name FullRowSelect in tvMapObjects is invalid.
+Line 226: The property name ImageList in tvMapObjects is invalid.
+Line 312: The property name _ExtentX in tvImageDefinitions is invalid.
+Line 313: The property name _ExtentY in tvImageDefinitions is invalid.
+Line 314: The property name _Version in tvImageDefinitions is invalid.
+Line 315: The property name HideSelection in tvImageDefinitions is invalid.
+Line 316: The property name Indentation in tvImageDefinitions is invalid.
+Line 317: The property name LabelEdit in tvImageDefinitions is invalid.
+Line 318: The property name LineStyle in tvImageDefinitions is invalid.
+Line 319: The property name Style in tvImageDefinitions is invalid.
+Line 320: The property name FullRowSelect in tvImageDefinitions is invalid.
+Line 321: The property name ImageList in tvImageDefinitions is invalid.
+Line 338: The property name _ExtentX in tvAvailableFiles is invalid.
+Line 339: The property name _ExtentY in tvAvailableFiles is invalid.
+Line 340: The property name _Version in tvAvailableFiles is invalid.
+Line 341: The property name HideSelection in tvAvailableFiles is invalid.
+Line 342: The property name Indentation in tvAvailableFiles is invalid.
+Line 343: The property name LabelEdit in tvAvailableFiles is invalid.
+Line 344: The property name LineStyle in tvAvailableFiles is invalid.
+Line 345: The property name Style in tvAvailableFiles is invalid.
+Line 346: The property name FullRowSelect in tvAvailableFiles is invalid.
+Line 347: The property name ImageList in tvAvailableFiles is invalid.
+Line 357: The property name _ExtentX in lstImageDefinitionProperties is invalid.
+Line 358: The property name _ExtentY in lstImageDefinitionProperties is invalid.
+Line 417: The property name _ExtentX in tvLVZfiles is invalid.
+Line 418: The property name _ExtentY in tvLVZfiles is invalid.
+Line 419: The property name _Version in tvLVZfiles is invalid.
+Line 420: The property name HideSelection in tvLVZfiles is invalid.
+Line 421: The property name Indentation in tvLVZfiles is invalid.
+Line 422: The property name LabelEdit in tvLVZfiles is invalid.
+Line 423: The property name LineStyle in tvLVZfiles is invalid.
+Line 424: The property name Style in tvLVZfiles is invalid.
+Line 425: The property name FullRowSelect in tvLVZfiles is invalid.
+Line 426: The property name ImageList in tvLVZfiles is invalid.
+Line 530: The property name _ExtentX in imglst is invalid.
+Line 531: The property name _ExtentY in imglst is invalid.
+Line 533: The property name ImageWidth in imglst is invalid.
+Line 534: The property name ImageHeight in imglst is invalid.
+Line 535: The property name MaskColor in imglst is invalid.
+Line 536: The property name _Version in imglst is invalid.
+Line 555: The property name Images in imglst is invalid.
+Line 563: The property name _ExtentX in tblvz is invalid.
+Line 564: The property name _ExtentY in tblvz is invalid.
+Line 565: The property name _Version in tblvz is invalid.
+Line 588: The property name Tabs in tblvz is invalid.
+Line 593: The property name _ExtentX in cd is invalid.
+Line 594: The property name _ExtentY in cd is invalid.
+Line 595: The property name _Version in cd is invalid.
+Line 596: The property name CancelError in cd is invalid.

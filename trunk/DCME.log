@@ -65,3 +65,7 @@ Untitled 1 @ InitTileset, tilesetpath= Default usingDefaultTileset True
 2009-06-28 16:12:10 --- DCME ready
 +++ Closing map Untitled 1 (ID: 0)
 DCME ended successfully
+--- Mbox prompt --- ERROR: Missing component - zlib.dll was not found! Visit http://dcme.sscentral.com to get this file. Ignoring this error could cause unexpected crashes.;18
+--- Mbox result --- ERROR: Missing component - zlib.dll was not found! Visit http://dcme.sscentral.com to get this file. Ignoring this error could cause unexpected crashes.;3
+--- Mbox prompt --- ERROR: Missing component - zlib.dll was not found! Visit http://dcme.sscentral.com to get this file. Ignoring this error could cause unexpected crashes.;18
+--- Mbox result --- ERROR: Missing component - zlib.dll was not found! Visit http://dcme.sscentral.com to get this file. Ignoring this error could cause unexpected crashes.;3

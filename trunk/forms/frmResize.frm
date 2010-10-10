@@ -211,227 +211,227 @@ Dim tileHfocus As Boolean
 Dim tileWfocus As Boolean
 
 Sub setParent(map As frmMain)
-10        Set parent = map
+    Set parent = map
 End Sub
 
 Private Sub Form_Load()
 
-10        Set Me.Icon = frmGeneral.Icon
+    Set Me.Icon = frmGeneral.Icon
 
-          Dim oSize As Integer
-20        oSize = CInt(GetSetting("OptSize", "0"))
-30        optSize(oSize).value = True
+    Dim oSize As Integer
+    oSize = CInt(GetSetting("OptSize", "0"))
+    optSize(oSize).value = True
 
-40        lbloriginalwidth.Caption = parent.sel.getBoundaries.Right - parent.sel.getBoundaries.Left
-50        lbloriginalheight.Caption = parent.sel.getBoundaries.Bottom - parent.sel.getBoundaries.Top
+    lbloriginalwidth.Caption = parent.sel.getBoundaries.Right - parent.sel.getBoundaries.Left
+    lbloriginalheight.Caption = parent.sel.getBoundaries.Bottom - parent.sel.getBoundaries.Top
 
-60        If optSize(0).value Then
-70            txtTileWidth.Text = GetSetting("TileWidth", lbloriginalwidth.Caption)
-80            txtTileHeight.Text = GetSetting("TileHeight", lbloriginalheight.Caption)
+    If optSize(0).value Then
+        txtTileWidth.Text = GetSetting("TileWidth", lbloriginalwidth.Caption)
+        txtTileHeight.Text = GetSetting("TileHeight", lbloriginalheight.Caption)
 
-90            txtPercentWidth.Text = (val(txtTileWidth.Text) / val(lbloriginalwidth.Caption)) * 100
-100           txtPercentHeight.Text = (val(txtTileHeight.Text) / val(lbloriginalheight.Caption)) * 100
-110           txtPercentWidth.Text = Format(txtPercentWidth.Text, "Fixed")
-120           txtPercentHeight.Text = Format(txtPercentHeight.Text, "Fixed")
+        txtPercentWidth.Text = (val(txtTileWidth.Text) / val(lbloriginalwidth.Caption)) * 100
+        txtPercentHeight.Text = (val(txtTileHeight.Text) / val(lbloriginalheight.Caption)) * 100
+        txtPercentWidth.Text = Format(txtPercentWidth.Text, "Fixed")
+        txtPercentHeight.Text = Format(txtPercentHeight.Text, "Fixed")
 
-130       ElseIf optSize(1).value Then
-140           txtPercentWidth.Text = GetSetting("PercWidth", CStr(val(txtTileWidth.Text) / val(lbloriginalwidth.Caption)) * 100)
-150           txtPercentHeight.Text = GetSetting("PercHeight", CStr(val(txtTileHeight.Text) / val(lbloriginalheight.Caption)) * 100)
-160           txtPercentWidth.Text = Format(txtPercentWidth.Text, "Fixed")
-170           txtPercentHeight.Text = Format(txtPercentHeight.Text, "Fixed")
+    ElseIf optSize(1).value Then
+        txtPercentWidth.Text = GetSetting("PercWidth", CStr(val(txtTileWidth.Text) / val(lbloriginalwidth.Caption)) * 100)
+        txtPercentHeight.Text = GetSetting("PercHeight", CStr(val(txtTileHeight.Text) / val(lbloriginalheight.Caption)) * 100)
+        txtPercentWidth.Text = Format(txtPercentWidth.Text, "Fixed")
+        txtPercentHeight.Text = Format(txtPercentHeight.Text, "Fixed")
 
-180           txtTileWidth.Text = Round((val(txtPercentWidth.Text) / 100) * val(lbloriginalwidth.Caption))
-190           txtTileHeight.Text = Round((val(txtPercentHeight.Text) / 100) * val(frmResize.lbloriginalheight.Caption))
+        txtTileWidth.Text = Round((val(txtPercentWidth.Text) / 100) * val(lbloriginalwidth.Caption))
+        txtTileHeight.Text = Round((val(txtPercentHeight.Text) / 100) * val(frmResize.lbloriginalheight.Caption))
 
-200       End If
+    End If
 
-210       chkmaintainratio.value = CInt(GetSetting("MaintainRatio", "1"))
+    chkmaintainratio.value = CInt(GetSetting("MaintainRatio", "1"))
 
-220       cmbResizeType.ListIndex = CInt(GetSetting("ResizeType", "0"))
+    cmbResizeType.ListIndex = CInt(GetSetting("ResizeType", "0"))
 
 
 End Sub
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-10        cmdCancel_Click
+    cmdCancel_Click
 End Sub
 
 Private Sub cmdOK_Click()
-          Dim newB As area
+    Dim newB As area
 
-          Dim oldtilew As Integer
-          Dim oldtileh As Integer
-          Dim tilewidth As Integer
-          Dim tileheight As Integer
+    Dim oldtilew As Integer
+    Dim oldtileh As Integer
+    Dim tileWidth As Integer
+    Dim tileHeight As Integer
 
-10        oldtilew = parent.sel.getBoundaries.Right - parent.sel.getBoundaries.Left
-20        oldtileh = parent.sel.getBoundaries.Bottom - parent.sel.getBoundaries.Top
+    oldtilew = parent.sel.getBoundaries.Right - parent.sel.getBoundaries.Left
+    oldtileh = parent.sel.getBoundaries.Bottom - parent.sel.getBoundaries.Top
 
 
-30        tilewidth = val(txtTileWidth.Text)
-40        tileheight = val(txtTileHeight.Text)
+    tileWidth = val(txtTileWidth.Text)
+    tileHeight = val(txtTileHeight.Text)
 
-50        If tilewidth = oldtilew And tileheight = oldtileh Then
-60            Call cmdCancel_Click
-70            Exit Sub
-80        End If
-          
-90        frmGeneral.IsBusy("frmResize.cmdOK_Click") = True
-          
-100       newB.Left = parent.sel.getBoundaries.Left
-110       newB.Top = parent.sel.getBoundaries.Top
-120       newB.Right = newB.Left + tilewidth
-130       newB.Bottom = newB.Top + tileheight
+    If tileWidth = oldtilew And tileHeight = oldtileh Then
+        Call cmdCancel_Click
+        Exit Sub
+    End If
+    
+    frmGeneral.IsBusy("frmResize.cmdOK_Click") = True
+    
+    newB.Left = parent.sel.getBoundaries.Left
+    newB.Top = parent.sel.getBoundaries.Top
+    newB.Right = newB.Left + tileWidth
+    newB.Bottom = newB.Top + tileHeight
 
-140       If newB.Right > 1023 Then
-150           newB.Left = newB.Left - (newB.Right - 1023)
-160           newB.Right = 1023
-170       End If
+    If newB.Right > 1023 Then
+        newB.Left = newB.Left - (newB.Right - 1023)
+        newB.Right = 1023
+    End If
 
-180       If newB.Bottom > 1023 Then
-190           newB.Top = newB.Top - (newB.Bottom - 1023)
-200           newB.Bottom = 1023
-210       End If
+    If newB.Bottom > 1023 Then
+        newB.Top = newB.Top - (newB.Bottom - 1023)
+        newB.Bottom = 1023
+    End If
 
-220       Call parent.sel.Resize(newB.Left, newB.Top, newB.Right, newB.Bottom, cmbResizeType.ListIndex, True)
+    Call parent.sel.Resize(newB.Left, newB.Top, newB.Right, newB.Bottom, cmbResizeType.ListIndex, True)
 
-230       Call SetSetting("ResizeType", cmbResizeType.ListIndex)
+    Call SetSetting("ResizeType", cmbResizeType.ListIndex)
 
-240       If optSize(0).value Then
-250           Call SetSetting("OptSize", "0")
-260       ElseIf optSize(1).value Then
-270           Call SetSetting("OptSize", "1")
-280       End If
+    If optSize(0).value Then
+        Call SetSetting("OptSize", "0")
+    ElseIf optSize(1).value Then
+        Call SetSetting("OptSize", "1")
+    End If
 
-290       If optSize(0).value Then
-300           Call SetSetting("TileWidth", txtTileWidth.Text)
-310           Call SetSetting("TileHeight", txtTileHeight.Text)
-320       ElseIf optSize(1).value Then
-330           Call SetSetting("PercWidth", txtPercentWidth.Text)
-340           Call SetSetting("PercHeight", txtPercentHeight.Text)
-350       End If
+    If optSize(0).value Then
+        Call SetSetting("TileWidth", txtTileWidth.Text)
+        Call SetSetting("TileHeight", txtTileHeight.Text)
+    ElseIf optSize(1).value Then
+        Call SetSetting("PercWidth", txtPercentWidth.Text)
+        Call SetSetting("PercHeight", txtPercentHeight.Text)
+    End If
 
-360       Call SetSetting("MaintainRatio", chkmaintainratio.value)
+    Call SetSetting("MaintainRatio", chkmaintainratio.value)
 
-370       Call SaveSettings
+    Call SaveSettings
 
-380       frmGeneral.IsBusy("frmResize.cmdOK_Click") = False
-          
-390       DoEvents
-400       Unload Me
+    frmGeneral.IsBusy("frmResize.cmdOK_Click") = False
+    
+    DoEvents
+    Unload Me
 
 End Sub
 
 Private Sub cmdCancel_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-10        Set parent = Nothing
+    Set parent = Nothing
 End Sub
 
 Private Sub txtPercentHeight_Change()
-10        Call removeDisallowedCharacters(txtPercentHeight, 1, (1024 / val(lbloriginalheight.Caption)) * 100, True)
+    Call removeDisallowedCharacters(txtPercentHeight, 0.1, (1024 / val(lbloriginalheight.Caption)) * 100, True)
 
-20        If (val(txtPercentHeight.Text) / 100) * val(lbloriginalheight.Caption) > 1024 Then
-30            txtPercentHeight.Text = (1024 / val(lbloriginalheight.Caption)) * 100
-40            txtPercentHeight.Text = Format(txtPercentHeight.Text, "Fixed")
-50        End If
+    If (val(txtPercentHeight.Text) / 100) * val(lbloriginalheight.Caption) > 1024 Then
+        txtPercentHeight.Text = (1024 / val(lbloriginalheight.Caption)) * 100
+        txtPercentHeight.Text = Format(txtPercentHeight.Text, "Fixed")
+    End If
 
-60        If percHfocus Then
-70            txtTileHeight.Text = Round((val(txtPercentHeight.Text) / 100) * val(frmResize.lbloriginalheight.Caption))
+    If percHfocus Then
+        txtTileHeight.Text = Round((val(txtPercentHeight.Text) / 100) * val(frmResize.lbloriginalheight.Caption))
 
-80            optSize(1).value = True
+        optSize(1).value = True
 
-90            If chkmaintainratio.value = 1 Then
-100               txtPercentWidth.Text = txtPercentHeight.Text
-110               txtTileWidth.Text = Round((val(lbloriginalwidth.Caption) * val(txtPercentWidth.Text)) / 100)
-120           End If
-130       End If
+        If chkmaintainratio.value = 1 Then
+            txtPercentWidth.Text = txtPercentHeight.Text
+            txtTileWidth.Text = Round((val(lbloriginalwidth.Caption) * val(txtPercentWidth.Text)) / 100)
+        End If
+    End If
 
 
 End Sub
 
 Private Sub txtPercentWidth_Change()
-10        Call removeDisallowedCharacters(txtPercentWidth, 1, (1024 / val(lbloriginalwidth.Caption)) * 100, True)
+    Call removeDisallowedCharacters(txtPercentWidth, 0.1, (1024 / val(lbloriginalwidth.Caption)) * 100, True)
 
-20        If Int(val(txtPercentWidth.Text) / 100) * val(lbloriginalwidth.Caption) > 1024 Then
-30            txtPercentWidth.Text = Int((1024 / val(lbloriginalwidth.Caption)) * 100)
-40            txtPercentWidth.Text = Format(txtPercentWidth.Text, "Fixed")
-50        End If
+    If Int(val(txtPercentWidth.Text) / 100) * val(lbloriginalwidth.Caption) > 1024 Then
+        txtPercentWidth.Text = Int((1024 / val(lbloriginalwidth.Caption)) * 100)
+        txtPercentWidth.Text = Format(txtPercentWidth.Text, "Fixed")
+    End If
 
-60        If percWfocus Then
-70            txtTileWidth.Text = Round((val(txtPercentWidth.Text) / 100) * val(lbloriginalwidth.Caption))
+    If percWfocus Then
+        txtTileWidth.Text = Round((val(txtPercentWidth.Text) / 100) * val(lbloriginalwidth.Caption))
 
-80            optSize(1).value = True
+        optSize(1).value = True
 
-90            If chkmaintainratio.value = 1 Then
-100               txtPercentHeight.Text = txtPercentWidth.Text
-110               txtTileHeight.Text = Round((val(lbloriginalheight.Caption) * val(txtPercentHeight.Text)) / 100)
-120           End If
-130       End If
+        If chkmaintainratio.value = 1 Then
+            txtPercentHeight.Text = txtPercentWidth.Text
+            txtTileHeight.Text = Round((val(lbloriginalheight.Caption) * val(txtPercentHeight.Text)) / 100)
+        End If
+    End If
 
 
 
 End Sub
 
 Private Sub txtTileHeight_Change()
-10        Call removeDisallowedCharacters(txtTileHeight, 0, 1024, True)
+    Call removeDisallowedCharacters(txtTileHeight, 1, 1024, True)
 
-20        If tileHfocus Then
-30            txtPercentHeight.Text = (val(txtTileHeight.Text) / val(lbloriginalheight.Caption)) * 100
-40            txtPercentHeight.Text = Format(txtPercentHeight.Text, "Fixed")
-50            optSize(0).value = True
+    If tileHfocus Then
+        txtPercentHeight.Text = (val(txtTileHeight.Text) / val(lbloriginalheight.Caption)) * 100
+        txtPercentHeight.Text = Format(txtPercentHeight.Text, "Fixed")
+        optSize(0).value = True
 
-60            If chkmaintainratio.value = 1 Then
-70                txtPercentWidth.Text = txtPercentHeight.Text
-80                txtTileWidth.Text = Round((val(lbloriginalwidth.Caption) * val(txtPercentWidth.Text)) / 100)
-90            End If
+        If chkmaintainratio.value = 1 Then
+            txtPercentWidth.Text = txtPercentHeight.Text
+            txtTileWidth.Text = Round((val(lbloriginalwidth.Caption) * val(txtPercentWidth.Text)) / 100)
+        End If
 
-100       End If
+    End If
 End Sub
 
 Private Sub txtTileWidth_Change()
-10        Call removeDisallowedCharacters(txtTileWidth, 0, 1024, True)
+    Call removeDisallowedCharacters(txtTileWidth, 1, 1024, True)
 
-20        If tileWfocus Then
-30            txtPercentWidth.Text = (val(txtTileWidth.Text) / val(lbloriginalwidth.Caption)) * 100
-40            txtPercentWidth.Text = Format(txtPercentWidth.Text, "Fixed")
-50            optSize(0).value = True
+    If tileWfocus Then
+        txtPercentWidth.Text = (val(txtTileWidth.Text) / val(lbloriginalwidth.Caption)) * 100
+        txtPercentWidth.Text = Format(txtPercentWidth.Text, "Fixed")
+        optSize(0).value = True
 
-60            If chkmaintainratio.value = 1 Then
-70                txtPercentHeight.Text = txtPercentWidth.Text
-80                txtTileHeight.Text = Round((val(lbloriginalheight.Caption) * val(txtPercentHeight.Text)) / 100)
-90            End If
+        If chkmaintainratio.value = 1 Then
+            txtPercentHeight.Text = txtPercentWidth.Text
+            txtTileHeight.Text = Round((val(lbloriginalheight.Caption) * val(txtPercentHeight.Text)) / 100)
+        End If
 
-100       End If
+    End If
 End Sub
 
 Private Sub txtPercentHeight_GotFocus()
-10        tileWfocus = False
-20        tileHfocus = False
-30        percWfocus = False
-40        percHfocus = True
+    tileWfocus = False
+    tileHfocus = False
+    percWfocus = False
+    percHfocus = True
 End Sub
 
 Private Sub txtPercentWidth_GotFocus()
-10        tileWfocus = False
-20        tileHfocus = False
-30        percWfocus = True
-40        percHfocus = False
+    tileWfocus = False
+    tileHfocus = False
+    percWfocus = True
+    percHfocus = False
 End Sub
 
 Private Sub txtTileHeight_GotFocus()
-10        tileWfocus = False
-20        tileHfocus = True
-30        percWfocus = False
-40        percHfocus = False
+    tileWfocus = False
+    tileHfocus = True
+    percWfocus = False
+    percHfocus = False
 End Sub
 
 Private Sub txtTileWidth_GotFocus()
-10        tileWfocus = True
-20        tileHfocus = False
-30        percWfocus = False
-40        percHfocus = False
+    tileWfocus = True
+    tileHfocus = False
+    percWfocus = False
+    percHfocus = False
 End Sub
 

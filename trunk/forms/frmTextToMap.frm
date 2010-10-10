@@ -1,5 +1,5 @@
 VERSION 5.00
-Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "COMDLG32.OCX"
 Begin VB.Form frmTextToMap 
    BorderStyle     =   3  'Fixed Dialog
    Caption         =   "Text to Map"
@@ -29,15 +29,6 @@ Begin VB.Form frmTextToMap
       AutoRedraw      =   -1  'True
       BackColor       =   &H80000005&
       BorderStyle     =   0  'None
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
       ForeColor       =   &H80000008&
       Height          =   1455
       Left            =   2280
@@ -121,164 +112,164 @@ Dim h As Integer
 Private parent As frmMain
 
 Public Sub setParent(Main As frmMain)
-10        Set parent = Main
+    Set parent = Main
 End Sub
 
 Private Sub cmdCancel_Click()
-      'Cancels the form
-10        Unload Me
+'Cancels the form
+    Unload Me
 End Sub
 
 Private Sub cmdChangeFont_Click()
-      'Shows the font dialog
-10        On Error GoTo errorh
-20        cd.flags = cdlCFScreenFonts
-30        cd.ShowFont
+'Shows the font dialog
+    On Error GoTo errorh
+    cd.flags = cdlCFScreenFonts
+    cd.ShowFont
 
-          'set the font settings
-40        picPreview.FontBold = cd.FontBold
-50        picPreview.FontItalic = cd.FontItalic
-60        picPreview.FontName = cd.FontName
-70        picPreview.FontSize = cd.FontSize
-80        picPreview.FontStrikethru = cd.FontStrikethru
-90        picPreview.FontUnderline = cd.FontUnderline
+    'set the font settings
+    picPreview.FontBold = cd.FontBold
+    picPreview.FontItalic = cd.FontItalic
+    picPreview.FontName = cd.FontName
+    picPreview.FontSize = cd.FontSize
+    picPreview.FontStrikethru = cd.FontStrikethru
+    picPreview.FontUnderline = cd.FontUnderline
 
-          'show the font settings in the label
-100       Call ShowStats
+    'show the font settings in the label
+    Call ShowStats
 
-          'Updates the preview
-110       Call UpdateTextPreview
-120       Exit Sub
+    'Updates the preview
+    Call UpdateTextPreview
+    Exit Sub
 errorh:
-130       If Err = cdlCancel Then
-140           Exit Sub
-150       End If
+    If Err = cdlCancel Then
+        Exit Sub
+    End If
 End Sub
 
 Private Sub cmdGo_Click()
-      'Creates an array, from the black and white pixels in the picture
-      'and pass it on to the general form
+'Creates an array, from the black and white pixels in the picture
+'and pass it on to the general form
 
-10        On Error GoTo cmdGo_Click_Error
+    On Error GoTo cmdGo_Click_Error
 
-          'create the array
-          Dim Text() As Integer
-20        ReDim Text(w, h) As Integer
+    'create the array
+    Dim Text() As Integer
+    ReDim Text(w, h) As Integer
 
-          Dim i As Integer
-          Dim j As Integer
-          
-          Dim TileToUse As Integer
-          
-30        If parent.tileset.selection(vbLeftButton).selectionType = TS_Tiles Then
-40            TileToUse = parent.tileset.selection(vbLeftButton).tilenr
-50        Else
-60            TileToUse = 1
-70        End If
-          
-          'check every pixel and if its dark then use the tiletouse
-          'else keep it blank
-80        For j = 0 To h
-90            For i = 0 To w
-                  Dim c As Long
-100               c = GetPixel(picPreview.hDC, i, j)
-110               If GetRED(c) < 128 And GetGREEN(c) < 128 And GetBLUE(c) < 128 Then
-120                   Text(i, j) = TileToUse
-130               Else
-140                   Text(i, j) = 0
-150               End If
-160           Next
-170       Next
+    Dim i As Integer
+    Dim j As Integer
+    
+    Dim TileToUse As Integer
+    
+    If parent.tileset.selection(vbLeftButton).selectionType = TS_Tiles Then
+        TileToUse = parent.tileset.selection(vbLeftButton).tilenr
+    Else
+        TileToUse = 1
+    End If
+    
+    'check every pixel and if its dark then use the tiletouse
+    'else keep it blank
+    For j = 0 To h
+        For i = 0 To w
+            Dim c As Long
+            c = GetPixel(picPreview.hDC, i, j)
+            If GetRED(c) < 128 And GetGREEN(c) < 128 And GetBLUE(c) < 128 Then
+                Text(i, j) = TileToUse
+            Else
+                Text(i, j) = 0
+            End If
+        Next
+    Next
 
-          'reenable the general form and executes the ttm
-180       Call frmGeneral.ExecuteTextToMap(Text, w + 1, h + 1)
+    'reenable the general form and executes the ttm
+    Call frmGeneral.ExecuteTextToMap(Text, w + 1, h + 1)
 
-          'disable the go again and unload the form
-190       cmdGo.Enabled = False
-200       Unload Me
+    'disable the go again and unload the form
+    cmdGo.Enabled = False
+    Unload Me
 
-210       On Error GoTo 0
-220       Exit Sub
+    On Error GoTo 0
+    Exit Sub
 
 cmdGo_Click_Error:
-230       HandleError Err, "frmTextToMap.cmdGo_Click"
+    HandleError Err, "frmTextToMap.cmdGo_Click"
 End Sub
 
 Private Sub UpdateTextPreview()
-      'Draws the preview
-      'clear the preview
-10        On Error GoTo UpdateTextPreview_Error
+'Draws the preview
+'clear the preview
+    On Error GoTo UpdateTextPreview_Error
 
-20        picPreview.Cls
+    picPreview.Cls
 
-          'put the correct attributes
-30        picPreview.CurrentX = 0
-40        picPreview.CurrentY = 0
-50        picPreview.ForeColor = vbBlack
+    'put the correct attributes
+    picPreview.CurrentX = 0
+    picPreview.CurrentY = 0
+    picPreview.ForeColor = vbBlack
 
-          'get the width & height of the text in the textbox
-60        w = picPreview.TextWidth(txttext.Text)
-70        h = picPreview.TextHeight(txttext.Text)
+    'get the width & height of the text in the textbox
+    w = picPreview.TextWidth(txttext.Text)
+    h = picPreview.TextHeight(txttext.Text)
 
-          ' make sure no out of bounce occurs
-80        If w > 1023 Then
-90            w = 1023
-100       End If
-110       If h > 1023 Then
-120           h = 1023
-130       End If
+    ' make sure no out of bounce occurs
+    If w > 1023 Then
+        w = 1023
+    End If
+    If h > 1023 Then
+        h = 1023
+    End If
 
-          ' DO NOT PUT THE PICTUREBOX INTO THE FRAME !!!
-          ' as it will be in twips, rather than pixels !
-          'resize the picturebox and print the text on it
-140       picPreview.width = w
-150       picPreview.height = h
-160       picPreview.Print txttext.Text
+    ' DO NOT PUT THE PICTUREBOX INTO THE FRAME !!!
+    ' as it will be in twips, rather than pixels !
+    'resize the picturebox and print the text on it
+    picPreview.width = w
+    picPreview.height = h
+    picPreview.Print txttext.Text
 
-          'enable go as we are good to go
-170       cmdGo.Enabled = True
+    'enable go as we are good to go
+    cmdGo.Enabled = True
 
-180       On Error GoTo 0
-190       Exit Sub
+    On Error GoTo 0
+    Exit Sub
 
 UpdateTextPreview_Error:
-200       HandleError Err, "frmTextToMap.UpdateTextPreview"
+    HandleError Err, "frmTextToMap.UpdateTextPreview"
 End Sub
 
 Private Sub Form_Load()
-      'disable the general form and the go button
-10        Set Me.Icon = frmGeneral.Icon
+'disable the general form and the go button
+    Set Me.Icon = frmGeneral.Icon
 
-20        cmdGo.Enabled = False
+    cmdGo.Enabled = False
 
-          'select everything in the textbox
-30        txttext.selstart = 0
-40        txttext.sellength = Len(txttext)
+    'select everything in the textbox
+    txttext.selstart = 0
+    txttext.sellength = Len(txttext)
 
     cd.FontBold = picPreview.FontBold
     cd.FontName = picPreview.FontName
     cd.FontItalic = picPreview.FontItalic
     cd.FontSize = picPreview.FontSize
-        
+  
     
-          'update the stats of the current font settings of the
-          'picturebox
-50        ShowStats
+    'update the stats of the current font settings of the
+    'picturebox
+    ShowStats
 
     Call UpdateTextPreview
 End Sub
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-      'Cancels the form
-10        cmdCancel_Click
+'Cancels the form
+    cmdCancel_Click
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-10        Set parent = Nothing
+    Set parent = Nothing
 End Sub
 
 Private Sub txttext_Change()
-10        Call UpdateTextPreview
+    Call UpdateTextPreview
 End Sub
 
 Private Sub txttext_Click()
@@ -288,12 +279,12 @@ Private Sub txttext_Click()
 End Sub
 
 Sub ShowStats()
-      'Show the font settings
-10        lblstats.Caption = "Font: " & picPreview.FontName & vbNewLine _
-                             & "Size: " & picPreview.FontSize & vbNewLine _
-                             & "Bold: " & picPreview.FontBold & vbNewLine _
-                             & "Italic: " & picPreview.FontItalic & vbNewLine _
-                             & "StrikeThrough: " & picPreview.FontStrikethru & vbNewLine _
-                             & "Underline: " & picPreview.FontUnderline
+'Show the font settings
+    lblstats.Caption = "Font: " & picPreview.FontName & vbNewLine _
+                       & "Size: " & picPreview.FontSize & vbNewLine _
+                       & "Bold: " & picPreview.FontBold & vbNewLine _
+                       & "Italic: " & picPreview.FontItalic & vbNewLine _
+                       & "StrikeThrough: " & picPreview.FontStrikethru & vbNewLine _
+                       & "Underline: " & picPreview.FontUnderline
 End Sub
 

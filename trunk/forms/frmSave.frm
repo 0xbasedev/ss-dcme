@@ -124,100 +124,100 @@ Attribute VB_Exposed = False
 
 Private Sub chkTileset_Click()
 
-10        chkelvlATTR.Enabled = chkTileset.value = vbChecked
-20        chkelvlREGN.Enabled = chkTileset.value = vbChecked
-30        chkelvlWT.Enabled = chkTileset.value = vbChecked
-40        chkelvlTT.Enabled = chkTileset.value = vbChecked
-50        chkelvlLVZ.Enabled = chkTileset.value = vbChecked
+    chkelvlATTR.Enabled = chkTileset.value = vbChecked
+    chkelvlREGN.Enabled = chkTileset.value = vbChecked
+    chkelvlWT.Enabled = chkTileset.value = vbChecked
+    chkelvlTT.Enabled = chkTileset.value = vbChecked
+    chkelvlLVZ.Enabled = chkTileset.value = vbChecked
 
 End Sub
 
 Private Sub cmdCancel_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub cmdSave_Click()
-          Dim flags As saveFlags
-          
-10        flags = SFdefault
-          
-20        FlagAdd flags, chkNoExtraTiles.value = vbUnchecked, SFsaveExtraTiles
-          
-30        FlagAdd flags, chkLVZ.value = vbChecked, SFsaveLVZ
-          
-          
-      '    If chkNoExtraTiles.Value = vbChecked Then
-      '        flags = flags And Not SFsaveExtraTiles
-      '    End If
-          
-      '    If chkLVZ.Value = vbChecked Then
-      '        flags = flags And SFsaveLVZ
-      '    Else
-      '        flags = flags And Not SFsaveLVZ
-      '    End If
-          
-40        If chkTileset.value = vbChecked Then
-              'ELVL needs tileset
-50            FlagAdd flags, True, SFsaveTileset
-          
-      '        flags = flags And SFsaveTileset
-              
-60            FlagAdd flags, chkelvlATTR.value = vbChecked, SFsaveELVLattr
-70            FlagAdd flags, chkelvlREGN.value = vbChecked, SFsaveELVLregn
-80            FlagAdd flags, chkelvlWT.value = vbChecked, SFsaveELVLdcwt
-90            FlagAdd flags, chkelvlTT.value = vbChecked, SFsaveELVLdctt
-100           FlagAdd flags, chkelvlLVZ.value = vbChecked, SFsaveELVLdclv
-          
-          
-      '        If chkelvlATTR.Value = vbChecked Then
-      '            flags = flags And SFsaveELVLattr
-      '        Else
-      '            flags = flags And Not SFsaveELVLattr
-      '        End If
-              
-      '        If chkelvlREGN.Value = vbChecked Then
-      '            flags = flags And SFsaveELVLregn
-      '        Else
-      '            flags = flags And Not SFsaveELVLregn
-      '        End If
-      '
-      '        If chkelvlWT.Value = vbChecked Then
-      '            flags = flags And SFsaveELVLdcwt
-      '        Else
-      '            flags = flags And Not SFsaveELVLdcwt
-      '        End If
-      '
-      '        If chkelvlTT.Value = vbChecked Then
-      '            flags = flags And SFsaveELVLdctt
-      '        Else
-      '            flags = flags And Not SFsaveELVLdctt
-      '        End If
-      '
-      '        If chkelvlLVZ.Value = vbChecked Then
-      '            flags = flags And SFsaveELVLdclv
-      '        Else
-      '            flags = flags And Not SFsaveELVLdclv
-      '        End If
-110       Else
-120           FlagAdd flags, False, SFsaveTileset
-130           FlagAdd flags, False, SFsaveELVL
-              
-      '        flags = flags And Not SFsaveTileset
-      '        flags = flags And Not SFsaveELVL
-140       End If
-          
+    Dim flags As saveFlags
+    
+    flags = SFdefault
+    
+    FlagAdd flags, chkNoExtraTiles.value = vbUnchecked, SFsaveExtraTiles
+    
+    FlagAdd flags, chkLVZ.value = vbChecked, SFsaveLVZ
+    
+    
+'    If chkNoExtraTiles.Value = vbChecked Then
+'        flags = flags And Not SFsaveExtraTiles
+'    End If
+    
+'    If chkLVZ.Value = vbChecked Then
+'        flags = flags And SFsaveLVZ
+'    Else
+'        flags = flags And Not SFsaveLVZ
+'    End If
+    
+    If chkTileset.value = vbChecked Then
+        'ELVL needs tileset
+        FlagAdd flags, True, SFsaveTileset
+    
+'        flags = flags And SFsaveTileset
+        
+        FlagAdd flags, chkelvlATTR.value = vbChecked, SFsaveELVLattr
+        FlagAdd flags, chkelvlREGN.value = vbChecked, SFsaveELVLregn
+        FlagAdd flags, chkelvlWT.value = vbChecked, SFsaveELVLdcwt
+        FlagAdd flags, chkelvlTT.value = vbChecked, SFsaveELVLdctt
+        FlagAdd flags, chkelvlLVZ.value = vbChecked, SFsaveELVLdclv
+    
+    
+'        If chkelvlATTR.Value = vbChecked Then
+'            flags = flags And SFsaveELVLattr
+'        Else
+'            flags = flags And Not SFsaveELVLattr
+'        End If
+        
+'        If chkelvlREGN.Value = vbChecked Then
+'            flags = flags And SFsaveELVLregn
+'        Else
+'            flags = flags And Not SFsaveELVLregn
+'        End If
+'
+'        If chkelvlWT.Value = vbChecked Then
+'            flags = flags And SFsaveELVLdcwt
+'        Else
+'            flags = flags And Not SFsaveELVLdcwt
+'        End If
+'
+'        If chkelvlTT.Value = vbChecked Then
+'            flags = flags And SFsaveELVLdctt
+'        Else
+'            flags = flags And Not SFsaveELVLdctt
+'        End If
+'
+'        If chkelvlLVZ.Value = vbChecked Then
+'            flags = flags And SFsaveELVLdclv
+'        Else
+'            flags = flags And Not SFsaveELVLdclv
+'        End If
+    Else
+        FlagAdd flags, False, SFsaveTileset
+        FlagAdd flags, False, SFsaveELVL
+        
+'        flags = flags And Not SFsaveTileset
+'        flags = flags And Not SFsaveELVL
+    End If
+    
 
-          
-150       Unload Me
-160       Call frmGeneral.SaveMap(True, flags)
+    
+    Unload Me
+    Call frmGeneral.SaveMap(True, flags)
 
 End Sub
 
 Private Sub Form_Load()
-10        Set Me.Icon = frmGeneral.Icon
+    Set Me.Icon = frmGeneral.Icon
 End Sub
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-10        Unload Me
+    Unload Me
 End Sub
 

@@ -136,145 +136,145 @@ Public Ycoord As Integer
 Dim ignoreupdate As Boolean
 
 Private Sub cmd_OK_Click()
-10        txt_X_LostFocus
-20        txt_Y_LostFocus
+    txt_X_LostFocus
+    txt_Y_LostFocus
 
-30        If IsNumeric(txt_Y.Text) And val(txt_Y.Text) >= 0 And val(txt_Y.Text) <= 1023 _
-             And IsNumeric(txt_X.Text) And val(txt_X.Text) >= 0 And val(txt_X.Text) <= 1023 Then
-40            Call frmGeneral.ExecuteGoTo(Xcoord, Ycoord)
-50            Unload Me
-60        End If
+    If IsNumeric(txt_Y.Text) And val(txt_Y.Text) >= 0 And val(txt_Y.Text) <= 1023 _
+       And IsNumeric(txt_X.Text) And val(txt_X.Text) >= 0 And val(txt_X.Text) <= 1023 Then
+        Call frmGeneral.ExecuteGoTo(Xcoord, Ycoord)
+        Unload Me
+    End If
 End Sub
 
 Private Sub cmdCancel_Click()
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub Form_Load()
-10        Set Me.Icon = frmGeneral.Icon
+    Set Me.Icon = frmGeneral.Icon
 
-20        If Xcoord > 1023 Then Xcoord = 1023
-30        If Xcoord < 0 Then Xcoord = 0
-40        If Ycoord > 1023 Then Ycoord = 1023
-50        If Ycoord < 0 Then Ycoord = 0
+    If Xcoord > 1023 Then Xcoord = 1023
+    If Xcoord < 0 Then Xcoord = 0
+    If Ycoord > 1023 Then Ycoord = 1023
+    If Ycoord < 0 Then Ycoord = 0
 
-60        txt_X.Text = Xcoord
-70        txt_Y.Text = Ycoord
-80        Call SetPointerToValues
+    txt_X.Text = Xcoord
+    txt_Y.Text = Ycoord
+    Call SetPointerToValues
 End Sub
 
 Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
-10        Unload Me
+    Unload Me
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
-10        SharedVar.MouseDown = 0
+    SharedVar.MouseDown = 0
 End Sub
 
 Private Sub picmap_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
-10        SharedVar.MouseDown = Button
+    SharedVar.MouseDown = Button
 
-20        If X <= 0 Then X = 0
-30        If X >= picmap.ScaleWidth - 1 Then X = picmap.ScaleWidth - 1
-40        If Y <= 0 Then Y = 0
-50        If Y >= picmap.ScaleHeight - 1 Then Y = picmap.ScaleHeight - 1
+    If X <= 0 Then X = 0
+    If X >= picmap.ScaleWidth - 1 Then X = picmap.ScaleWidth - 1
+    If Y <= 0 Then Y = 0
+    If Y >= picmap.ScaleHeight - 1 Then Y = picmap.ScaleHeight - 1
 
-60        Call PlacePointer(X, Y)
-70        Call UpdateValues
+    Call PlacePointer(X, Y)
+    Call UpdateValues
 End Sub
 
 Private Sub picmap_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
-10        If SharedVar.MouseDown <> 0 Then
-20            Call picmap_MouseDown(Button, Shift, X, Y)
-30        End If
+    If SharedVar.MouseDown <> 0 Then
+        Call picmap_MouseDown(Button, Shift, X, Y)
+    End If
 
 End Sub
 
 Private Sub picmap_MouseUp(Button As Integer, Shift As Integer, X As Single, Y As Single)
-10        SharedVar.MouseDown = 0
+    SharedVar.MouseDown = 0
 End Sub
 
 Private Sub txt_X_Change()
-10        Call removeDisallowedCharacters(txt_X, 0, 1024)
+    Call removeDisallowedCharacters(txt_X, 0, 1024)
 
-20        If Len(txt_X.Text) = 4 Then
-30            txt_Y.setfocus
-40        End If
+    If Len(txt_X.Text) = 4 Then
+        txt_Y.setfocus
+    End If
 
-50        Call SetPointerToValues
+    Call SetPointerToValues
 End Sub
 
 Private Sub txt_Y_Change()
-10        Call removeDisallowedCharacters(txt_Y, 0, 1024)
+    Call removeDisallowedCharacters(txt_Y, 0, 1024)
 
-20        If Len(txt_Y.Text) = 4 Then
-30            txt_X.setfocus
-40        End If
+    If Len(txt_Y.Text) = 4 Then
+        txt_X.setfocus
+    End If
 
-50        Call SetPointerToValues
+    Call SetPointerToValues
 End Sub
 Private Sub txt_X_GotFocus()
-10        txt_X.selstart = 0
-20        txt_X.sellength = Len(txt_X.Text)
+    txt_X.selstart = 0
+    txt_X.sellength = Len(txt_X.Text)
 End Sub
 
 Private Sub txt_X_LostFocus()
-10        Xcoord = check_coord(txt_X.Text)
-20        txt_X.Text = Xcoord
+    Xcoord = check_coord(txt_X.Text)
+    txt_X.Text = Xcoord
 End Sub
 
 Private Sub txt_Y_GotFocus()
-10        txt_Y.selstart = 0
-20        txt_Y.sellength = Len(txt_Y.Text)
+    txt_Y.selstart = 0
+    txt_Y.sellength = Len(txt_Y.Text)
 End Sub
 
 Private Sub txt_Y_LostFocus()
-10        Ycoord = check_coord(txt_Y.Text)
-20        txt_Y.Text = Ycoord
+    Ycoord = check_coord(txt_Y.Text)
+    txt_Y.Text = Ycoord
 End Sub
 
 Private Function check_coord(coord As String) As Integer
-10        If IsNumeric(coord) Then
-20            If coord > 1023 Then coord = 1023
-30            If coord < 0 Then coord = 0
-40            check_coord = Int(coord)
-50        Else
-60            check_coord = 512
-70        End If
+    If IsNumeric(coord) Then
+        If coord > 1023 Then coord = 1023
+        If coord < 0 Then coord = 0
+        check_coord = Int(coord)
+    Else
+        check_coord = 512
+    End If
 End Function
 
 Private Sub PlacePointer(X As Single, Y As Single)
-10        cursor.Left = X - 3
-20        cursor.Top = Y - 3
+    cursor.Left = X - 3
+    cursor.Top = Y - 3
 
-30        cursorLine1.x1 = X
-40        cursorLine1.x2 = X
-50        cursorLine1.y1 = Y - 5
-60        cursorLine1.y2 = Y + 5
+    cursorLine1.x1 = X
+    cursorLine1.x2 = X
+    cursorLine1.y1 = Y - 5
+    cursorLine1.y2 = Y + 5
 
-70        cursorLine2.x1 = X - 5
-80        cursorLine2.x2 = X + 5
-90        cursorLine2.y1 = Y
-100       cursorLine2.y2 = Y
+    cursorLine2.x1 = X - 5
+    cursorLine2.x2 = X + 5
+    cursorLine2.y1 = Y
+    cursorLine2.y2 = Y
 End Sub
 
 Private Sub SetPointerToValues()
-10        If ignoreupdate Then Exit Sub
+    If ignoreupdate Then Exit Sub
 
-          Dim X As Single
-          Dim Y As Single
-20        X = Int((val(txt_X.Text) / 1024) * (picmap.width - 1))
-30        Y = Int((val(txt_Y.Text) / 1024) * (picmap.height - 1))
+    Dim X As Single
+    Dim Y As Single
+    X = Int((val(txt_X.Text) / 1024) * (picmap.width - 1))
+    Y = Int((val(txt_Y.Text) / 1024) * (picmap.height - 1))
 
-40        Call PlacePointer(X, Y)
+    Call PlacePointer(X, Y)
 End Sub
 
 Private Sub UpdateValues()
-      ' 0.. picmap.width = Int(cursor.Left + cursor.Width / 2)
-10        ignoreupdate = True
-20        txt_X.Text = Int(((cursor.Left + 3) / (picmap.width - 1)) * 1023)
-30        txt_Y.Text = Int(((cursor.Top + 3) / (picmap.height - 1)) * 1023)
-40        ignoreupdate = False
+' 0.. picmap.width = Int(cursor.Left + cursor.Width / 2)
+    ignoreupdate = True
+    txt_X.Text = Int(((cursor.Left + 3) / (picmap.width - 1)) * 1023)
+    txt_Y.Text = Int(((cursor.Top + 3) / (picmap.height - 1)) * 1023)
+    ignoreupdate = False
 
 End Sub
 
