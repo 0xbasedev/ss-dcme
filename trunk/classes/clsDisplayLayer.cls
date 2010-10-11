@@ -457,8 +457,10 @@ Sub SetBitCount(bcount As Integer)
     Dim oldbmp As Long
     oldbmp = hBitmap
     
-    c_hBitmap = CreateBitmap(c_width, c_height, 1, 1, ByVal 0&)
-    
+    c_hBitmap = CreateBitmap(c_width, c_height, 1, bcount, ByVal 0&)
+    If c_hBitmap = 0 Then
+        Call MsgBox("Error CreateBitmap", vbExclamation)
+    End If
    
     'Should return oldbmp
     SelectObject c_hDC, hBitmap
@@ -472,7 +474,9 @@ Sub SetBitCount(bcount As Integer)
     Dim tmpheader As BITMAPINFO
     tmpheader.bmiHeader.biSize = 40
     
-    GetDIBits c_hDC, hBitmap, 0, c_height, ByVal 0&, tmpheader, 0
+    If GetDIBits(c_hDC, hBitmap, 0, c_height, ByVal 0&, tmpheader, 0) = 0 Then
+        Call MsgBox("Error GetDIBits setbitcount", vbExclamation)
+    End If
     
     bmpInfo = tmpheader
     bmpFileheader.bfSize = bmpInfo.bmiHeader.biSizeImage
@@ -607,6 +611,8 @@ End Function
 
 
 Sub SaveToFile(path As String, askoverwrite As Boolean)
+
+    
     Dim f As Integer, i As Integer
     
     If FileExists(path) Then
@@ -618,44 +624,49 @@ Sub SaveToFile(path As String, askoverwrite As Boolean)
             Call DeleteFile(path)
         End If
     End If
-
+    
+    
     'Dump the bitmap data in a file
     Dim cache_data() As Byte
     ReDim cache_data(bmpInfo.bmiHeader.biSizeImage - 1)
-    
-    
-    'Grab the bitmap data
 
+
+'    Grab the bitmap data
+    
     
     f = FreeFile
     Open path For Binary As #f
-    
+
     Put #f, , bmpFileheader
     Put #f, , bmpInfo.bmiHeader
-    
+
     If bmpInfo.bmiHeader.biBitCount <= 8 Then
         Dim tmpbmpinfo As BITMAPINFO
         tmpbmpinfo = bmpInfo
-    
+
         Dim ncolors As Long
         ncolors = bmpInfo.bmiHeader.biClrUsed
-        
-        GetDIBits c_hDC, hBitmap, 0, c_height, cache_data(0), tmpbmpinfo, 0
-        
+
+        If GetDIBits(c_hDC, hBitmap, 0, c_height, cache_data(0), tmpbmpinfo, 0) = 0 Then
+            Call MsgBox("Error GetDIBits 8bits", vbExclamation)
+        End If
+
         For i = 0 To ncolors - 1
             Put #f, , tmpbmpinfo.bmiColors(i)
         Next
 '        CopyMemory ByVal VarPtr(ctable(0)), ByVal VarPtr(bmpInfo.bmiColors(0)),
-    
+
 '        ReDim bmpInfo.bmiColors((2 ^ bmpInfo.bmiHeader.biBitCount) - 1)
     Else
-        GetDIBits c_hDC, hBitmap, 0, c_height, cache_data(0), bmpInfo, 0
+        If GetDIBits(c_hDC, hBitmap, 0, c_height, cache_data(0), bmpInfo, 0) = 0 Then
+            Call MsgBox("Error GetDIBits", vbExclamation)
+        End If
     End If
-    
-    
-    
+
+
+
     Put #f, , cache_data
-    
+
     Close #f
 End Sub
 

@@ -4600,21 +4600,21 @@ Private Sub MDIForm_Load()
 
     MAX_TOOL_SIZE(T_pencil - 1) = 64
     MAX_TOOL_SIZE(T_line - 1) = 64
-    MAX_TOOL_SIZE(T_spline - 1) = 64
+    MAX_TOOL_SIZE(t_spline - 1) = 64
     MAX_TOOL_SIZE(T_rectangle - 1) = 64
     MAX_TOOL_SIZE(T_ellipse - 1) = 64
     MAX_TOOL_SIZE(T_filledellipse - 1) = 64
     MAX_TOOL_SIZE(T_filledrectangle - 1) = 64
     toolSize(T_pencil - 1).Max = 64
     toolSize(T_line - 1).Max = 64
-    toolSize(T_spline - 1).Max = 64
+    toolSize(t_spline - 1).Max = 64
     toolSize(T_rectangle - 1).Max = 64
     toolSize(T_ellipse - 1).Max = 64
     toolSize(T_filledellipse - 1).Max = 64
     toolSize(T_filledrectangle - 1).Max = 64
 
     toolStep(T_line - 1).Min = 0
-    toolStep(T_spline - 1).Min = 0
+    toolStep(t_spline - 1).Min = 0
     toolStep(T_rectangle - 1).Min = 0
     toolStep(T_ellipse - 1).Min = 0
     toolStep(T_filledellipse - 1).Min = 0
@@ -5544,10 +5544,10 @@ Private Sub mnuSaveMiniMap_Click()
 'Saves mini map
     If Not loadedmaps(activemap) Then Exit Sub
 
-
-    'BitBlt frmSaveRadar.piclevel.hdc, 0, 0, 1024, 1024, Maps(activemap).pic1024.hdc, 0, 0, vbSrcCopy
-'    Call Maps(activemap).cpic1024.bltToDC(frmSaveRadar.piclevel.hDC, 0, 0, 1024, 1024, 0, 0, vbSrcCopy)
-    frmSaveRadar.show vbModal, Me
+    Load frmSaveRadar
+    Call frmSaveRadar.setParent(Maps(activemap))
+    frmSaveRadar.show vbModal, frmGeneral
+    
 
 End Sub
 
@@ -6478,8 +6478,8 @@ Friend Sub ExecuteZoomFocus(out As Boolean, ByRef mousepos As POINTAPI)
     'curtiley = (parent.Vscr.value + Y) \ parent.currenttilew
     ScreenToClient Maps(activemap).picPreview.hWnd, mousepos
     
-    Dim offsetX As Integer
-    Dim offsetY As Integer
+    Dim OffsetX As Integer
+    Dim OffsetY As Integer
 
     frmGeneral.IsBusy("frmGeneral.ExecuteZoomFocus") = True
     
@@ -7202,7 +7202,7 @@ Private Sub SetCurrentCursor(ByVal tool As toolenum)
            tool <> T_rectangle And _
            tool <> T_selection And _
            tool <> T_ellipse And _
-           tool <> T_spline And _
+           tool <> t_spline And _
            tool <> T_filledellipse And _
            tool <> T_filledrectangle And _
            tool <> T_customshape And _
@@ -7302,7 +7302,7 @@ Sub SetCurrentTool(tool As toolenum, Optional setToolbars As Boolean = True)
         'force redraw
         Call Maps(activemap).UpdateLevel
     
-    ElseIf curtool = T_spline Then
+    ElseIf curtool = t_spline Then
         Maps(activemap).tileset.lastButton = vbLeftButton
     End If
     End If
@@ -8176,7 +8176,7 @@ Sub UpdateToolToolbar()
             optToolRound(curtool - 1).value = True
         End If
 
-    Case T_line, T_rectangle, T_filledrectangle, T_spline
+    Case T_line, T_rectangle, T_filledrectangle, t_spline
         toolSize(curtool - 1).value = CInt(GetSetting("ToolSize" & ToolName(CInt(curtool - 1)), "1"))
 
         If CInt(GetSetting("ToolTip" & ToolName(CInt(curtool - 1)), "1")) = 1 Then
