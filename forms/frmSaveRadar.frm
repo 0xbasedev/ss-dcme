@@ -1,28 +1,29 @@
 VERSION 5.00
 Begin VB.Form frmSaveRadar 
    Caption         =   "Save Screenshot"
-   ClientHeight    =   7020
+   ClientHeight    =   6615
    ClientLeft      =   60
    ClientTop       =   435
-   ClientWidth     =   7725
+   ClientWidth     =   3345
    LinkTopic       =   "Form1"
    MinButton       =   0   'False
-   ScaleHeight     =   468
+   ScaleHeight     =   441
    ScaleMode       =   3  'Pixel
-   ScaleWidth      =   515
+   ScaleWidth      =   223
    StartUpPosition =   2  'CenterScreen
    Begin VB.Frame fOptions 
       Caption         =   "Options"
-      Height          =   1695
-      Left            =   4680
-      TabIndex        =   16
+      Height          =   1455
+      Left            =   1200
+      TabIndex        =   14
       Top             =   4200
-      Width           =   2895
+      Visible         =   0   'False
+      Width           =   2055
       Begin VB.CheckBox chkSelectionOnly 
          Caption         =   "Selection Only"
          Height          =   255
          Left            =   240
-         TabIndex        =   19
+         TabIndex        =   17
          Top             =   1080
          Width           =   1575
       End
@@ -30,47 +31,38 @@ Begin VB.Form frmSaveRadar
          Caption         =   "Draw Grid"
          Height          =   255
          Left            =   240
-         TabIndex        =   18
+         TabIndex        =   16
          Top             =   720
-         Width           =   1815
+         Width           =   1575
       End
       Begin VB.CheckBox chkDrawLVZ 
          Caption         =   "Draw LVZ Objects"
          Height          =   255
          Left            =   240
-         TabIndex        =   17
+         TabIndex        =   15
          Top             =   360
-         Width           =   1815
+         Width           =   1695
       End
-   End
-   Begin VB.Frame fPreview 
-      Caption         =   "Preview"
-      Height          =   1215
-      Left            =   1680
-      TabIndex        =   11
-      Top             =   3600
-      Width           =   4215
    End
    Begin VB.Frame fArea 
       Caption         =   "Area"
-      Height          =   2655
-      Left            =   120
-      TabIndex        =   5
-      Top             =   4200
-      Width           =   3015
+      Height          =   4095
+      Left            =   0
+      TabIndex        =   4
+      Top             =   0
+      Width           =   3255
       Begin VB.PictureBox picradar 
          AutoRedraw      =   -1  'True
          BackColor       =   &H00000000&
          BorderStyle     =   0  'None
-         Height          =   1815
-         Left            =   600
-         MousePointer    =   15  'Size All
-         ScaleHeight     =   121
+         Height          =   3015
+         Left            =   120
+         ScaleHeight     =   201
          ScaleMode       =   3  'Pixel
-         ScaleWidth      =   121
-         TabIndex        =   10
+         ScaleWidth      =   201
+         TabIndex        =   9
          Top             =   480
-         Width           =   1815
+         Width           =   3015
          Begin VB.Shape shparea 
             BorderColor     =   &H000000FF&
             Height          =   495
@@ -81,58 +73,76 @@ Begin VB.Form frmSaveRadar
       End
       Begin VB.TextBox txtBottom 
          Height          =   285
-         Left            =   1920
-         TabIndex        =   9
-         Text            =   "1023"
-         Top             =   2280
+         Left            =   2640
+         TabIndex        =   8
+         Text            =   "520"
+         Top             =   3600
          Width           =   495
       End
       Begin VB.TextBox txtRight 
          Height          =   285
-         Left            =   2400
-         TabIndex        =   8
-         Text            =   "1023"
-         Top             =   2040
+         Left            =   2160
+         TabIndex        =   7
+         Text            =   "520"
+         Top             =   3600
          Width           =   495
       End
       Begin VB.TextBox txtTop 
          Height          =   285
-         Left            =   600
-         TabIndex        =   7
-         Text            =   "0"
-         Top             =   240
+         Left            =   1080
+         TabIndex        =   6
+         Text            =   "500"
+         Top             =   3600
          Width           =   495
       End
       Begin VB.TextBox txtLeft 
          Height          =   285
-         Left            =   120
-         TabIndex        =   6
-         Text            =   "0"
-         Top             =   480
+         Left            =   600
+         TabIndex        =   5
+         Text            =   "500"
+         Top             =   3600
          Width           =   495
+      End
+      Begin VB.Label Label2 
+         Alignment       =   1  'Right Justify
+         Caption         =   "To"
+         Height          =   255
+         Left            =   1680
+         TabIndex        =   20
+         Top             =   3600
+         Width           =   375
+      End
+      Begin VB.Label Label1 
+         Alignment       =   1  'Right Justify
+         Caption         =   "From"
+         Height          =   255
+         Left            =   120
+         TabIndex        =   19
+         Top             =   3600
+         Width           =   375
       End
    End
    Begin VB.CommandButton cmdSave 
       Caption         =   "Save"
       Default         =   -1  'True
       Height          =   375
-      Left            =   4440
-      TabIndex        =   4
-      Top             =   6600
+      Left            =   360
+      TabIndex        =   3
+      Top             =   6120
       Width           =   1335
    End
    Begin VB.CommandButton cmdCancel 
       Caption         =   "Cancel"
       Height          =   375
-      Left            =   6120
-      TabIndex        =   3
-      Top             =   6600
-      Width           =   1455
+      Left            =   1920
+      TabIndex        =   2
+      Top             =   6120
+      Width           =   1335
    End
    Begin VB.Frame fZoom 
       Caption         =   "Zoom"
-      Height          =   1695
-      Left            =   3360
+      Height          =   1455
+      Left            =   0
       TabIndex        =   0
       Top             =   4200
       Width           =   1095
@@ -141,8 +151,8 @@ Begin VB.Form frmSaveRadar
          Height          =   195
          Index           =   4
          Left            =   120
-         TabIndex        =   14
-         Top             =   1320
+         TabIndex        =   12
+         Top             =   1080
          Width           =   615
       End
       Begin VB.OptionButton optZoomlevel 
@@ -150,8 +160,8 @@ Begin VB.Form frmSaveRadar
          Height          =   195
          Index           =   3
          Left            =   120
-         TabIndex        =   13
-         Top             =   1080
+         TabIndex        =   11
+         Top             =   840
          Width           =   615
       End
       Begin VB.OptionButton optZoomlevel 
@@ -159,8 +169,8 @@ Begin VB.Form frmSaveRadar
          Height          =   195
          Index           =   2
          Left            =   120
-         TabIndex        =   12
-         Top             =   840
+         TabIndex        =   10
+         Top             =   600
          Width           =   615
       End
       Begin VB.OptionButton optZoomlevel 
@@ -168,48 +178,32 @@ Begin VB.Form frmSaveRadar
          Height          =   195
          Index           =   1
          Left            =   120
-         TabIndex        =   2
-         Top             =   600
+         TabIndex        =   1
+         Top             =   360
          Value           =   -1  'True
          Width           =   615
       End
-      Begin VB.OptionButton optZoomlevel 
-         Caption         =   "2:1"
-         Height          =   195
-         Index           =   0
-         Left            =   120
-         TabIndex        =   1
-         Top             =   360
-         Width           =   615
-      End
    End
-   Begin DCME.cPicViewer cPicPreview 
-      Height          =   3615
-      Left            =   0
-      TabIndex        =   20
-      Top             =   0
-      Width           =   7215
-      _ExtentX        =   7223
-      _ExtentY        =   5106
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      ImageWidth      =   65
-      ImageHeight     =   57
-      AnimationTime   =   0
+   Begin VB.PictureBox picfull 
+      AutoRedraw      =   -1  'True
+      BackColor       =   &H00000000&
+      BorderStyle     =   0  'None
+      Height          =   3735
+      Left            =   4200
+      ScaleHeight     =   249
+      ScaleMode       =   3  'Pixel
+      ScaleWidth      =   513
+      TabIndex        =   18
+      Top             =   1320
+      Visible         =   0   'False
+      Width           =   7695
    End
    Begin VB.Label lblSize 
       Caption         =   "Screenshot size: 16000 x 16000"
       Height          =   255
-      Left            =   3360
-      TabIndex        =   15
-      Top             =   6120
+      Left            =   120
+      TabIndex        =   13
+      Top             =   5760
       Width           =   3015
    End
 End
@@ -222,13 +216,12 @@ Option Explicit
 
 Dim parent As frmMain
 
-Dim disp As New clsDisplayLayer
-
 Dim Boundaries As area
-Dim zoom As Single
 Dim tileWidth As Integer, tileHeight As Integer
 Dim fullwidth As Integer, fullheight As Integer
 
+
+Dim bFreezeTextboxes As Boolean
 
 
 Private Sub cmdCancel_Click()
@@ -239,40 +232,73 @@ Public Sub setParent(Main As frmMain)
     Set parent = Main
     
     If Not parent Is Nothing Then
-    
+        SetStretchBltMode picradar.hDC, HALFTONE
         Call parent.cpic1024.stretchToDC(picradar.hDC, 0, 0, picradar.ScaleWidth, picradar.ScaleHeight, 0, 0, 1024, 1024, vbSrcCopy)
-    
-        zoom = parent.currentzoom
-    
+        
+        Boundaries.Left = parent.ScreenToTileX(0)
+        Boundaries.Right = parent.ScreenToTileX(parent.picPreview.width - 1)
+        Boundaries.Top = parent.ScreenToTileY(0)
+        Boundaries.Bottom = parent.ScreenToTileY(parent.picPreview.height - 1)
+
+        
+        bFreezeTextboxes = True
+        Call UpdateBoundaries
+        bFreezeTextboxes = False
+        Call UpdateSize
     End If
 End Sub
 
 
 
-Private Sub Form_Load()
-    Boundaries.Left = 0
-    Boundaries.Top = 0
-    Boundaries.Right = MAPW - 1
-    Boundaries.Bottom = MAPH - 1
-    zoom = 1#
+Private Sub cmdSave_Click()
+    
+    If FileExists("screenshot.bmp") Then
+        If Not CheckOverwrite("screenshot.bmp") Then
+            Exit Sub
+        End If
+    End If
 
+    Call Render
+    
+    Call SavePicture(picfull.Image, "screenshot.bmp")
+End Sub
+
+Private Sub Form_Load()
+    bFreezeTextboxes = False
+    Boundaries.Left = 0
+    Boundaries.Right = MAPW
+    Boundaries.Top = 0
+    Boundaries.Bottom = MAPH
+End Sub
+
+Private Sub UpdateBoundaries()
+    txtLeft.Text = CStr(Boundaries.Left)
+    txtRight.Text = CStr(Boundaries.Right)
+    txtTop.Text = CStr(Boundaries.Top)
+    txtBottom.Text = CStr(Boundaries.Bottom)
+    
 End Sub
 
 Private Sub Form_Unload(Cancel As Integer)
     Set parent = Nothing
-    disp.Cls
+    picfull.width = 1
+    picfull.height = 1
+    picfull.Cls
+    
 End Sub
 
 
 Private Sub UpdateSize()
+    If parent Is Nothing Then Exit Sub
+    
     tileWidth = (Boundaries.Right - Boundaries.Left + 1)
     tileHeight = (Boundaries.Bottom - Boundaries.Top + 1)
     
-    fullwidth = tileWidth * TILEW * zoom
-    fullheight = tileHeight * TILEH * zoom
+    fullwidth = tileWidth * parent.currenttilew
+    fullheight = tileHeight * parent.currenttilew
     
-    If fullwidth > 16383 Then fullwidth = 16383
-    If fullheight > 16383 Then fullheight = 16383
+    If fullwidth > 16380 Then fullwidth = 16380
+    If fullheight > 16380 Then fullheight = 16380
     
     lblSize = "Screenshot Size: " & fullwidth & "x" & fullheight
     
@@ -289,35 +315,89 @@ End Sub
 
 
 Private Sub Render()
-    disp.BackColor = vbBlack
-    Call disp.Resize(fullwidth, fullheight, False)
+ On Error GoTo render_error
+ 
+'    disp.BackColor = vbBlack
+'    Call disp.Resize(fullwidth, fullheight, False)
+'
+    picfull.width = fullwidth
+    picfull.height = fullheight
     
+'
+'    cPicPreview.AnimFramesX = 1
+'    cPicPreview.AnimFramesX = 1
+'
+'    cPicPreview.width = cPicPreview.width
+'    cPicPreview.height = cPicPreview.height
+'    cPicPreview.BackColor = vbBlack
+'
+'    cPicPreview.imageWidth = fullwidth
+'    cPicPreview.imageHeight = fullheight
+'    cPicPreview.Clear
+    picfull.Cls
     
-    
-    cPicPreview.width = cPicPreview.width
-    cPicPreview.height = cPicPreview.height
-    cPicPreview.BackColor = vbBlack
+    'DrawFilledRectangle cPicPreview.hDC, 0, 0, fullwidth, fullheight, vbBlack
+    Call parent.RenderTiles(Boundaries.Left, Boundaries.Top, 0, 0, fullwidth - 1, fullheight - 1, picfull.hDC, False, False)
 
-    cPicPreview.imageWidth = fullwidth
-    cPicPreview.imageHeight = fullheight
-    DrawFilledRectangle cPicPreview.hDC, 0, 0, fullwidth, fullheight, vbBlack
-    Call parent.RenderTiles(Boundaries.Left, Boundaries.Top, 0, 0, fullwidth, fullheight, cPicPreview.hDC, False, False)
     
-'    Call disp.SaveToFile("C:\Jeux\Continuum\DCME\bleh.bmp", False)
-    Call cPicPreview.Refresh
+    'Call cPicPreview.Refresh
 
     
 '    cPicPreview.Clear
-    
-'    BitBlt Picture1.hDC, 0, 0, Picture1.width, Picture1.height, disp.hDC, 0, 0, vbSrcCopy
+    picfull.Refresh
     
 '    BitBlt cPicPreview.hDC, 0, 0, fullWidth, fullHeight, disp.hDC, 0, 0, vbSrcCopy
-
+    Exit Sub
+render_error:
+    MsgBox "Cannot create image, try rendering a smaller image", vbExclamation
 End Sub
 
 
 
+
+
+Private Sub optZoomlevel_Click(Index As Integer)
+    Dim zoom As Single
+    
+    If Not parent Is Nothing Then
+        Select Case Index
+        Case 0
+            zoom = 2#
+        Case 1
+            zoom = 1#
+        Case 2
+            zoom = 0.5
+        Case 3
+            zoom = 0.25
+        Case 4
+            zoom = 1 / 16
+        Case Else
+            zoom = 1#
+        End Select
+        
+        
+        Call parent.magnifier.SetZoom(zoom, True)
+        Call parent.SetFocusAt(Boundaries.Left + (Boundaries.Right - Boundaries.Left) \ 2, _
+                                Boundaries.Top + (Boundaries.Bottom - Boundaries.Top) \ 2, _
+                                parent.picPreview.width \ 2, parent.picPreview.height \ 2, True)
+    End If
+    Call UpdateSize
+    
+End Sub
+
+
+
+Private Sub picradar_MouseMove(Button As Integer, Shift As Integer, X As Single, Y As Single)
+    'If inside the rectangle, show 'move' arrow
+    
+    'If on the edge, show 'resize' arrow
+
+
+End Sub
+
 Private Sub txtBottom_Change()
+    If bFreezeTextboxes Then Exit Sub
+    
     Call removeDisallowedCharacters(txtBottom, 0, 1023, False)
     Boundaries.Bottom = CInt(val(txtBottom.Text))
     
@@ -325,6 +405,8 @@ Private Sub txtBottom_Change()
 End Sub
 
 Private Sub txtLeft_Change()
+    If bFreezeTextboxes Then Exit Sub
+    
     Call removeDisallowedCharacters(txtLeft, 0, 1023, False)
     Boundaries.Left = CInt(val(txtLeft.Text))
     
@@ -332,6 +414,8 @@ Private Sub txtLeft_Change()
 End Sub
 
 Private Sub txtRight_Change()
+    If bFreezeTextboxes Then Exit Sub
+    
     Call removeDisallowedCharacters(txtRight, 0, 1023, False)
     Boundaries.Right = CInt(val(txtRight.Text))
     
@@ -339,6 +423,8 @@ Private Sub txtRight_Change()
 End Sub
 
 Private Sub txtTop_Change()
+    If bFreezeTextboxes Then Exit Sub
+    
     Call removeDisallowedCharacters(txtTop, 0, 1023, False)
     Boundaries.Top = CInt(val(txtTop.Text))
     
